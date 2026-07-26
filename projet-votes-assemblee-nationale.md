@@ -22,6 +22,48 @@ Développeur C#/.NET avec expérience en architecture, DDD, TDD. Objectif : cré
 - **Informer, pas orienter** : le site reste **purement factuel**, ne porte jamais de jugement de valeur ("bon" ou "mauvais" vote). Le jugement de valeur appartient au lecteur, après lecture des faits.
 - Priorité fonctionnelle retenue : **thématisation des votes** (axe B) plutôt que détection de dissidence des députés (axe A) — cet axe est déjà bien couvert par Datan (score de "loyauté"/rébellion par groupe), donc mis de côté pour ne pas dupliquer.
 
+### Objectif SMART (issu d'une session de grilling)
+
+Stratégie en 3 temps : d'abord **profondeur d'usage** (B), pour que ça mène à de la **reconnaissance par des tiers de confiance** (C), pour finalement atteindre l'**ampleur de diffusion** (A). L'objectif ci-dessous ne couvre que la première étape (B), volontairement — c'est la seule mesurable sans dépendre d'acteurs externes (journalistes, réseau de diffusion).
+
+> Dès la mise en ligne publique, atteindre et maintenir un taux d'au moins **50% des visiteurs uniques** qui, au moins une fois, **descendent jusqu'au niveau dossier législatif**, mesuré en continu sur une **fenêtre glissante de 3 mois**.
+
+### Impact map
+
+**Acteurs**
+- *Primaires* : citoyen peu politisé/indécis (persona fondateur du projet) ; citoyen déjà engagé qui vérifie/conteste un discours de parti.
+- *Secondaires* : le développeur/éditeur (toi) ; le curateur thématique (rôle actuellement tenu par toi).
+- *En coulisses* : journalistes/fact-checkers susceptibles de relayer le site ; Assemblée nationale/Sénat (fournisseurs de la donnée).
+- *Faisant obstacle* : comptes/médias qui relaient un chiffre agrégé hors contexte pour un récit partisan ; **visiteur sceptique qui présume d'emblée un biais éditorial et repart sans creuser** — impact jugé important pour la façon de présenter l'information (ton, design de la page d'accueil).
+
+**Impacts (comportements visés)**
+1. Descendre jusqu'au dossier pour vérifier avant de juger *(= l'objectif chiffré lui-même)*
+2. Comparer un même sous-thème entre plusieurs groupes parlementaires
+3. Ne pas rebondir sur le score agrégé sans creuser
+4. Ne pas repartir dès la page d'accueil par présomption de biais
+5. Partager/citer un lien vers un dossier précis (citoyen engagé, journalistes)
+6. Publier de nouveaux thèmes/branches validés empiriquement, sans enfreindre la règle "sens politique = niveau sous-thème uniquement"
+7. Instrumenter le suivi de profondeur de navigation dès le lancement
+8. Contrer la récupération partisane d'un chiffre isolé
+
+**Livrables candidats (hypothèses à tester, pas des engagements)** — voir impact visé entre parenthèses :
+- Navigation arbre → nœud → dossier → scrutin, avec CTA explicite "voir les X dossiers" à chaque nœud agrégé (1, 3)
+- Vue comparative entre groupes intégrée à la navigation, pas une feature à part (2)
+- Page d'accueil montrant la neutralité dès le premier écran (ex. un scrutin consensuel en exemple, pas un sujet clivant) + charte éditoriale visible + design sobre non connoté (4)
+- URLs stables/lisibles par dossier ou scrutin (permaliens) + carte de partage pré-remplie avec la source (5, 8)
+- Méthode d'analyse empirique par commission (comme pratiqué pour École et Libertés & sécurité) à formaliser en process réutilisable (6)
+- Analytics respectueux de la vie privée, sans profilage nominatif (7)
+
+**Priorisation qui en découle** : continuer le travail de taxonomie en premier (impacts 1 et 6 en dépendent) ; travailler en parallèle le ton/design de la page d'accueil pour l'impact 4 (décision à prendre tôt, pas un correctif tardif) ; reporter permaliens/analytics/cartes de partage (5, 7, 8) à la phase technique.
+
+### Décision : structure de la page d'accueil (prototype)
+
+3 variantes structurelles testées (grille de tuiles / exemple en vedette / index éditorial), même identité visuelle — prototype de référence : https://claude.ai/code/artifact/7fd7f581-743b-4826-aef4-3c22c36d0853
+
+**Retenu : la grille de tuiles** (un thème = une tuile, avec gloss neutre d'une ligne). Choisie parce qu'elle affiche l'ensemble des possibilités sans orienter le visiteur vers une direction — cohérent avec l'impact "ne pas repartir dès la home par présomption de biais". Testée jusqu'à 9 tuiles sans casser la mise en page, ce qui donne une marge confortable au-delà des 7 thèmes actuels : la structure de la home n'est donc plus bloquée sur la fin de la taxonomie.
+
+**Faiblesse connue, à corriger dans un second temps** : la grille montre tout à plat mais ne suscite pas la curiosité par elle-même (contrairement à la variante "exemple en vedette", qui prouvait la neutralité par un cas concret). À retravailler plus tard — probablement en empruntant un élément de la variante B (un exemple mis en avant) sans perdre l'exhaustivité neutre de la grille.
+
 ## Sources de données (par ordre de priorité)
 
 1. **Assemblée nationale** (Open Data officiel) — données brutes : scrutins, dossiers législatifs, votes, groupes.
