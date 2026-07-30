@@ -15,6 +15,7 @@ function unScrutin(positionsParGroupe: Scrutin["positionsParGroupe"]): Scrutin {
   return {
     uid: "VTANR5L17V1",
     titre: "Un titre de scrutin",
+    dossierRef: null,
     decompte: { pour: 10, contre: 6, abstentions: 0 },
     positionsParGroupe,
   };
@@ -28,8 +29,16 @@ describe("comparerGroupes", () => {
     });
     const comparerGroupes = createComparerGroupes(repository);
     const scrutin = unScrutin([
-      { organeRef: "PO1", decompte: { pour: 5, contre: 0, abstentions: 0 } },
-      { organeRef: "PO2", decompte: { pour: 0, contre: 5, abstentions: 0 } },
+      {
+        organeRef: "PO1",
+        decompte: { pour: 5, contre: 0, abstentions: 0 },
+        effectif: 10,
+      },
+      {
+        organeRef: "PO2",
+        decompte: { pour: 0, contre: 5, abstentions: 0 },
+        effectif: 10,
+      },
     ]);
 
     const comparaison = comparerGroupes(scrutin);
@@ -55,6 +64,7 @@ describe("comparerGroupes", () => {
       {
         organeRef: "POINCONNU",
         decompte: { pour: 1, contre: 0, abstentions: 0 },
+        effectif: 10,
       },
     ]);
 

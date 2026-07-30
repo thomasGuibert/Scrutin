@@ -8,6 +8,12 @@ class FakeScrutinRepository implements ScrutinRepository {
   async getByUid(uid: string): Promise<Scrutin | null> {
     return this.scrutins[uid] ?? null;
   }
+
+  async getByDossierRef(dossierRef: string): Promise<Scrutin[]> {
+    return Object.values(this.scrutins).filter(
+      (scrutin) => scrutin.dossierRef === dossierRef
+    );
+  }
 }
 
 describe("getScrutin", () => {
@@ -15,9 +21,14 @@ describe("getScrutin", () => {
     const unScrutin: Scrutin = {
       uid: "VTANR5L17V1",
       titre: "Un titre de scrutin",
+      dossierRef: null,
       decompte: { pour: 1, contre: 2, abstentions: 3 },
       positionsParGroupe: [
-        { organeRef: "PO845401", decompte: { pour: 1, contre: 0, abstentions: 0 } },
+        {
+          organeRef: "PO845401",
+          decompte: { pour: 1, contre: 0, abstentions: 0 },
+          effectif: 125,
+        },
       ],
     };
     const repository = new FakeScrutinRepository({ VTANR5L17V1: unScrutin });

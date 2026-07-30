@@ -15,6 +15,7 @@ type RawDecompte = {
 
 type RawGroupeVote = {
   organeRef: string;
+  nombreMembresGroupe: string;
   vote: { decompteVoix: RawDecompte };
 };
 
@@ -22,6 +23,7 @@ type RawScrutinFile = {
   scrutin: {
     uid: string;
     titre: string;
+    objet: { dossierLegislatif: { dossierRef: string } | null };
     syntheseVote: { decompte: RawDecompte };
     ventilationVotes: {
       organe: { groupes: { groupe: RawGroupeVote | RawGroupeVote[] } };
@@ -51,12 +53,42 @@ function toArray<T>(value: T | T[]): T[] {
   return Array.isArray(value) ? value : [value];
 }
 
+function parseScrutin(raw: RawScrutinFile): Scrutin {
+  const groupes = toArray(raw.scrutin.ventilationVotes.organe.groupes.groupe);
+
+  return {
+    uid: raw.scrutin.uid,
+    titre: raw.scrutin.titre,
+    dossierRef: raw.scrutin.objet.dossierLegislatif?.dossierRef ?? null,
+    decompte: parseDecompte(raw.scrutin.syntheseVote.decompte),
+    positionsParGroupe: groupes.map((groupe) => ({
+      organeRef: groupe.organeRef,
+      decompte: parseDecompte(groupe.vote.decompteVoix),
+      effectif: parseCount(
+        groupe.nombreMembresGroupe,
+        "nombreMembresGroupe"
+      ),
+    })),
+  };
+}
+
 export class FilesystemScrutinRepository implements ScrutinRepository {
+  private zip: AdmZip | null = null;
+
   constructor(private readonly zipPath: string = ZIP_PATH) {}
 
+  // L'archive (~40 Mo, 8000+ entrées) est coûteuse à ouvrir et à indexer ;
+  // une seule instance est réutilisée par les deux méthodes de ce repository
+  // plutôt que d'être reconstruite à chaque appel.
+  private getZip(): AdmZip {
+    if (!this.zip) {
+      this.zip = new AdmZip(this.zipPath);
+    }
+    return this.zip;
+  }
+
   async getByUid(uid: string): Promise<Scrutin | null> {
-    const zip = new AdmZip(this.zipPath);
-    const entry = zip.getEntry(`json/${uid}.json`);
+    const entry = this.getZip().getEntry(`json/${uid}.json`);
     if (!entry) {
       return null;
     }
@@ -64,16 +96,27 @@ export class FilesystemScrutinRepository implements ScrutinRepository {
     const raw = JSON.parse(
       entry.getData().toString("utf-8")
     ) as RawScrutinFile;
-    const groupes = toArray(raw.scrutin.ventilationVotes.organe.groupes.groupe);
 
-    return {
-      uid: raw.scrutin.uid,
-      titre: raw.scrutin.titre,
-      decompte: parseDecompte(raw.scrutin.syntheseVote.decompte),
-      positionsParGroupe: groupes.map((groupe) => ({
-        organeRef: groupe.organeRef,
-        decompte: parseDecompte(groupe.vote.decompteVoix),
-      })),
-    };
+    return parseScrutin(raw);
+  }
+
+  async getByDossierRef(dossierRef: string): Promise<Scrutin[]> {
+    const scrutins: Scrutin[] = [];
+
+    for (const entry of this.getZip().getEntries()) {
+      if (!entry.entryName.startsWith("json/") || entry.isDirectory) {
+        continue;
+      }
+
+      const raw = JSON.parse(
+        entry.getData().toString("utf-8")
+      ) as RawScrutinFile;
+
+      if (raw.scrutin.objet.dossierLegislatif?.dossierRef === dossierRef) {
+        scrutins.push(parseScrutin(raw));
+      }
+    }
+
+    return scrutins;
   }
 }

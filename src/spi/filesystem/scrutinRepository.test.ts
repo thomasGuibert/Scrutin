@@ -29,6 +29,7 @@ describe("FilesystemScrutinRepository", () => {
     expect(scrutin?.positionsParGroupe).toContainEqual({
       organeRef: "PO845425",
       decompte: { pour: 1, contre: 1, abstentions: 0 },
+      effectif: 48,
     });
   });
 
@@ -54,7 +55,30 @@ describe("FilesystemScrutinRepository", () => {
     const scrutin = await repository.getByUid("VTANR5L17VSINGLEGROUP");
 
     expect(scrutin?.positionsParGroupe).toEqual([
-      { organeRef: "PO845401", decompte: { pour: 1, contre: 0, abstentions: 0 } },
+      {
+        organeRef: "PO845401",
+        decompte: { pour: 1, contre: 0, abstentions: 0 },
+        effectif: 125,
+      },
     ]);
+  });
+
+  it("retourne tous les scrutins réels rattachés à un dossierRef donné", async () => {
+    const repository = new FilesystemScrutinRepository(FIXTURE_ZIP_PATH);
+
+    const scrutins = await repository.getByDossierRef("DLR5L17N52767");
+
+    expect(scrutins.map((s) => s.uid).sort()).toEqual([
+      "VTANR5L17V6993",
+      "VTANR5L17V6994",
+    ]);
+  });
+
+  it("ne retourne aucun scrutin pour un dossierRef inconnu", async () => {
+    const repository = new FilesystemScrutinRepository(FIXTURE_ZIP_PATH);
+
+    const scrutins = await repository.getByDossierRef("DLR5L17INCONNU");
+
+    expect(scrutins).toEqual([]);
   });
 });

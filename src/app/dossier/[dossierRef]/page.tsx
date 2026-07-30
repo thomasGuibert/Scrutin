@@ -1,9 +1,17 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ComparaisonGroupes } from "@/app/_components/ComparaisonGroupes";
+import { createAgregerPositionsDossier } from "@/api/agregerPositionsDossier";
 import { createGetDossier } from "@/api/getDossier";
 import { FilesystemDossierRepository } from "@/spi/filesystem/dossierRepository";
+import { FilesystemGroupeRepository } from "@/spi/filesystem/groupes";
+import { FilesystemScrutinRepository } from "@/spi/filesystem/scrutinRepository";
 
 const getDossier = createGetDossier(new FilesystemDossierRepository());
+const agregerPositionsDossier = createAgregerPositionsDossier(
+  new FilesystemScrutinRepository(),
+  new FilesystemGroupeRepository()
+);
 
 export function generateStaticParams() {
   return [{ dossierRef: "DLR5L17N52767" }];
@@ -20,6 +28,8 @@ export default async function DossierPage({
   if (!dossier) {
     notFound();
   }
+
+  const comparaison = await agregerPositionsDossier(dossierRef);
 
   return (
     <main>
@@ -39,6 +49,11 @@ export default async function DossierPage({
           {dossier.ficheDossier.resultatAttendu}
         </div>
       </div>
+
+      <ComparaisonGroupes
+        titre="Position par groupe, sur l'ensemble des scrutins du dossier"
+        comparaison={comparaison}
+      />
 
       <Link className="back-link" href="/">
         ← Retour
