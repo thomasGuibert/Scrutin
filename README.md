@@ -8,7 +8,7 @@ Donner une lecture factuelle et pédagogique des votes des députés et des grou
 
 Statut
 
-🚧 Projet en phase de conception fonctionnelle — pas encore de code.
+🚧 Squelette Next.js en place (architecture hexagonale `domain`/`api`/`spi`), pas encore de logique métier.
 
 Licence
 
