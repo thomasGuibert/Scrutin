@@ -17,6 +17,7 @@ describe("FilesystemScrutinRepository", () => {
       uid: "VTANR5L17V1",
       titre:
         "la motion de censure déposée en application de l'article 49, alinéa 2, de la Constitution par M. Boris Vallaud, Mme Mathilde Panot, Mme Cyrielle Chatelain, M. André Chassaigne et 188 de leurs collègues.",
+      decompte: { pour: 197, contre: 0, abstentions: 0 },
     });
   });
 
@@ -26,5 +27,13 @@ describe("FilesystemScrutinRepository", () => {
     const scrutin = await repository.getByUid("VTANR5L17V999999");
 
     expect(scrutin).toBeNull();
+  });
+
+  it("throws when a décompte value isn't numeric", async () => {
+    const repository = new FilesystemScrutinRepository(FIXTURE_ZIP_PATH);
+
+    await expect(repository.getByUid("VTANR5L17VBROKEN")).rejects.toThrow(
+      /pour/
+    );
   });
 });

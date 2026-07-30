@@ -8,8 +8,26 @@ const ZIP_PATH = path.join(
 );
 
 type RawScrutinFile = {
-  scrutin: { uid: string; titre: string };
+  scrutin: {
+    uid: string;
+    titre: string;
+    syntheseVote: {
+      decompte: {
+        pour: string;
+        contre: string;
+        abstentions: string;
+      };
+    };
+  };
 };
+
+function parseCount(raw: string, field: string): number {
+  const value = Number(raw);
+  if (!Number.isFinite(value)) {
+    throw new Error(`Scrutin : décompte "${field}" invalide ("${raw}").`);
+  }
+  return value;
+}
 
 export class FilesystemScrutinRepository implements ScrutinRepository {
   constructor(private readonly zipPath: string = ZIP_PATH) {}
@@ -24,10 +42,16 @@ export class FilesystemScrutinRepository implements ScrutinRepository {
     const raw = JSON.parse(
       entry.getData().toString("utf-8")
     ) as RawScrutinFile;
+    const decompte = raw.scrutin.syntheseVote.decompte;
 
     return {
       uid: raw.scrutin.uid,
       titre: raw.scrutin.titre,
+      decompte: {
+        pour: parseCount(decompte.pour, "pour"),
+        contre: parseCount(decompte.contre, "contre"),
+        abstentions: parseCount(decompte.abstentions, "abstentions"),
+      },
     };
   }
 }
