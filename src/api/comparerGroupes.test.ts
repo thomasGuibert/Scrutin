@@ -24,8 +24,8 @@ function unScrutin(positionsParGroupe: Scrutin["positionsParGroupe"]): Scrutin {
 describe("comparerGroupes", () => {
   it("associe la Position calculée au groupe réel pour chaque entrée", () => {
     const repository = new FakeGroupeRepository({
-      PO1: { organeRef: "PO1", nom: "Groupe Un", abreviation: "G1" },
-      PO2: { organeRef: "PO2", nom: "Groupe Deux", abreviation: "G2" },
+      PO1: { organeRef: "PO1", nom: "Groupe Un", abreviation: "G1", ordreHemicycle: 0 },
+      PO2: { organeRef: "PO2", nom: "Groupe Deux", abreviation: "G2", ordreHemicycle: 1 },
     });
     const comparerGroupes = createComparerGroupes(repository);
     const scrutin = unScrutin([
@@ -45,12 +45,12 @@ describe("comparerGroupes", () => {
 
     expect(comparaison).toEqual([
       {
-        groupe: { organeRef: "PO1", nom: "Groupe Un", abreviation: "G1" },
+        groupe: { organeRef: "PO1", nom: "Groupe Un", abreviation: "G1", ordreHemicycle: 0 },
         decompte: { pour: 5, contre: 0, abstentions: 0 },
         position: "Pour",
       },
       {
-        groupe: { organeRef: "PO2", nom: "Groupe Deux", abreviation: "G2" },
+        groupe: { organeRef: "PO2", nom: "Groupe Deux", abreviation: "G2", ordreHemicycle: 1 },
         decompte: { pour: 0, contre: 5, abstentions: 0 },
         position: "Contre",
       },

@@ -57,7 +57,7 @@ describe("agregerPositionsDossier", () => {
       ],
     });
     const groupeRepository = new FakeGroupeRepository({
-      PO1: { organeRef: "PO1", nom: "Groupe Un", abreviation: "G1" },
+      PO1: { organeRef: "PO1", nom: "Groupe Un", abreviation: "G1", ordreHemicycle: 0 },
     });
     const agregerPositionsDossier = createAgregerPositionsDossier(
       scrutinRepository,
@@ -71,6 +71,7 @@ describe("agregerPositionsDossier", () => {
       organeRef: "PO1",
       nom: "Groupe Un",
       abreviation: "G1",
+      ordreHemicycle: 0,
     });
     // même calcul que le test domaine agregerPositions : 70%/30% -> Pour
     expect(comparaison[0].decompte.pour).toBeCloseTo(0.7);

@@ -178,6 +178,41 @@ p.page-gloss {
   margin-right: 0.4rem;
 }
 
+.dossier-list {
+  margin-top: 0.5rem;
+}
+
+.dossier-row {
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 1.1rem;
+  margin-bottom: 1.1rem;
+}
+
+.dossier-row:first-child {
+  border-top: 1px solid var(--line);
+  padding-top: 1rem;
+}
+
+.dossier-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.9rem;
+  align-items: baseline;
+  padding-bottom: 0.7rem;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.dossier-header:hover .dossier-title {
+  color: var(--accent);
+}
+
+.dossier-title {
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
 .cmp-block {
   margin: 1rem 0 1.6rem;
   border: 1px solid var(--line);

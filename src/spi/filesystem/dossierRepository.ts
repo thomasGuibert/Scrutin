@@ -6,6 +6,8 @@ import type {
   DossierRepository,
   FicheDossier,
 } from "@/domain/dossier";
+import type { TaxonomyRepository } from "@/domain/taxonomie";
+import { DeclaredTaxonomyRepository } from "@/spi/filesystem/taxonomie";
 
 const CONTENT_DIR = path.join(process.cwd(), "content/dossiers");
 
@@ -45,8 +47,22 @@ function parseFicheDossier(body: string): FicheDossier {
   };
 }
 
+export type FilesystemDossierRepositoryOptions = {
+  contentDir?: string;
+  taxonomyRepository?: TaxonomyRepository;
+};
+
 export class FilesystemDossierRepository implements DossierRepository {
-  constructor(private readonly contentDir: string = CONTENT_DIR) {}
+  private readonly contentDir: string;
+  private readonly taxonomyRepository: TaxonomyRepository;
+
+  constructor({
+    contentDir = CONTENT_DIR,
+    taxonomyRepository = new DeclaredTaxonomyRepository(),
+  }: FilesystemDossierRepositoryOptions = {}) {
+    this.contentDir = contentDir;
+    this.taxonomyRepository = taxonomyRepository;
+  }
 
   async getByRef(dossierRef: string): Promise<Dossier | null> {
     const filePath = path.join(this.contentDir, `${dossierRef}.md`);
@@ -58,8 +74,35 @@ export class FilesystemDossierRepository implements DossierRepository {
       return null;
     }
 
+    return this.parseDossier(raw);
+  }
+
+  async getBySousTheme(slug: string): Promise<Dossier[]> {
+    const fichiers = await fs.readdir(this.contentDir);
+    const dossiers = await Promise.all(
+      fichiers
+        .filter((fichier) => fichier.endsWith(".md"))
+        .map(async (fichier) => {
+          const raw = await fs.readFile(
+            path.join(this.contentDir, fichier),
+            "utf-8"
+          );
+          return this.parseDossier(raw);
+        })
+    );
+
+    return dossiers.filter((dossier) => dossier.sousTheme === slug);
+  }
+
+  private parseDossier(raw: string): Dossier {
     const { data, content } = matter(raw);
     const frontmatter = data as RawDossierFrontmatter;
+
+    if (!this.taxonomyRepository.trouverSousTheme(frontmatter.sousTheme)) {
+      throw new Error(
+        `Dossier "${frontmatter.dossierRef}" : sous-thème "${frontmatter.sousTheme}" absent de la taxonomie déclarée.`
+      );
+    }
 
     return {
       dossierRef: frontmatter.dossierRef,

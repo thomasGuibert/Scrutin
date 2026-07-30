@@ -14,4 +14,5 @@ export type Dossier = {
 
 export interface DossierRepository {
   getByRef(dossierRef: string): Promise<Dossier | null>;
+  getBySousTheme(slug: string): Promise<Dossier[]>;
 }

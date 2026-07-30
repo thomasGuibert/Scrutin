@@ -45,10 +45,15 @@ export function ComparaisonGroupes({
     return null;
   }
 
+  // De gauche à droite dans l'hémicycle, du haut vers le bas.
+  const comparaisonTriee = [...comparaison].sort(
+    (a, b) => a.groupe.ordreHemicycle - b.groupe.ordreHemicycle
+  );
+
   return (
     <div className="cmp-block">
       <p className="cmp-title">{titre}</p>
-      {comparaison.map((ligne) => (
+      {comparaisonTriee.map((ligne) => (
         <LigneComparaison key={ligne.groupe.organeRef} {...ligne} />
       ))}
       <div className="cmp-legend">

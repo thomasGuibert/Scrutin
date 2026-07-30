@@ -8,6 +8,12 @@ class FakeDossierRepository implements DossierRepository {
   async getByRef(dossierRef: string): Promise<Dossier | null> {
     return this.dossiers[dossierRef] ?? null;
   }
+
+  async getBySousTheme(slug: string): Promise<Dossier[]> {
+    return Object.values(this.dossiers).filter(
+      (dossier) => dossier.sousTheme === slug
+    );
+  }
 }
 
 const A_DOSSIER: Dossier = {
