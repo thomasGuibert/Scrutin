@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createGetScrutin } from "@/api/getScrutin";
 import { FilesystemScrutinRepository } from "@/spi/filesystem/scrutinRepository";
 
@@ -9,6 +10,7 @@ export default async function Home() {
   return (
     <main>
       <div>{scrutin?.titre ?? "Scrutin introuvable"}</div>
+      <Link href="/dossier/DLR5L17N52767">Voir un dossier</Link>
     </main>
   );
 }
