@@ -1,10 +1,6 @@
-export type Groupe = {
-  organeRef: string;
-  nom: string;
-  abreviation: string;
-};
+import type { Groupe, GroupeRepository } from "@/domain/groupes";
 
-export const GROUPES: Groupe[] = [
+const GROUPES: Groupe[] = [
   { organeRef: "PO845401", nom: "Rassemblement National", abreviation: "RN" },
   {
     organeRef: "PO845407",
@@ -43,6 +39,8 @@ export const GROUPES: Groupe[] = [
   { organeRef: "PO840056", nom: "Non inscrits", abreviation: "NI" },
 ];
 
-export function trouverGroupe(organeRef: string): Groupe | undefined {
-  return GROUPES.find((groupe) => groupe.organeRef === organeRef);
+export class FilesystemGroupeRepository implements GroupeRepository {
+  trouverGroupe(organeRef: string): Groupe | undefined {
+    return GROUPES.find((groupe) => groupe.organeRef === organeRef);
+  }
 }

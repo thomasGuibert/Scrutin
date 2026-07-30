@@ -1,15 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { GROUPES, trouverGroupe } from "@/spi/filesystem/groupes";
+import { FilesystemGroupeRepository } from "@/spi/filesystem/groupes";
 
-describe("GROUPES", () => {
-  it("contient les 11 groupes parlementaires et les Non-inscrits (12e ligne)", () => {
-    expect(GROUPES).toHaveLength(12);
-  });
-});
-
-describe("trouverGroupe", () => {
+describe("FilesystemGroupeRepository", () => {
   it("retourne le groupe réel pour un organeRef connu", () => {
-    expect(trouverGroupe("PO845425")).toEqual({
+    const repository = new FilesystemGroupeRepository();
+
+    expect(repository.trouverGroupe("PO845425")).toEqual({
       organeRef: "PO845425",
       nom: "Droite Républicaine",
       abreviation: "DR",
@@ -17,6 +13,18 @@ describe("trouverGroupe", () => {
   });
 
   it("retourne undefined pour un organeRef inconnu", () => {
-    expect(trouverGroupe("PO000000")).toBeUndefined();
+    const repository = new FilesystemGroupeRepository();
+
+    expect(repository.trouverGroupe("PO000000")).toBeUndefined();
+  });
+
+  it("connaît les 11 groupes parlementaires et les Non-inscrits (12e ligne)", () => {
+    const repository = new FilesystemGroupeRepository();
+
+    expect(repository.trouverGroupe("PO840056")).toEqual({
+      organeRef: "PO840056",
+      nom: "Non inscrits",
+      abreviation: "NI",
+    });
   });
 });
