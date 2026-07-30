@@ -7,16 +7,24 @@ const ZIP_PATH = path.join(
   "data/raw/an/17/Scrutins.json.zip"
 );
 
+type RawDecompte = {
+  pour: string;
+  contre: string;
+  abstentions: string;
+};
+
+type RawGroupeVote = {
+  organeRef: string;
+  vote: { decompteVoix: RawDecompte };
+};
+
 type RawScrutinFile = {
   scrutin: {
     uid: string;
     titre: string;
-    syntheseVote: {
-      decompte: {
-        pour: string;
-        contre: string;
-        abstentions: string;
-      };
+    syntheseVote: { decompte: RawDecompte };
+    ventilationVotes: {
+      organe: { groupes: { groupe: RawGroupeVote | RawGroupeVote[] } };
     };
   };
 };
@@ -27,6 +35,20 @@ function parseCount(raw: string, field: string): number {
     throw new Error(`Scrutin : décompte "${field}" invalide ("${raw}").`);
   }
   return value;
+}
+
+function parseDecompte(raw: RawDecompte) {
+  return {
+    pour: parseCount(raw.pour, "pour"),
+    contre: parseCount(raw.contre, "contre"),
+    abstentions: parseCount(raw.abstentions, "abstentions"),
+  };
+}
+
+// L'export AN sérialise un élément XML répété comme un tableau,
+// mais comme un objet unique quand il n'y en a qu'un seul.
+function toArray<T>(value: T | T[]): T[] {
+  return Array.isArray(value) ? value : [value];
 }
 
 export class FilesystemScrutinRepository implements ScrutinRepository {
@@ -42,16 +64,16 @@ export class FilesystemScrutinRepository implements ScrutinRepository {
     const raw = JSON.parse(
       entry.getData().toString("utf-8")
     ) as RawScrutinFile;
-    const decompte = raw.scrutin.syntheseVote.decompte;
+    const groupes = toArray(raw.scrutin.ventilationVotes.organe.groupes.groupe);
 
     return {
       uid: raw.scrutin.uid,
       titre: raw.scrutin.titre,
-      decompte: {
-        pour: parseCount(decompte.pour, "pour"),
-        contre: parseCount(decompte.contre, "contre"),
-        abstentions: parseCount(decompte.abstentions, "abstentions"),
-      },
+      decompte: parseDecompte(raw.scrutin.syntheseVote.decompte),
+      positionsParGroupe: groupes.map((groupe) => ({
+        organeRef: groupe.organeRef,
+        decompte: parseDecompte(groupe.vote.decompteVoix),
+      })),
     };
   }
 }

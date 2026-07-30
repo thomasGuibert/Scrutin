@@ -16,6 +16,9 @@ describe("getScrutin", () => {
       uid: "VTANR5L17V1",
       titre: "Un titre de scrutin",
       decompte: { pour: 1, contre: 2, abstentions: 3 },
+      positionsParGroupe: [
+        { organeRef: "PO845401", decompte: { pour: 1, contre: 0, abstentions: 0 } },
+      ],
     };
     const repository = new FakeScrutinRepository({ VTANR5L17V1: unScrutin });
     const getScrutin = createGetScrutin(repository);

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createGetDossier } from "@/api/getDossier";
 import { FilesystemDossierRepository } from "@/spi/filesystem/dossierRepository";
@@ -22,16 +23,26 @@ export default async function DossierPage({
 
   return (
     <main>
-      <h1>{dossier.titre}</h1>
+      <h1 className="page-title">{dossier.titre}</h1>
 
-      <h2>Contexte</h2>
-      <p>{dossier.ficheDossier.contexte}</p>
+      <div className="dossier-brief">
+        <div>
+          <span className="brief-label">Contexte</span>
+          {dossier.ficheDossier.contexte}
+        </div>
+        <div>
+          <span className="brief-label">Action</span>
+          {dossier.ficheDossier.action}
+        </div>
+        <div>
+          <span className="brief-label">Résultat attendu</span>
+          {dossier.ficheDossier.resultatAttendu}
+        </div>
+      </div>
 
-      <h2>Action</h2>
-      <p>{dossier.ficheDossier.action}</p>
-
-      <h2>Résultat attendu</h2>
-      <p>{dossier.ficheDossier.resultatAttendu}</p>
+      <Link className="back-link" href="/">
+        ← Retour
+      </Link>
     </main>
   );
 }
