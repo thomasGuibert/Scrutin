@@ -542,6 +542,11 @@ const TAXONOMIE: ThemeRacine[] = [
         nom: "Décarbonation du transport maritime",
         type: "consensuel",
       },
+      {
+        slug: "grands-projets-infrastructure-vs-environnement",
+        nom: "Grands projets d'infrastructure : intérêt public majeur vs protection environnementale",
+        type: "clivant",
+      },
     ],
   },
 ];

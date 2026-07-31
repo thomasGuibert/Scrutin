@@ -231,7 +231,10 @@ describe("trouverScrutinDecisif — cas au-delà du vote sur l'ensemble", () => 
     });
 
     expect(trouverScrutinDecisif([decisif])).toEqual(decisif);
-    expect(determinerResultatDossier([decisif])).toBe("adopté");
+    // Le champ resultat du scrutin ("adopté") décrit l'issue de la motion,
+    // pas celle du texte : la motion adoptée tue le texte, donc le dossier
+    // est rejeté — l'inverse littéral du resultat de ce scrutin.
+    expect(determinerResultatDossier([decisif])).toBe("rejeté");
   });
 
   it("ignore une motion de rejet préalable rejetée : le texte continue son parcours normal", () => {

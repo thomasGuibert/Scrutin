@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "audit:dossiers": "vitest run --config vitest.audit.config.mts"
   },
   "dependencies": {
     "adm-zip": "^0.6.0",

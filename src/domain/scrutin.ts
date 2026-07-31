@@ -114,15 +114,16 @@ function estVoteDirectSurLeTexte(titre: string): boolean {
   );
 }
 
+function estMotionDeRejetPrealable(titre: string): boolean {
+  return /^la motion de rejet préalable\b/i.test(titre.trim());
+}
+
 // Une motion de rejet préalable adoptée tue le texte avant tout vote sur
 // l'ensemble ou l'article unique — c'est alors elle, et elle seule, qui
 // tranche le sort du dossier. Rejetée, elle ne change rien : le texte
 // poursuit son parcours normal vers son propre vote décisif.
 function estMotionDeRejetPrealableAdoptee(scrutin: Scrutin): boolean {
-  return (
-    /^la motion de rejet préalable\b/i.test(scrutin.titre.trim()) &&
-    scrutin.resultat === "adopté"
-  );
+  return estMotionDeRejetPrealable(scrutin.titre) && scrutin.resultat === "adopté";
 }
 
 // Une motion de censure n'est rattachée à aucun texte de loi : le scrutin
@@ -166,10 +167,22 @@ export function trouverScrutinDecisif(scrutins: Scrutin[]): Scrutin | null {
 }
 
 // Résultat global d'un dossier législatif — celui de son scrutin décisif.
+// Cas particulier : le champ resultat d'une motion de rejet préalable décrit
+// l'issue de la motion elle-même ("adopté" = la motion de rejet est votée),
+// pas celle du texte qu'elle vise — pour ce type de scrutin seulement,
+// resultat="adopté" signifie donc que le dossier a été rejeté (le texte est
+// tué avant tout vote sur l'ensemble, cf. Scrutin décisif dans CONTEXT.md).
 export function determinerResultatDossier(
   scrutins: Scrutin[]
 ): ResultatScrutin | null {
-  return trouverScrutinDecisif(scrutins)?.resultat ?? null;
+  const decisif = trouverScrutinDecisif(scrutins);
+  if (!decisif) {
+    return null;
+  }
+  if (estMotionDeRejetPrealable(decisif.titre)) {
+    return "rejeté";
+  }
+  return decisif.resultat;
 }
 
 // Fiche Contexte/Action/Résultat propre à un scrutin (cf. Fiche dossier dans

@@ -558,9 +558,59 @@ const DOSSIER_REF_OVERRIDE: Record<string, string> = {
   // personnes ciblées par les réseaux de criminalité organisée" (1re
   // lecture, adopté)
   VTANR5L17V5358: "DLR5L17N53427",
+  // Issue #42, suite à #33 : la 3e forme de Scrutin décisif (motion de
+  // rejet préalable *adoptée*, qui tue le texte avant tout vote sur
+  // l'ensemble) n'avait pas été auditée par #33/#34-#39. 7 dossiers
+  // (4 identifiés par #42 + 2 volets "comptes de la sécurité sociale"
+  // 2023/2024 non distingués par #42, retrouvés en vérifiant le point
+  // ouvert par #42 lui-même + 1 cas d'ambiguïté résolu, cf. Castres-Toulouse).
+  // "la motion de rejet préalable... de la proposition de loi relative à
+  // la réforme de l'audiovisuel public et à la souveraineté audiovisuelle"
+  // (1re lecture, adoptée — motion adoptée = décisif, tue le texte)
+  VTANR5L17V2873: "DLR5L16N47697",
+  // "la motion de rejet préalable... de la proposition de loi organique
+  // visant à reporter le renouvellement général des membres du congrès...
+  // pour permettre la mise en œuvre de l'accord du 12 juillet 2025"
+  // (1re lecture, adoptée — à distinguer de VTANR5L17V3182/V3181, décisifs
+  // d'un dossier de report antérieur et distinct (DLR5L17N50450), motivé
+  // par un accord différent)
+  VTANR5L17V3060: "DLR5L17N52655",
+  // "la motion de rejet préalable... du projet de loi relatif aux
+  // résultats de la gestion et portant approbation des comptes de
+  // l'année 2024" (1re lecture, adoptée)
+  VTANR5L17V2276: "DLR5L17N51919",
+  // "la motion de rejet préalable... du projet de loi portant approbation
+  // des comptes de la sécurité sociale de l'année 2024" (1re lecture,
+  // adoptée — volet distinct de DLR5L17N51919, sur le modèle des deux
+  // dossiers déjà séparés pour 2025 (DLR5L17N54196/DLR5L17N54373) ; #42
+  // ne l'avait pas identifié séparément, retrouvé en vérifiant le point
+  // ouvert par #42 lui-même ("un seul dossier vs deux" pour 2023/2024))
+  VTANR5L17V2277: "DLR5L17N52133",
+  // "la motion de rejet préalable... du projet de loi relatif aux
+  // résultats de la gestion et portant approbation des comptes de
+  // l'année 2023" (1re lecture, adoptée)
+  VTANR5L17V4: "DLR5L17N50172",
+  // "la motion de rejet préalable... du projet de loi d'approbation des
+  // comptes de la sécurité sociale de l'année 2023" (1re lecture, adoptée
+  // — volet distinct de DLR5L17N50172, même raisonnement que pour 2024
+  // ci-dessus)
+  VTANR5L17V5: "DLR5L17N50173",
+  // "la motion de rejet préalable... de la proposition de loi relative à
+  // la raison impérative d'intérêt public majeur de la liaison
+  // autoroutière entre Castres et Toulouse" (1re lecture, adoptée — titre
+  // exact de DLR5L17N51702 ; à distinguer de DLR5L17N51817, dont le titre
+  // omet "Proposition de loi relative à" et dont la procédure débute
+  // directement à l'Assemblée (1ère assemblée saisie) plutôt qu'au Sénat,
+  // ce qui ne correspond pas à la navette de ce scrutin)
+  VTANR5L17V2208: "DLR5L17N51702",
 };
 
-function normaliserDossierRef(
+// Exportée pour être réutilisée par le script d'audit de complétude
+// (src/spi/filesystem/auditDossiersManquants.test.ts, cf. #33/#42) — la
+// même logique de résolution (brut ?? curation manuelle) doit y être
+// utilisée pour ne pas re-signaler comme "manquants" des scrutins déjà
+// couverts par DOSSIER_REF_OVERRIDE.
+export function normaliserDossierRef(
   uid: string,
   dossierRef: string | null
 ): string | null {
