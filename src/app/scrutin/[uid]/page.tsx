@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumb, type BreadcrumbItem } from "@/app/_components/Breadcrumb";
 import { ComparaisonGroupes } from "@/app/_components/ComparaisonGroupes";
+import { FicheDossier } from "@/app/_components/FicheDossier";
 import { comparerGroupes, getDossier, getScrutin, taxonomyRepository } from "@/app/_composition";
 import { calculerVotants } from "@/domain/scrutin";
 
@@ -49,18 +50,38 @@ export default async function ScrutinPage({
   return (
     <main>
       <Breadcrumb items={fil} />
-      <h1 className="page-title">{scrutin.titre}</h1>
+      <div className="node-header">
+        <span className="dossier-tag">Scrutin</span>
+        <h1 className="page-title">{scrutin.titre}</h1>
+      </div>
 
-      <dl>
-        <dt>Votants</dt>
-        <dd>{calculerVotants(scrutin.decompte)}</dd>
-        <dt>Pour</dt>
-        <dd>{scrutin.decompte.pour}</dd>
-        <dt>Contre</dt>
-        <dd>{scrutin.decompte.contre}</dd>
-        <dt>Abstentions</dt>
-        <dd>{scrutin.decompte.abstentions}</dd>
-      </dl>
+      {dossier && <FicheDossier fiche={dossier.ficheDossier} />}
+
+      <div className="cmp-block">
+        <p className="cmp-title">Décompte du scrutin</p>
+        <div className="decompte-row">
+          <span className="decompte-item">
+            <span className="brief-label">Votants</span>
+            <span className="decompte-value">
+              {calculerVotants(scrutin.decompte)}
+            </span>
+          </span>
+          <span className="decompte-item">
+            <span className="brief-label">Pour</span>
+            <span className="decompte-value">{scrutin.decompte.pour}</span>
+          </span>
+          <span className="decompte-item">
+            <span className="brief-label">Contre</span>
+            <span className="decompte-value">{scrutin.decompte.contre}</span>
+          </span>
+          <span className="decompte-item">
+            <span className="brief-label">Abstentions</span>
+            <span className="decompte-value">
+              {scrutin.decompte.abstentions}
+            </span>
+          </span>
+        </div>
+      </div>
 
       <ComparaisonGroupes titre="Position par groupe" comparaison={comparaison} />
 

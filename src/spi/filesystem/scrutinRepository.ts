@@ -23,6 +23,8 @@ type RawScrutinFile = {
   scrutin: {
     uid: string;
     titre: string;
+    dateScrutin: string;
+    numero: string;
     objet: { dossierLegislatif: { dossierRef: string } | null };
     syntheseVote: { decompte: RawDecompte };
     ventilationVotes: {
@@ -59,8 +61,10 @@ function parseScrutin(raw: RawScrutinFile): Scrutin {
   return {
     uid: raw.scrutin.uid,
     titre: raw.scrutin.titre,
+    date: raw.scrutin.dateScrutin,
     dossierRef: raw.scrutin.objet.dossierLegislatif?.dossierRef ?? null,
     decompte: parseDecompte(raw.scrutin.syntheseVote.decompte),
+    numero: parseCount(raw.scrutin.numero, "numero"),
     positionsParGroupe: groupes.map((groupe) => ({
       organeRef: groupe.organeRef,
       decompte: parseDecompte(groupe.vote.decompteVoix),

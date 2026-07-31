@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumb, type BreadcrumbItem } from "@/app/_components/Breadcrumb";
 import { ComparaisonGroupes } from "@/app/_components/ComparaisonGroupes";
+import { FicheDossier } from "@/app/_components/FicheDossier";
 import {
   agregerPositionsDossiers,
   getDossier,
@@ -56,29 +57,22 @@ export default async function DossierPage({
   return (
     <main>
       <Breadcrumb items={fil} />
-      <h1 className="page-title">{dossier.titre}</h1>
-
-      <div className="dossier-brief">
-        <div>
-          <span className="brief-label">Contexte</span>
-          {dossier.ficheDossier.contexte}
-        </div>
-        <div>
-          <span className="brief-label">Action</span>
-          {dossier.ficheDossier.action}
-        </div>
-        <div>
-          <span className="brief-label">Résultat attendu</span>
-          {dossier.ficheDossier.resultatAttendu}
-        </div>
+      <div className="node-header">
+        <span className="dossier-tag">Dossier</span>
+        <h1 className="page-title">{dossier.titre}</h1>
+        <a className="dossier-count" href="#scrutins">
+          {scrutins.length} scrutin{scrutins.length > 1 ? "s" : ""} →
+        </a>
       </div>
+
+      <FicheDossier fiche={dossier.ficheDossier} />
 
       <ComparaisonGroupes
         titre="Position par groupe, sur l'ensemble des scrutins du dossier"
         comparaison={comparaison}
       />
 
-      <div className="dossier-list">
+      <div className="dossier-list" id="scrutins">
         {scrutins.map((scrutin) => (
           <div className="dossier-row" key={scrutin.uid}>
             <Link className="dossier-header" href={`/scrutin/${scrutin.uid}`}>

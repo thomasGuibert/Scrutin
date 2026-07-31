@@ -21,6 +21,8 @@ describe("getScrutin", () => {
     const unScrutin: Scrutin = {
       uid: "VTANR5L17V1",
       titre: "Un titre de scrutin",
+      date: "2024-10-08",
+      numero: 1,
       dossierRef: null,
       decompte: { pour: 1, contre: 2, abstentions: 3 },
       positionsParGroupe: [

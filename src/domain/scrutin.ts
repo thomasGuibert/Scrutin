@@ -13,6 +13,11 @@ export type PositionGroupe = {
 export type Scrutin = {
   uid: string;
   titre: string;
+  date: string;
+  // Numéro de scrutin de la législature, croissant dans l'ordre chronologique
+  // exact — sert de départage entre scrutins du même jour (cf. date), la
+  // seule granularité que l'export AN fournit pour l'heure du scrutin.
+  numero: number;
   dossierRef: string | null;
   decompte: DecompteScrutin;
   positionsParGroupe: PositionGroupe[];

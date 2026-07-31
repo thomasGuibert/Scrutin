@@ -17,6 +17,8 @@ describe("FilesystemScrutinRepository", () => {
       uid: "VTANR5L17V1",
       titre:
         "la motion de censure déposée en application de l'article 49, alinéa 2, de la Constitution par M. Boris Vallaud, Mme Mathilde Panot, Mme Cyrielle Chatelain, M. André Chassaigne et 188 de leurs collègues.",
+      date: "2024-10-08",
+      numero: 1,
       decompte: { pour: 197, contre: 0, abstentions: 0 },
     });
   });

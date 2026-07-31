@@ -15,6 +15,8 @@ function unScrutin(positionsParGroupe: Scrutin["positionsParGroupe"]): Scrutin {
   return {
     uid: "VTANR5L17V1",
     titre: "Un titre de scrutin",
+    date: "2024-10-08",
+    numero: 1,
     dossierRef: null,
     decompte: { pour: 10, contre: 6, abstentions: 0 },
     positionsParGroupe,

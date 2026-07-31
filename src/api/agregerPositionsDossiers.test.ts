@@ -31,6 +31,8 @@ function unScrutin(
   return {
     uid,
     titre: `Scrutin ${uid}`,
+    date: "2024-10-08",
+    numero: 1,
     dossierRef,
     decompte: { pour: 0, contre: 0, abstentions: 0 },
     positionsParGroupe,

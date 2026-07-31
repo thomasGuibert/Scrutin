@@ -158,6 +158,39 @@ p.page-gloss {
   max-width: 36rem;
 }
 
+/* En-tête auto-référentiel d'une page dossier/scrutin : le tag du nœud
+   ("Dossier", "Scrutin") devant son propre titre, rappelant où l'on est —
+   variante non cliquable de .dossier-header. */
+.node-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.9rem;
+  align-items: baseline;
+  margin: 0.9rem 0 0.3rem;
+}
+
+.node-header .page-title {
+  margin: 0;
+}
+
+.decompte-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.decompte-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.decompte-value {
+  font-family: var(--mono);
+  font-size: 1rem;
+  color: var(--ink);
+}
+
 .branch-group {
   margin-bottom: 2.2rem;
 }
