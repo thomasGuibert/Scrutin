@@ -65,6 +65,18 @@ describe("FilesystemScrutinRepository", () => {
     ]);
   });
 
+  it("normalise l'organeRef \"PO0\" (anomalie d'export AN) vers le RN", async () => {
+    const repository = new FilesystemScrutinRepository(FIXTURE_ZIP_PATH);
+
+    const scrutin = await repository.getByUid("VTANR5L17VPO0");
+
+    expect(scrutin?.positionsParGroupe).toContainEqual({
+      organeRef: "PO845401",
+      decompte: { pour: 0, contre: 17, abstentions: 0 },
+      effectif: 122,
+    });
+  });
+
   it("retourne tous les scrutins réels rattachés à un dossierRef donné", async () => {
     const repository = new FilesystemScrutinRepository(FIXTURE_ZIP_PATH);
 

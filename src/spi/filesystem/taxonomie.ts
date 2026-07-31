@@ -66,6 +66,30 @@ const TAXONOMIE: ThemeRacine[] = [
     ],
     sousThemes: [],
   },
+  {
+    slug: "libertes-securite",
+    nom: "Libertés & sécurité",
+    description: "Justice, police, surveillance, immigration, libertés individuelles.",
+    branches: [
+      {
+        slug: "justice-police-immigration",
+        nom: "Justice, police & immigration",
+        sousThemes: [
+          {
+            slug: "fermete-penale",
+            nom: "Sécurité : fermeté pénale vs garanties individuelles",
+            type: "clivant",
+          },
+          {
+            slug: "protection-victimes",
+            nom: "Protection des victimes (violences sexuelles, intrafamiliales, mineurs)",
+            type: "consensuel",
+          },
+        ],
+      },
+    ],
+    sousThemes: [],
+  },
 ];
 
 export class DeclaredTaxonomyRepository implements TaxonomyRepository {

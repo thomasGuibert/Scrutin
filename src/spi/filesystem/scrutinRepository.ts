@@ -55,6 +55,14 @@ function toArray<T>(value: T | T[]): T[] {
   return Array.isArray(value) ? value : [value];
 }
 
+// Anomalie confirmée de l'export AN (14 scrutins sur 8434) : le groupe RN
+// (PO845401) y apparaît sous "PO0" à la place de son organeRef réel — jamais
+// les deux en même temps, effectif cohérent avec le RN à la date du scrutin.
+const ORGANE_REF_RN = "PO845401";
+function normaliserOrganeRef(organeRef: string): string {
+  return organeRef === "PO0" ? ORGANE_REF_RN : organeRef;
+}
+
 function parseScrutin(raw: RawScrutinFile): Scrutin {
   const groupes = toArray(raw.scrutin.ventilationVotes.organe.groupes.groupe);
 
@@ -66,7 +74,7 @@ function parseScrutin(raw: RawScrutinFile): Scrutin {
     decompte: parseDecompte(raw.scrutin.syntheseVote.decompte),
     numero: parseCount(raw.scrutin.numero, "numero"),
     positionsParGroupe: groupes.map((groupe) => ({
-      organeRef: groupe.organeRef,
+      organeRef: normaliserOrganeRef(groupe.organeRef),
       decompte: parseDecompte(groupe.vote.decompteVoix),
       effectif: parseCount(
         groupe.nombreMembresGroupe,
