@@ -105,6 +105,26 @@ const TAXONOMIE: ThemeRacine[] = [
             nom: "Mode de scrutin : proportionnelle vs scrutin majoritaire",
             type: "clivant",
           },
+          {
+            slug: "transparence-probite-vie-politique",
+            nom: "Transparence et probité de la vie politique",
+            type: "consensuel",
+          },
+          {
+            slug: "gouvernance-gestion-moyens-etat",
+            nom: "Gouvernance et gestion des moyens de l'État",
+            type: "consensuel",
+          },
+          {
+            slug: "housekeeping-vie-democratique",
+            nom: "Housekeeping / technique",
+            type: "housekeeping",
+          },
+          {
+            slug: "pouvoirs-parlement-vs-executif",
+            nom: "Pouvoirs : renforcer le Parlement vs préserver la prééminence présidentielle",
+            type: "clivant",
+          },
         ],
       },
       {
@@ -120,6 +140,32 @@ const TAXONOMIE: ThemeRacine[] = [
             slug: "organisation-territoriale",
             nom: "Organisation territoriale : simplifier les échelons vs préserver la proximité",
             type: "clivant",
+          },
+          {
+            slug: "statut-agents-publics-locaux",
+            nom: "Statut et gestion des agents publics locaux",
+            type: "consensuel",
+          },
+          {
+            slug: "financement-competences-communes",
+            nom: "Financement des compétences déléguées aux communes",
+            type: "consensuel",
+          },
+        ],
+      },
+      {
+        slug: "droit-civil-etat-personnes",
+        nom: "Droit civil & état des personnes",
+        sousThemes: [
+          {
+            slug: "lutte-fraude-etat-civil",
+            nom: "Lutte contre la fraude à l'état civil",
+            type: "consensuel",
+          },
+          {
+            slug: "protection-interet-enfant-procedures-familiales",
+            nom: "Protection de l'intérêt de l'enfant dans les procédures familiales",
+            type: "consensuel",
           },
         ],
       },
