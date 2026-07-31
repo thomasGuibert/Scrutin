@@ -82,6 +82,27 @@ function normaliserOrganeRef(organeRef: string): string {
   return ORGANE_REF_ALIAS[organeRef] ?? organeRef;
 }
 
+// Certains scrutins portent bien sur un dossier législatif réel, mais
+// l'export AN laisse leur "objet.dossierLegislatif" à null (lacune connue de
+// la donnée source, pas une absence réelle de lien) — curation manuelle
+// (cf. CONTEXT.md, Tag d'impact et rattachement) vérifiée par rapprochement
+// de titre/date avec le dossier concerné :
+// - VTANR5L17V1304 : "l'ensemble de la proposition de loi organique visant
+//   à harmoniser le mode de scrutin aux élections municipales..." — seul
+//   autre scrutin lié à DLR5L17N50579 dans l'export
+//   est une motion procédurale (prolongation de séance), sans lien vers ce
+//   vote de fond pourtant bien réel (numéro 1304, adopté).
+const DOSSIER_REF_OVERRIDE: Record<string, string> = {
+  VTANR5L17V1304: "DLR5L17N50579",
+};
+
+function normaliserDossierRef(
+  uid: string,
+  dossierRef: string | null
+): string | null {
+  return dossierRef ?? DOSSIER_REF_OVERRIDE[uid] ?? null;
+}
+
 function parseScrutin(raw: RawScrutinFile): Scrutin {
   const groupes = toArray(raw.scrutin.ventilationVotes.organe.groupes.groupe);
 
@@ -89,7 +110,10 @@ function parseScrutin(raw: RawScrutinFile): Scrutin {
     uid: raw.scrutin.uid,
     titre: raw.scrutin.titre,
     date: raw.scrutin.dateScrutin,
-    dossierRef: raw.scrutin.objet.dossierLegislatif?.dossierRef ?? null,
+    dossierRef: normaliserDossierRef(
+      raw.scrutin.uid,
+      raw.scrutin.objet.dossierLegislatif?.dossierRef ?? null
+    ),
     decompte: parseDecompte(raw.scrutin.syntheseVote.decompte),
     numero: parseCount(raw.scrutin.numero, "numero"),
     resultat: parseResultat(raw.scrutin.sort.code),
@@ -155,7 +179,15 @@ export class FilesystemScrutinRepository implements ScrutinRepository {
           entry.getData().toString("utf-8")
         ) as RawScrutinFile;
 
-        const dossierRef = raw.scrutin.objet.dossierLegislatif?.dossierRef;
+        // Le dossierRef (brut ou corrigé par curation manuelle) détermine
+        // s'il vaut la peine de parser intégralement ce scrutin — sans quoi
+        // les entrées de test volontairement invalides hors de tout dossier
+        // (décompte non numérique, sort inconnu) feraient échouer la
+        // construction de l'index avant même d'atteindre le dossier demandé.
+        const dossierRef = normaliserDossierRef(
+          raw.scrutin.uid,
+          raw.scrutin.objet.dossierLegislatif?.dossierRef ?? null
+        );
         if (!dossierRef) {
           continue;
         }

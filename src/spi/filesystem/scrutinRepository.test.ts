@@ -109,6 +109,16 @@ describe("FilesystemScrutinRepository", () => {
     ]);
   });
 
+  it("rattache un scrutin dont le dossierRef AN est absent, via la curation manuelle connue (VTANR5L17V1304 -> DLR5L17N50579)", async () => {
+    const repository = new FilesystemScrutinRepository(FIXTURE_ZIP_PATH);
+
+    const parDossierRef = await repository.getByUid("VTANR5L17V1304");
+    expect(parDossierRef?.dossierRef).toBe("DLR5L17N50579");
+
+    const scrutins = await repository.getByDossierRef("DLR5L17N50579");
+    expect(scrutins.map((s) => s.uid)).toEqual(["VTANR5L17V1304"]);
+  });
+
   it("ne retourne aucun scrutin pour un dossierRef inconnu", async () => {
     const repository = new FilesystemScrutinRepository(FIXTURE_ZIP_PATH);
 
