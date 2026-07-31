@@ -126,6 +126,7 @@ describe("DeclaredTaxonomyRepository", () => {
       "institutions",
       "libertes-securite",
       "repartition-richesses",
+      "solidarite",
       "souverainete",
     ]);
     expect(themes.every((t) => t.description.length > 0)).toBe(true);

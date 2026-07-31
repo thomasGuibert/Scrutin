@@ -156,6 +156,34 @@ const TAXONOMIE: ThemeRacine[] = [
     ],
     sousThemes: [],
   },
+  {
+    slug: "solidarite",
+    nom: "Solidarité & protection sociale",
+    description: "Santé, handicap, famille, logement.",
+    branches: [],
+    sousThemes: [
+      {
+        slug: "fin-de-vie",
+        nom: "Fin de vie : légaliser l'aide à mourir vs renforcer les soins palliatifs",
+        type: "clivant",
+      },
+      {
+        slug: "acces-soins",
+        nom: "Accès aux soins sur le territoire",
+        type: "consensuel",
+      },
+      {
+        slug: "protection-enfance",
+        nom: "Protection de l'enfance",
+        type: "consensuel",
+      },
+      {
+        slug: "sante-publique-risque",
+        nom: "Santé publique : réguler les produits à risque vs liberté de consommation",
+        type: "clivant",
+      },
+    ],
+  },
 ];
 
 export class DeclaredTaxonomyRepository implements TaxonomyRepository {
