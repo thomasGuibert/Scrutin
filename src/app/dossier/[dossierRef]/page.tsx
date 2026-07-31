@@ -5,17 +5,25 @@ import { ComparaisonGroupes } from "@/app/_components/ComparaisonGroupes";
 import { FicheDossier } from "@/app/_components/FicheDossier";
 import {
   agregerPositionsDossiers,
+  dossierRepository,
   getDossier,
   listerScrutinsDossier,
   taxonomyRepository,
 } from "@/app/_composition";
+import { tousLesSousThemes } from "@/domain/taxonomie";
 
-export function generateStaticParams() {
-  return [
-    { dossierRef: "DLR5L17N52767" },
-    { dossierRef: "DLR5L17N53672" },
-    { dossierRef: "DLR5L17N54083" },
-  ];
+export async function generateStaticParams() {
+  const sousThemes = taxonomyRepository
+    .listerThemes()
+    .flatMap((theme) => tousLesSousThemes(theme));
+
+  const dossiersParSousTheme = await Promise.all(
+    sousThemes.map((sousTheme) => dossierRepository.getBySousTheme(sousTheme.slug))
+  );
+
+  return dossiersParSousTheme
+    .flat()
+    .map((dossier) => ({ dossierRef: dossier.dossierRef }));
 }
 
 export default async function DossierPage({

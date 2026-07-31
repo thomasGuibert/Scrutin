@@ -5,7 +5,10 @@ import { SousThemeRow } from "@/app/_components/SousThemeRow";
 import { listerSousThemesAvecPosition, taxonomyRepository } from "@/app/_composition";
 
 export function generateStaticParams() {
-  return [{ slug: "ecole" }];
+  return taxonomyRepository
+    .listerThemes()
+    .flatMap((theme) => theme.branches)
+    .map((branche) => ({ slug: branche.slug }));
 }
 
 export default async function BranchePage({

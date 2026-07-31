@@ -4,13 +4,13 @@ import { Breadcrumb, type BreadcrumbItem } from "@/app/_components/Breadcrumb";
 import { ComparaisonGroupes } from "@/app/_components/ComparaisonGroupes";
 import { FicheDossier } from "@/app/_components/FicheDossier";
 import { listerDossiersSousTheme, taxonomyRepository } from "@/app/_composition";
+import { tousLesSousThemes } from "@/domain/taxonomie";
 
 export function generateStaticParams() {
-  return [
-    { slug: "reparation-memorielle" },
-    { slug: "role-civique" },
-    { slug: "doctrine-defense" },
-  ];
+  return taxonomyRepository
+    .listerThemes()
+    .flatMap((theme) => tousLesSousThemes(theme))
+    .map((sousTheme) => ({ slug: sousTheme.slug }));
 }
 
 export default async function SousThemePage({

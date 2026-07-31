@@ -5,7 +5,7 @@ import { SousThemeRow } from "@/app/_components/SousThemeRow";
 import { listerSousThemesAvecPosition, taxonomyRepository } from "@/app/_composition";
 
 export function generateStaticParams() {
-  return [{ slug: "souverainete" }, { slug: "education-culture" }];
+  return taxonomyRepository.listerThemes().map((theme) => ({ slug: theme.slug }));
 }
 
 export default async function ThemePage({

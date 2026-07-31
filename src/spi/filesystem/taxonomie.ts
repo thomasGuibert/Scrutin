@@ -24,6 +24,11 @@ const TAXONOMIE: ThemeRacine[] = [
         nom: "Doctrine de défense et effort militaire",
         type: "consensuel",
       },
+      {
+        slug: "housekeeping-technique",
+        nom: "Housekeeping / technique",
+        type: "housekeeping",
+      },
     ],
   },
   {
