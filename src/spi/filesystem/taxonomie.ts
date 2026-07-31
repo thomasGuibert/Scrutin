@@ -184,6 +184,29 @@ const TAXONOMIE: ThemeRacine[] = [
       },
     ],
   },
+  {
+    slug: "environnement",
+    nom: "Environnement & ressources",
+    description: "Écologie, énergie, agriculture, aménagement du territoire.",
+    branches: [],
+    sousThemes: [
+      {
+        slug: "souverainete-energetique",
+        nom: "Souveraineté énergétique : nucléaire/hydrocarbures vs sobriété",
+        type: "clivant",
+      },
+      {
+        slug: "agriculture-pesticides",
+        nom: "Agriculture : pesticides et compétitivité vs écologie/santé publique",
+        type: "clivant",
+      },
+      {
+        slug: "economie-circulaire",
+        nom: "Déchets et économie circulaire",
+        type: "consensuel",
+      },
+    ],
+  },
 ];
 
 export class DeclaredTaxonomyRepository implements TaxonomyRepository {
