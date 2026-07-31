@@ -335,6 +335,59 @@ const DOSSIER_REF_OVERRIDE: Record<string, string> = {
   // participer aux collectes de sang, de plaquettes ou de plasma sur
   // leur temps de travail" (1re lecture, adopté)
   VTANR5L17V2256: "DLR5L17N51132",
+  // Lot 4/6 de l'audit #33 (issue #37) : 13 dossiers, même situation que les
+  // lots précédents (cf. commentaires ci-dessus).
+  // "l'ensemble de la proposition de loi visant à proroger le dispositif
+  // d'expérimentation favorisant l'égalité des chances pour l'accès à
+  // certaines écoles de service public" (1re lecture, adopté)
+  VTANR5L17V840: "DLR5L17N51161",
+  // "l'ensemble de la proposition de loi organique tendant à modifier le
+  // II de l'article 43 de la loi organique n° 2004-192... statut
+  // d'autonomie de la Polynésie française" (1re lecture, adopté)
+  VTANR5L17V4706: "DLR5L17N51173",
+  // "l'ensemble de la proposition de loi instaurant un impôt plancher de
+  // 2 % sur le patrimoine des ultra riches" (1re lecture, adopté)
+  VTANR5L17V881: "DLR5L17N51215",
+  // "l'ensemble du projet de loi d'urgence pour Mayotte" (texte CMP,
+  // adopté — le plus récent des deux votes décisifs du dossier)
+  VTANR5L17V790: "DLR5L17N51222",
+  // "l'ensemble de la proposition de loi visant à lutter contre la
+  // disparition des terres agricoles et renforcer la régulation des prix
+  // du foncier agricole" (1re lecture, adopté)
+  VTANR5L17V959: "DLR5L17N51312",
+  // "l'ensemble de la proposition de loi modifiant la définition pénale
+  // du viol et des agressions sexuelles" (texte CMP, adopté — le plus
+  // récent des deux votes décisifs du dossier)
+  VTANR5L17V3061: "DLR5L17N51349",
+  // "l'ensemble de la proposition de loi visant à reconnaître le
+  // préjudice subi par les personnes condamnées sur le fondement de la
+  // législation pénalisant l'avortement..." (1re lecture, adopté)
+  VTANR5L17V4839: "DLR5L17N51351",
+  // "l'ensemble du projet de loi autorisant la ratification de la
+  // résolution LP.3(4)... Protocole de Londres de 1996..." (texte CMP,
+  // adopté — à distinguer de VTANR5L17V1333, rejeté en 1re lecture, dont
+  // le titre porte sur le Protocole de Londres de "1966" et qui relève
+  // donc d'un dossier distinct malgré la même référence de résolution)
+  VTANR5L17V2460: "DLR5L17N51362",
+  // "l'ensemble de la proposition de loi visant à faciliter le maintien
+  // en rétention des personnes condamnées pour des faits d'une
+  // particulière gravité et présentant de forts risques de récidive"
+  // (1re lecture, adopté)
+  VTANR5L17V2958: "DLR5L17N51429",
+  // "l'ensemble de la proposition de loi contre les fraudes aux moyens de
+  // paiement scripturaux" (1re lecture, adopté)
+  VTANR5L17V1193: "DLR5L17N51434",
+  // "l'ensemble de la proposition de loi relative à la protection sociale
+  // complémentaire des agents publics territoriaux" (1re lecture, adopté)
+  VTANR5L17V4707: "DLR5L17N51457",
+  // "l'ensemble de la proposition de loi visant à convertir des centrales
+  // à charbon vers des combustibles moins émetteurs en dioxyde de
+  // carbone..." (1re lecture, adopté)
+  VTANR5L17V1306: "DLR5L17N51485",
+  // "l'ensemble de la proposition de loi portant reconnaissance de la
+  // Nation envers les rapatriés d'Indochine et réparation des préjudices
+  // subis par ceux-ci et leurs familles..." (1re lecture, adopté)
+  VTANR5L17V2220: "DLR5L17N51499",
 };
 
 function normaliserDossierRef(

@@ -234,6 +234,11 @@ const TAXONOMIE: ThemeRacine[] = [
             type: "consensuel",
           },
           {
+            slug: "urgence-reconstruction-outre-mer",
+            nom: "Urgence et reconstruction après une catastrophe naturelle en outre-mer",
+            type: "consensuel",
+          },
+          {
             slug: "housekeeping-collectivites-territoriales",
             nom: "Housekeeping / technique",
             type: "housekeeping",
@@ -294,9 +299,19 @@ const TAXONOMIE: ThemeRacine[] = [
             type: "consensuel",
           },
           {
+            slug: "lutte-fraude-moyens-paiement",
+            nom: "Lutte contre la fraude aux moyens de paiement",
+            type: "consensuel",
+          },
+          {
             slug: "vie-chere-regulation-marches-outre-mer",
             nom: "Vie chère et régulation des marchés en outre-mer",
             type: "consensuel",
+          },
+          {
+            slug: "fiscalite-grandes-fortunes",
+            nom: "Fiscalité des grandes fortunes : taxation renforcée vs libre circulation des capitaux",
+            type: "clivant",
           },
         ],
       },
@@ -436,6 +451,11 @@ const TAXONOMIE: ThemeRacine[] = [
           {
             slug: "gouvernance-representation-agricole",
             nom: "Gouvernance et représentation dans les instances agricoles",
+            type: "consensuel",
+          },
+          {
+            slug: "protection-foncier-agricole",
+            nom: "Protection du foncier agricole",
             type: "consensuel",
           },
           {
