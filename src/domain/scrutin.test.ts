@@ -180,6 +180,94 @@ function creerScrutin(overrides: Partial<Scrutin>): Scrutin {
   };
 }
 
+describe("trouverScrutinDecisif — cas au-delà du vote sur l'ensemble", () => {
+  it("retient le vote sur l'article unique d'un texte qui n'a pas de vote sur l'ensemble distinct", () => {
+    const decisif = creerScrutin({
+      uid: "V2",
+      numero: 2,
+      titre:
+        "l'article unique de la proposition de loi relative à la sortie des collections publiques (première lecture).",
+    });
+    const scrutins = [
+      creerScrutin({ uid: "V1", numero: 1, titre: "l'amendement n° 1 à l'article unique de la proposition de loi." }),
+      decisif,
+    ];
+
+    expect(trouverScrutinDecisif(scrutins)).toEqual(decisif);
+  });
+
+  it("retient un vote direct sur le texte lui-même, sans article ni ensemble distinct (ex. ratification de traité)", () => {
+    const decisif = creerScrutin({
+      uid: "V1",
+      numero: 1,
+      titre:
+        "le projet de loi autorisant l'approbation de l'accord entre le Gouvernement de la République française et la Communauté des Caraïbes (première lecture).",
+    });
+
+    expect(trouverScrutinDecisif([decisif])).toEqual(decisif);
+  });
+
+  it("ne confond pas un vote direct sur le texte avec un vote sur un article ou une motion qui le mentionne plus loin", () => {
+    const scrutins = [
+      creerScrutin({
+        titre: "l'article premier du projet de loi autorisant l'approbation de l'accord.",
+      }),
+      creerScrutin({
+        titre:
+          "la motion de rejet préalable, déposée par Mme X, du projet de loi autorisant l'approbation de l'accord.",
+        resultat: "rejeté",
+      }),
+    ];
+
+    expect(trouverScrutinDecisif(scrutins)).toBeNull();
+  });
+
+  it("retient une motion de rejet préalable adoptée, qui tue le texte avant tout vote sur l'ensemble", () => {
+    const decisif = creerScrutin({
+      uid: "V1",
+      numero: 1,
+      titre: "la motion de rejet préalable, déposée par Mme X, du projet de loi Y.",
+      resultat: "adopté",
+    });
+
+    expect(trouverScrutinDecisif([decisif])).toEqual(decisif);
+    expect(determinerResultatDossier([decisif])).toBe("adopté");
+  });
+
+  it("ignore une motion de rejet préalable rejetée : le texte continue son parcours normal", () => {
+    const scrutins = [
+      creerScrutin({
+        titre: "la motion de rejet préalable, déposée par Mme X, du projet de loi Y.",
+        resultat: "rejeté",
+      }),
+    ];
+
+    expect(trouverScrutinDecisif(scrutins)).toBeNull();
+  });
+
+  it("retient une motion de censure, décisive quelle que soit son issue puisqu'elle est son propre objet", () => {
+    const censureAdoptee = creerScrutin({
+      uid: "V1",
+      numero: 1,
+      titre:
+        "la motion de censure déposée en application de l'article 49, alinéa 2, de la Constitution par Mme X.",
+      resultat: "adopté",
+    });
+
+    expect(trouverScrutinDecisif([censureAdoptee])).toEqual(censureAdoptee);
+
+    const censureRejetee = creerScrutin({
+      uid: "V2",
+      numero: 1,
+      titre:
+        "la motion de censure déposée en application de l'article 49, alinéa 2, de la Constitution par Mme X.",
+      resultat: "rejeté",
+    });
+
+    expect(trouverScrutinDecisif([censureRejetee])).toEqual(censureRejetee);
+  });
+});
+
 describe("determinerResultatDossier", () => {
   it("retourne le résultat du vote sur l'ensemble", () => {
     const scrutins = [

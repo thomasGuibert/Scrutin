@@ -93,21 +93,74 @@ export function estVoteSurEnsemble(titre: string): boolean {
   return /^l['’]ensemble\b/i.test(titre.trim());
 }
 
-// Le scrutin qui a réellement acté ou rejeté un dossier législatif : son vote
-// sur l'ensemble le plus récent (numéro le plus élevé). Un dossier peut
-// connaître plusieurs lectures, donc plusieurs votes sur l'ensemble ; seul le
-// dernier reflète l'issue définitive. Retourne null tant qu'aucun vote sur
-// l'ensemble n'a encore eu lieu (dossier toujours en cours d'examen, encore
-// seulement des votes d'amendement/d'article).
-export function trouverScrutinDecisif(scrutins: Scrutin[]): Scrutin | null {
-  const votesEnsemble = scrutins.filter((scrutin) =>
-    estVoteSurEnsemble(scrutin.titre)
+// Un texte à article unique (fréquent pour les ratifications simples) ne
+// connaît pas de vote "sur l'ensemble" distinct : son seul vote de fond porte
+// directement sur cet article unique, qui vaut donc adoption du texte entier.
+function estVoteSurArticleUnique(titre: string): boolean {
+  return /^l['’]article unique\b/i.test(titre.trim());
+}
+
+// Certaines ratifications (accords, traités) sont votées sans article ni
+// "ensemble" distinct : le titre du scrutin est directement celui du texte
+// lui-même (ex. "le projet de loi autorisant l'approbation de l'accord...").
+// Ne pas confondre avec un vote sur un article/amendement/sous-amendement ou
+// une motion, qui rattachent toujours le type de texte plus loin dans leur
+// titre ("... à l'article premier du projet de loi...") plutôt qu'au début.
+function estVoteDirectSurLeTexte(titre: string): boolean {
+  const minuscule = titre.trim().toLowerCase();
+  return TYPES_TEXTE_LEGISLATIF.some(
+    (type) =>
+      minuscule.startsWith(`le ${type} `) || minuscule.startsWith(`la ${type} `)
   );
-  if (votesEnsemble.length === 0) {
+}
+
+// Une motion de rejet préalable adoptée tue le texte avant tout vote sur
+// l'ensemble ou l'article unique — c'est alors elle, et elle seule, qui
+// tranche le sort du dossier. Rejetée, elle ne change rien : le texte
+// poursuit son parcours normal vers son propre vote décisif.
+function estMotionDeRejetPrealableAdoptee(scrutin: Scrutin): boolean {
+  return (
+    /^la motion de rejet préalable\b/i.test(scrutin.titre.trim()) &&
+    scrutin.resultat === "adopté"
+  );
+}
+
+// Une motion de censure n'est rattachée à aucun texte de loi : le scrutin
+// est lui-même l'objet entier du dossier, donc toujours décisif quel que
+// soit son issue (adoptée = le Gouvernement tombe, rejetée = il se maintient).
+function estMotionDeCensure(titre: string): boolean {
+  return /^la motion de censure\b/i.test(titre.trim());
+}
+
+// Le scrutin qui a réellement acté ou rejeté un dossier législatif. Prend
+// plusieurs formes selon l'export AN (cf. Scrutin décisif dans CONTEXT.md) :
+// vote sur l'ensemble du texte, vote sur son article unique, vote direct sur
+// le texte lui-même (ratifications simples), motion de rejet préalable
+// adoptée, ou motion de censure (son propre objet). Jamais un vote sur un
+// article non-unique, un amendement ou un sous-amendement pris isolément.
+function estScrutinDecisif(scrutin: Scrutin): boolean {
+  return (
+    estVoteSurEnsemble(scrutin.titre) ||
+    estVoteSurArticleUnique(scrutin.titre) ||
+    estVoteDirectSurLeTexte(scrutin.titre) ||
+    estMotionDeRejetPrealableAdoptee(scrutin) ||
+    estMotionDeCensure(scrutin.titre)
+  );
+}
+
+// Le scrutin décisif le plus récent (numéro le plus élevé) parmi ceux
+// identifiés par estScrutinDecisif. Un dossier peut connaître plusieurs
+// lectures, donc plusieurs votes décisifs ; seul le dernier reflète l'issue
+// définitive. Retourne null tant qu'aucun n'a encore eu lieu (dossier
+// toujours en cours d'examen, encore seulement des votes d'amendement/
+// d'article/de procédure).
+export function trouverScrutinDecisif(scrutins: Scrutin[]): Scrutin | null {
+  const decisifs = scrutins.filter(estScrutinDecisif);
+  if (decisifs.length === 0) {
     return null;
   }
 
-  return votesEnsemble.reduce((plusRecent, scrutin) =>
+  return decisifs.reduce((plusRecent, scrutin) =>
     scrutin.numero > plusRecent.numero ? scrutin : plusRecent
   );
 }
