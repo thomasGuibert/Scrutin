@@ -4,6 +4,12 @@ import {
   calculerPosition,
   calculerTauxParticipation,
   calculerVotants,
+  determinerResultatDossier,
+  estVoteSurEnsemble,
+  formaterTitreScrutin,
+  genererFicheScrutin,
+  type Scrutin,
+  trouverScrutinDecisif,
 } from "@/domain/scrutin";
 
 describe("calculerVotants", () => {
@@ -101,5 +107,184 @@ describe("agregerPositions", () => {
     ]);
 
     expect(agrege).toEqual({ pour: 0, contre: 0, abstentions: 0 });
+  });
+});
+
+describe("formaterTitreScrutin", () => {
+  it("retire la description du dossier répétée après le type de texte, et met une majuscule initiale", () => {
+    const titre = formaterTitreScrutin(
+      "l'amendement n° 44 de M. Arnaud Bonnet à l'article premier de la proposition de loi visant à garantir l'information et la protection effective des victimes de violences sexistes et sexuelles lors de la libération de leur agresseur (première lecture)."
+    );
+
+    expect(titre).toBe(
+      "L'amendement n° 44 de M. Arnaud Bonnet à l'article premier de la proposition de loi (première lecture)."
+    );
+  });
+
+  it("conserve la qualification organique/constitutionnelle du type de texte", () => {
+    const titre = formaterTitreScrutin(
+      "l'article 3 du projet de loi organique relatif à l'élection des sénateurs (nouvelle lecture)."
+    );
+
+    expect(titre).toBe(
+      "L'article 3 du projet de loi organique (nouvelle lecture)."
+    );
+  });
+
+  it("laisse inchangé un titre sans type de texte reconnu (ex. motion de censure), à la majuscule près", () => {
+    const titre = formaterTitreScrutin(
+      "la motion de censure déposée en application de l'article 49, alinéa 2, de la Constitution par M. Boris Vallaud."
+    );
+
+    expect(titre).toBe(
+      "La motion de censure déposée en application de l'article 49, alinéa 2, de la Constitution par M. Boris Vallaud."
+    );
+  });
+
+  it("laisse inchangé un titre où le type de texte n'est suivi d'aucune description à retirer", () => {
+    const titre = formaterTitreScrutin(
+      "l'article 26 du projet de loi (première lecture)."
+    );
+
+    expect(titre).toBe("L'article 26 du projet de loi (première lecture).");
+  });
+});
+
+describe("estVoteSurEnsemble", () => {
+  it("reconnaît le vote sur l'ensemble d'un texte", () => {
+    expect(
+      estVoteSurEnsemble(
+        "l'ensemble de la proposition de loi visant à garantir l'information (première lecture)."
+      )
+    ).toBe(true);
+  });
+
+  it("ne reconnaît pas un vote sur un article ou un amendement", () => {
+    expect(
+      estVoteSurEnsemble("l'article premier de la proposition de loi.")
+    ).toBe(false);
+  });
+});
+
+function creerScrutin(overrides: Partial<Scrutin>): Scrutin {
+  return {
+    uid: "VTANR5L17V0",
+    titre: "l'article premier de la proposition de loi (première lecture).",
+    date: "2026-01-01",
+    numero: 1,
+    dossierRef: "DLR5L17N1",
+    decompte: { pour: 1, contre: 0, abstentions: 0 },
+    positionsParGroupe: [],
+    resultat: "adopté",
+    ...overrides,
+  };
+}
+
+describe("determinerResultatDossier", () => {
+  it("retourne le résultat du vote sur l'ensemble", () => {
+    const scrutins = [
+      creerScrutin({ numero: 1, titre: "l'article premier de la loi." }),
+      creerScrutin({
+        numero: 2,
+        titre: "l'ensemble de la proposition de loi (première lecture).",
+        resultat: "adopté",
+      }),
+    ];
+
+    expect(determinerResultatDossier(scrutins)).toBe("adopté");
+  });
+
+  it("retient le vote sur l'ensemble le plus récent quand il y a plusieurs lectures", () => {
+    const scrutins = [
+      creerScrutin({
+        numero: 2,
+        titre: "l'ensemble de la proposition de loi (première lecture).",
+        resultat: "rejeté",
+      }),
+      creerScrutin({
+        numero: 10,
+        titre: "l'ensemble de la proposition de loi (nouvelle lecture).",
+        resultat: "adopté",
+      }),
+    ];
+
+    expect(determinerResultatDossier(scrutins)).toBe("adopté");
+  });
+
+  it("retourne null quand aucun vote sur l'ensemble n'a encore eu lieu", () => {
+    const scrutins = [
+      creerScrutin({ numero: 1, titre: "l'article premier de la loi." }),
+    ];
+
+    expect(determinerResultatDossier(scrutins)).toBeNull();
+  });
+});
+
+describe("trouverScrutinDecisif", () => {
+  it("retourne le scrutin dont le titre commence par l'ensemble", () => {
+    const decisif = creerScrutin({
+      uid: "V2",
+      numero: 2,
+      titre: "l'ensemble de la proposition de loi (première lecture).",
+    });
+    const scrutins = [
+      creerScrutin({ uid: "V1", numero: 1, titre: "l'article premier de la loi." }),
+      decisif,
+    ];
+
+    expect(trouverScrutinDecisif(scrutins)).toEqual(decisif);
+  });
+
+  it("retourne null en l'absence de vote sur l'ensemble (dossier encore en cours d'examen)", () => {
+    const scrutins = [
+      creerScrutin({ titre: "l'article premier de la loi." }),
+      creerScrutin({ titre: "l'amendement n° 1 à l'article premier." }),
+    ];
+
+    expect(trouverScrutinDecisif(scrutins)).toBeNull();
+  });
+});
+
+describe("genererFicheScrutin", () => {
+  it("dérive contexte/action/résultat des métadonnées du scrutin et du dossier", () => {
+    const scrutin = creerScrutin({
+      titre:
+        "l'amendement n° 44 de M. Arnaud Bonnet à l'article premier de la proposition de loi visant à garantir l'information (première lecture).",
+      decompte: { pour: 46, contre: 36, abstentions: 32 },
+      resultat: "adopté",
+    });
+
+    const fiche = genererFicheScrutin(
+      scrutin,
+      "Garantir l'information et la protection effective des victimes"
+    );
+
+    expect(fiche).toEqual({
+      contexte:
+        "Ce scrutin porte sur le dossier « Garantir l'information et la protection effective des victimes ».",
+      action:
+        "L'amendement n° 44 de M. Arnaud Bonnet à l'article premier de la proposition de loi (première lecture).",
+      resultat: "Ce scrutin a été adopté (46 pour, 36 contre, 32 abstentions).",
+    });
+  });
+
+  it("indique l'absence de dossier rattaché quand il n'y en a pas", () => {
+    const scrutin = creerScrutin({ dossierRef: null });
+
+    const fiche = genererFicheScrutin(scrutin, null);
+
+    expect(fiche.contexte).toBe(
+      "Ce scrutin ne se rattache à aucun dossier législatif recensé."
+    );
+  });
+
+  it("accorde \"abstention\" au singulier quand il n'y en a qu'une", () => {
+    const scrutin = creerScrutin({
+      decompte: { pour: 5, contre: 2, abstentions: 1 },
+    });
+
+    const fiche = genererFicheScrutin(scrutin, null);
+
+    expect(fiche.resultat).toContain("1 abstention)");
   });
 });

@@ -1,6 +1,6 @@
 import type { ComparaisonGroupe } from "@/api/comparerGroupes";
 import type { Dossier, DossierRepository } from "@/domain/dossier";
-import type { Scrutin } from "@/domain/scrutin";
+import { determinerResultatDossier, type ResultatScrutin, type Scrutin } from "@/domain/scrutin";
 
 type DossierAffiche = {
   dossier: Dossier;
@@ -14,6 +14,7 @@ type DossierAffiche = {
 export type DossierAvecPosition = DossierAffiche & {
   comparaison: ComparaisonGroupe[];
   nombreScrutins: number;
+  resultat: ResultatScrutin | null;
 };
 
 export function createListerDossiersSousTheme(
@@ -61,6 +62,7 @@ export function createListerDossiersSousTheme(
           viaTag,
           comparaison,
           nombreScrutins: scrutins.length,
+          resultat: determinerResultatDossier(scrutins),
         };
       })
     );

@@ -1,6 +1,10 @@
 import AdmZip from "adm-zip";
 import path from "node:path";
-import type { Scrutin, ScrutinRepository } from "@/domain/scrutin";
+import type {
+  ResultatScrutin,
+  Scrutin,
+  ScrutinRepository,
+} from "@/domain/scrutin";
 
 const ZIP_PATH = path.join(
   process.cwd(),
@@ -25,6 +29,7 @@ type RawScrutinFile = {
     titre: string;
     dateScrutin: string;
     numero: string;
+    sort: { code: string };
     objet: { dossierLegislatif: { dossierRef: string } | null };
     syntheseVote: { decompte: RawDecompte };
     ventilationVotes: {
@@ -47,6 +52,13 @@ function parseDecompte(raw: RawDecompte) {
     contre: parseCount(raw.contre, "contre"),
     abstentions: parseCount(raw.abstentions, "abstentions"),
   };
+}
+
+function parseResultat(code: string): ResultatScrutin {
+  if (code !== "adopté" && code !== "rejeté") {
+    throw new Error(`Scrutin : sort "${code}" inconnu (ni adopté, ni rejeté).`);
+  }
+  return code;
 }
 
 // L'export AN sérialise un élément XML répété comme un tableau,
@@ -80,6 +92,7 @@ function parseScrutin(raw: RawScrutinFile): Scrutin {
     dossierRef: raw.scrutin.objet.dossierLegislatif?.dossierRef ?? null,
     decompte: parseDecompte(raw.scrutin.syntheseVote.decompte),
     numero: parseCount(raw.scrutin.numero, "numero"),
+    resultat: parseResultat(raw.scrutin.sort.code),
     positionsParGroupe: groupes.map((groupe) => ({
       organeRef: normaliserOrganeRef(groupe.organeRef),
       decompte: parseDecompte(groupe.vote.decompteVoix),

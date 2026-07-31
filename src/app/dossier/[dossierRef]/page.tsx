@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Breadcrumb, type BreadcrumbItem } from "@/app/_components/Breadcrumb";
 import { ComparaisonGroupes } from "@/app/_components/ComparaisonGroupes";
 import { FicheDossier } from "@/app/_components/FicheDossier";
+import { ResultatBadge } from "@/app/_components/ResultatBadge";
 import {
   agregerPositionsDossiers,
   dossierRepository,
@@ -10,6 +11,7 @@ import {
   listerScrutinsDossier,
   taxonomyRepository,
 } from "@/app/_composition";
+import { determinerResultatDossier, formaterTitreScrutin } from "@/domain/scrutin";
 import { tousLesSousThemes } from "@/domain/taxonomie";
 
 export async function generateStaticParams() {
@@ -45,6 +47,7 @@ export default async function DossierPage({
   const contexte = taxonomyRepository.trouverContexteSousTheme(
     dossier.sousTheme
   );
+  const resultatDossier = determinerResultatDossier(scrutins);
 
   const fil: BreadcrumbItem[] = [];
   if (contexte) {
@@ -68,6 +71,7 @@ export default async function DossierPage({
       <div className="node-header">
         <span className="dossier-tag">Dossier</span>
         <h1 className="page-title">{dossier.titre}</h1>
+        {resultatDossier && <ResultatBadge resultat={resultatDossier} />}
       </div>
 
       <FicheDossier fiche={dossier.ficheDossier} />
@@ -82,7 +86,9 @@ export default async function DossierPage({
           <div className="dossier-row" key={scrutin.uid}>
             <Link className="dossier-header" href={`/scrutin/${scrutin.uid}`}>
               <span className="dossier-tag">Scrutin</span>
-              <span className="dossier-title">{scrutin.titre}</span>
+              <span className="dossier-title">
+                {formaterTitreScrutin(scrutin.titre)}
+              </span>
               <span className="dossier-count">Voir →</span>
             </Link>
           </div>

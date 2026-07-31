@@ -23,6 +23,7 @@ function unScrutin(uid: string, date: string, numero: number): Scrutin {
     dossierRef: "DLR5L17TEST",
     decompte: { pour: 0, contre: 0, abstentions: 0 },
     positionsParGroupe: [],
+    resultat: "adopté",
   };
 }
 

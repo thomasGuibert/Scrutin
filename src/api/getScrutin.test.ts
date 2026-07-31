@@ -32,6 +32,7 @@ describe("getScrutin", () => {
           effectif: 125,
         },
       ],
+      resultat: "adopté",
     };
     const repository = new FakeScrutinRepository({ VTANR5L17V1: unScrutin });
     const getScrutin = createGetScrutin(repository);

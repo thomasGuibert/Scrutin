@@ -2,9 +2,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumb, type BreadcrumbItem } from "@/app/_components/Breadcrumb";
 import { ComparaisonGroupes } from "@/app/_components/ComparaisonGroupes";
-import { FicheDossier } from "@/app/_components/FicheDossier";
+import { ResultatBadge } from "@/app/_components/ResultatBadge";
+import { ScrutinBrief } from "@/app/_components/ScrutinBrief";
 import { comparerGroupes, getDossier, getScrutin, taxonomyRepository } from "@/app/_composition";
-import { calculerVotants } from "@/domain/scrutin";
+import { calculerVotants, formaterTitreScrutin, genererFicheScrutin } from "@/domain/scrutin";
 
 export function generateStaticParams() {
   return [{ uid: "VTANR5L17V6993" }, { uid: "VTANR5L17V6994" }];
@@ -27,6 +28,8 @@ export default async function ScrutinPage({
   const contexte = dossier
     ? taxonomyRepository.trouverContexteSousTheme(dossier.sousTheme)
     : null;
+  const titreScrutin = formaterTitreScrutin(scrutin.titre);
+  const ficheScrutin = genererFicheScrutin(scrutin, dossier?.titre ?? null);
 
   const fil: BreadcrumbItem[] = [];
   if (contexte) {
@@ -45,21 +48,25 @@ export default async function ScrutinPage({
   if (dossier) {
     fil.push({ href: `/dossier/${dossier.dossierRef}`, label: dossier.titre });
   }
-  fil.push({ label: scrutin.titre });
+  fil.push({ label: titreScrutin });
 
   return (
     <main>
       <Breadcrumb items={fil} />
       <div className="node-header">
         <span className="dossier-tag">Scrutin</span>
-        <h1 className="page-title">{scrutin.titre}</h1>
+        <h1 className="page-title">{titreScrutin}</h1>
       </div>
 
-      {dossier && <FicheDossier fiche={dossier.ficheDossier} />}
+      <ScrutinBrief fiche={ficheScrutin} />
 
       <div className="cmp-block">
         <p className="cmp-title">Décompte du scrutin</p>
         <div className="decompte-row">
+          <span className="decompte-item">
+            <span className="brief-label">Résultat</span>
+            <ResultatBadge resultat={scrutin.resultat} variant="value" />
+          </span>
           <span className="decompte-item">
             <span className="brief-label">Votants</span>
             <span className="decompte-value">

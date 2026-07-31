@@ -20,6 +20,7 @@ describe("FilesystemScrutinRepository", () => {
       date: "2024-10-08",
       numero: 1,
       decompte: { pour: 197, contre: 0, abstentions: 0 },
+      resultat: "rejeté",
     });
   });
 
@@ -48,6 +49,14 @@ describe("FilesystemScrutinRepository", () => {
 
     await expect(repository.getByUid("VTANR5L17VBROKEN")).rejects.toThrow(
       /pour/
+    );
+  });
+
+  it("throws when le sort n'est ni adopté ni rejeté", async () => {
+    const repository = new FilesystemScrutinRepository(FIXTURE_ZIP_PATH);
+
+    await expect(repository.getByUid("VTANR5L17VBADSORT")).rejects.toThrow(
+      /irrecevable/
     );
   });
 

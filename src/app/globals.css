@@ -316,6 +316,13 @@ p.page-gloss {
   line-height: 1.45;
 }
 
+.dossier-tags {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  align-self: start;
+}
+
 .dossier-tag {
   font-family: var(--mono);
   font-size: 0.65rem;
@@ -484,6 +491,20 @@ p.page-gloss {
 
 .cmp-badge-divise {
   color: var(--accent-warm);
+}
+
+.resultat-tag {
+  font-weight: 600;
+}
+
+.resultat-adopte {
+  color: var(--pour);
+  border-color: var(--pour);
+}
+
+.resultat-rejete {
+  color: var(--contre);
+  border-color: var(--contre);
 }
 
 .cmp-legend {

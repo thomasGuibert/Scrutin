@@ -20,6 +20,7 @@ function unScrutin(positionsParGroupe: Scrutin["positionsParGroupe"]): Scrutin {
     dossierRef: null,
     decompte: { pour: 10, contre: 6, abstentions: 0 },
     positionsParGroupe,
+    resultat: "adopté",
   };
 }
 

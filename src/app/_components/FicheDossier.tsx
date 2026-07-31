@@ -1,8 +1,7 @@
 import type { FicheDossier as TypeFicheDossier } from "@/domain/dossier";
 
 // Résumé Contexte / Action / Résultat attendu d'un dossier (cf. CONTEXT.md).
-// Réutilisé tel quel sur la page dossier et sur la page scrutin, pour que le
-// scrutin garde ce repère même quand on y arrive sans passer par son dossier.
+// Pour la fiche propre à un scrutin, voir ScrutinBrief.
 export function FicheDossier({ fiche }: { fiche: TypeFicheDossier }) {
   return (
     <div className="dossier-brief">

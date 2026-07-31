@@ -56,8 +56,12 @@ _Avoid_: Axe transversal (rejeté comme modèle), Catégorie secondaire
 ### Vote et agrégation
 
 **Position**:
-Le résultat Pour / Divisé / Contre d'un groupe parlementaire sur un scrutin donné, ou sur l'agrégat de plusieurs scrutins rattachés à un même nœud de l'arbre. Exprimée dans la même grammaire (% Pour / % Contre / % Abstention) à tous les niveaux — jamais un score arbitraire.
+Le résultat Pour / Divisé / Contre d'un groupe parlementaire sur un scrutin donné, ou sur l'agrégat de plusieurs scrutins rattachés à un même nœud de l'arbre. Exprimée dans la même grammaire (% Pour / % Contre / % Abstention) à tous les niveaux — jamais un score arbitraire. **À partir du niveau Dossier législatif (et au-dessus), la Position d'un groupe ne s'agrège pas sur tous les scrutins du dossier — voir Scrutin décisif.**
 _Avoid_: Badge (nom de la représentation visuelle du concept, pas le concept lui-même), Score, Vote (voir Scrutin)
+
+**Scrutin décisif**:
+Le scrutin qui a réellement acté ou rejeté un dossier législatif — son vote sur "l'ensemble" du texte le plus récent (un dossier peut connaître plusieurs lectures, donc plusieurs votes sur l'ensemble). C'est lui, et lui seul, qui alimente la Position d'un groupe au niveau Dossier législatif et au-dessus (Sous-thème, Branche, Thème racine) — jamais une moyenne sur tous les scrutins du dossier (amendements, articles), qui diluerait la position de fond d'un groupe sur le texte avec ses votes de détail. Un dossier sans Scrutin décisif (encore en cours d'examen) ne contribue à aucune Position tant qu'il n'y en a pas.
+_Avoid_: Vote final (imprécis — ne dit pas qu'il s'agit du vote sur l'ensemble)
 
 **Vote individuel**:
 Le choix d'un·e député·e sur un scrutin donné : Pour, Contre, Abstention, ou Absent. Unité atomique dont la Position d'un groupe parlementaire est calculée par sommation — la Position n'existe qu'agrégée, jamais au niveau d'un·e député·e seul·e (pas de "fiche député" pour l'instant, cf. points ouverts).

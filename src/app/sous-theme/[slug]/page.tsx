@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Breadcrumb, type BreadcrumbItem } from "@/app/_components/Breadcrumb";
 import { ComparaisonGroupes } from "@/app/_components/ComparaisonGroupes";
 import { FicheDossier } from "@/app/_components/FicheDossier";
+import { ResultatBadge } from "@/app/_components/ResultatBadge";
 import { listerDossiersSousTheme, taxonomyRepository } from "@/app/_composition";
 import { tousLesSousThemes } from "@/domain/taxonomie";
 
@@ -43,10 +44,13 @@ export default async function SousThemePage({
       <h1 className="page-title">{sousTheme.nom}</h1>
 
       <div className="dossier-list">
-        {dossiers.map(({ dossier, comparaison, viaTag, nombreScrutins }) => (
+        {dossiers.map(({ dossier, comparaison, viaTag, nombreScrutins, resultat }) => (
           <div className="dossier-row" key={dossier.dossierRef}>
             <Link className="dossier-header" href={`/dossier/${dossier.dossierRef}`}>
-              <span className="dossier-tag">{viaTag ?? "Dossier"}</span>
+              <span className="dossier-tags">
+                <span className="dossier-tag">{viaTag ?? "Dossier"}</span>
+                {resultat && <ResultatBadge resultat={resultat} />}
+              </span>
               <span className="dossier-title">{dossier.titre}</span>
               <span className="dossier-count">
                 {nombreScrutins} scrutin{nombreScrutins > 1 ? "s" : ""} →

@@ -3,13 +3,19 @@ import type { GroupeRepository } from "@/domain/groupes";
 import {
   agregerPositions,
   calculerPosition,
+  trouverScrutinDecisif,
   type EntreeAgregation,
   type ScrutinRepository,
 } from "@/domain/scrutin";
 
-// Agrège la Position d'un groupe sur tous les scrutins réels de tous les
-// dossiers passés — même mécanisme, qu'il s'agisse des scrutins d'un seul
-// dossier ou de tous les dossiers rattachés à un sous-thème/branche/thème.
+// Agrège la Position d'un groupe sur le scrutin décisif de chaque dossier
+// passé — même mécanisme, qu'il s'agisse d'un seul dossier ou de tous les
+// dossiers rattachés à un sous-thème/branche/thème. Un dossier peut contenir
+// des dizaines de scrutins d'amendement/d'article en plus de celui qui l'a
+// réellement acté ou rejeté ; les agréger tous ensemble diluerait la position
+// d'un groupe sur le fond du texte avec ses votes de détail (cf.
+// trouverScrutinDecisif). Un dossier sans scrutin décisif pour l'instant
+// (encore en cours d'examen) ne contribue à aucune Position.
 export function createAgregerPositionsDossiers(
   scrutinRepository: ScrutinRepository,
   groupeRepository: GroupeRepository
@@ -25,16 +31,18 @@ export function createAgregerPositionsDossiers(
 
     const entreesParGroupe = new Map<string, EntreeAgregation[]>();
     for (const scrutins of scrutinsParDossier) {
-      for (const scrutin of scrutins) {
-        for (const positionGroupe of scrutin.positionsParGroupe) {
-          const entrees =
-            entreesParGroupe.get(positionGroupe.organeRef) ?? [];
-          entrees.push({
-            decompte: positionGroupe.decompte,
-            effectif: positionGroupe.effectif,
-          });
-          entreesParGroupe.set(positionGroupe.organeRef, entrees);
-        }
+      const scrutinDecisif = trouverScrutinDecisif(scrutins);
+      if (!scrutinDecisif) {
+        continue;
+      }
+
+      for (const positionGroupe of scrutinDecisif.positionsParGroupe) {
+        const entrees = entreesParGroupe.get(positionGroupe.organeRef) ?? [];
+        entrees.push({
+          decompte: positionGroupe.decompte,
+          effectif: positionGroupe.effectif,
+        });
+        entreesParGroupe.set(positionGroupe.organeRef, entrees);
       }
     }
 

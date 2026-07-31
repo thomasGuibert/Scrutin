@@ -50,9 +50,10 @@ describe("listerDossiersSousTheme", () => {
     const dossierA = unDossier("DLR5L17A", "cible");
     const dossierB = unDossier("DLR5L17B", "cible");
     const dossierRepository = new FakeDossierRepository([dossierA, dossierB]);
-    const listerScrutinsDossier = vi
-      .fn()
-      .mockResolvedValue([{ uid: "V1" }, { uid: "V2" }]);
+    const listerScrutinsDossier = vi.fn().mockResolvedValue([
+      { uid: "V1", titre: "l'article premier de la loi.", numero: 1 },
+      { uid: "V2", titre: "l'article 2 de la loi.", numero: 2 },
+    ]);
     const listerDossiersSousTheme = createListerDossiersSousTheme(
       dossierRepository,
       AGREGATION_FACTICE,
@@ -66,6 +67,29 @@ describe("listerDossiersSousTheme", () => {
     expect(resultat[0].viaTag).toBeNull();
     expect(resultat[0].comparaison[0].position).toBe("Pour");
     expect(resultat[0].nombreScrutins).toBe(2);
+    expect(resultat[0].resultat).toBeNull();
+  });
+
+  it("expose le résultat (adopté/rejeté) du vote sur l'ensemble du dossier", async () => {
+    const dossierA = unDossier("DLR5L17A", "cible");
+    const dossierRepository = new FakeDossierRepository([dossierA]);
+    const listerScrutinsDossier = vi.fn().mockResolvedValue([
+      {
+        uid: "V1",
+        titre: "l'ensemble de la proposition de loi (première lecture).",
+        numero: 1,
+        resultat: "adopté",
+      },
+    ]);
+    const listerDossiersSousTheme = createListerDossiersSousTheme(
+      dossierRepository,
+      AGREGATION_FACTICE,
+      listerScrutinsDossier
+    );
+
+    const resultat = await listerDossiersSousTheme("cible");
+
+    expect(resultat[0].resultat).toBe("adopté");
   });
 
   it("retourne une liste vide quand aucun dossier n'est classé dans ce sous-thème", async () => {
