@@ -1,7 +1,12 @@
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { FilesystemDossierRepository } from "@/spi/filesystem/dossierRepository";
-import type { SousTheme, TaxonomyRepository } from "@/domain/taxonomie";
+import type {
+  Branche,
+  SousTheme,
+  TaxonomyRepository,
+  ThemeRacine,
+} from "@/domain/taxonomie";
 
 const FIXTURE_CONTENT_DIR = path.join(
   import.meta.dirname,
@@ -19,6 +24,14 @@ class FakeTaxonomyRepository implements TaxonomyRepository {
   trouverSousTheme(slug: string): SousTheme | undefined {
     return this.sousThemes[slug];
   }
+
+  trouverTheme(): ThemeRacine | undefined {
+    throw new Error("not used in this test");
+  }
+
+  trouverBranche(): { theme: ThemeRacine; branche: Branche } | undefined {
+    throw new Error("not used in this test");
+  }
 }
 
 const TAXONOMIE_DE_TEST = new FakeTaxonomyRepository({
@@ -26,19 +39,16 @@ const TAXONOMIE_DE_TEST = new FakeTaxonomyRepository({
     slug: "sous-theme-test",
     nom: "Sous-thème de test",
     type: "consensuel",
-    branche: null,
   },
   "sous-theme-cible": {
     slug: "sous-theme-cible",
     nom: "Sous-thème cible",
     type: "consensuel",
-    branche: null,
   },
   "autre-sous-theme": {
     slug: "autre-sous-theme",
     nom: "Autre sous-thème",
     type: "consensuel",
-    branche: null,
   },
 });
 

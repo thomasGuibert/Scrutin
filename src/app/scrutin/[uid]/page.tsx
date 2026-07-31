@@ -1,13 +1,7 @@
 import { notFound } from "next/navigation";
 import { ComparaisonGroupes } from "@/app/_components/ComparaisonGroupes";
-import { createComparerGroupes } from "@/api/comparerGroupes";
-import { createGetScrutin } from "@/api/getScrutin";
+import { comparerGroupes, getScrutin } from "@/app/_composition";
 import { calculerVotants } from "@/domain/scrutin";
-import { FilesystemGroupeRepository } from "@/spi/filesystem/groupes";
-import { FilesystemScrutinRepository } from "@/spi/filesystem/scrutinRepository";
-
-const getScrutin = createGetScrutin(new FilesystemScrutinRepository());
-const comparerGroupes = createComparerGroupes(new FilesystemGroupeRepository());
 
 export function generateStaticParams() {
   return [{ uid: "VTANR5L17V6993" }, { uid: "VTANR5L17V6994" }];

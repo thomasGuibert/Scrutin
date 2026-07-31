@@ -1,24 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ComparaisonGroupes } from "@/app/_components/ComparaisonGroupes";
-import { createAgregerPositionsDossier } from "@/api/agregerPositionsDossier";
-import { createListerDossiersSousTheme } from "@/api/listerDossiersSousTheme";
-import { DeclaredTaxonomyRepository } from "@/spi/filesystem/taxonomie";
-import { FilesystemDossierRepository } from "@/spi/filesystem/dossierRepository";
-import { FilesystemGroupeRepository } from "@/spi/filesystem/groupes";
-import { FilesystemScrutinRepository } from "@/spi/filesystem/scrutinRepository";
-
-const taxonomyRepository = new DeclaredTaxonomyRepository();
-const listerDossiersSousTheme = createListerDossiersSousTheme(
-  new FilesystemDossierRepository({ taxonomyRepository }),
-  createAgregerPositionsDossier(
-    new FilesystemScrutinRepository(),
-    new FilesystemGroupeRepository()
-  )
-);
+import { listerDossiersSousTheme, taxonomyRepository } from "@/app/_composition";
 
 export function generateStaticParams() {
-  return [{ slug: "reparation-memorielle" }];
+  return [{ slug: "reparation-memorielle" }, { slug: "role-civique" }];
 }
 
 export default async function SousThemePage({

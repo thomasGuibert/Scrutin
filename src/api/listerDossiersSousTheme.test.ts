@@ -31,14 +31,19 @@ describe("listerDossiersSousTheme", () => {
     const dossierRepository = new FakeDossierRepository({
       cible: [dossierA, dossierB],
     });
-    const agregerPositionsDossier = vi
+    const agregerPositionsDossiers = vi
       .fn()
-      .mockImplementation(async (dossierRef: string) => [
-        { groupe: { organeRef: "PO1", nom: "G1", abreviation: "G1" }, decompte: { pour: 1, contre: 0, abstentions: 0 }, position: "Pour", dossierRef },
+      .mockImplementation(async (dossierRefs: string[]) => [
+        {
+          groupe: { organeRef: "PO1", nom: "G1", abreviation: "G1" },
+          decompte: { pour: 1, contre: 0, abstentions: 0 },
+          position: "Pour",
+          dossierRefs,
+        },
       ]);
     const listerDossiersSousTheme = createListerDossiersSousTheme(
       dossierRepository,
-      agregerPositionsDossier
+      agregerPositionsDossiers
     );
 
     const resultat = await listerDossiersSousTheme("cible");
@@ -46,21 +51,21 @@ describe("listerDossiersSousTheme", () => {
     expect(resultat).toHaveLength(2);
     expect(resultat[0].dossier).toEqual(dossierA);
     expect(resultat[0].comparaison[0].position).toBe("Pour");
-    expect(agregerPositionsDossier).toHaveBeenCalledWith("DLR5L17A");
-    expect(agregerPositionsDossier).toHaveBeenCalledWith("DLR5L17B");
+    expect(agregerPositionsDossiers).toHaveBeenCalledWith(["DLR5L17A"]);
+    expect(agregerPositionsDossiers).toHaveBeenCalledWith(["DLR5L17B"]);
   });
 
   it("retourne une liste vide quand aucun dossier n'est classé dans ce sous-thème", async () => {
     const dossierRepository = new FakeDossierRepository({});
-    const agregerPositionsDossier = vi.fn();
+    const agregerPositionsDossiers = vi.fn();
     const listerDossiersSousTheme = createListerDossiersSousTheme(
       dossierRepository,
-      agregerPositionsDossier
+      agregerPositionsDossiers
     );
 
     const resultat = await listerDossiersSousTheme("vide");
 
     expect(resultat).toEqual([]);
-    expect(agregerPositionsDossier).not.toHaveBeenCalled();
+    expect(agregerPositionsDossiers).not.toHaveBeenCalled();
   });
 });

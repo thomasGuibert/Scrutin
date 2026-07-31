@@ -1,20 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ComparaisonGroupes } from "@/app/_components/ComparaisonGroupes";
-import { createAgregerPositionsDossier } from "@/api/agregerPositionsDossier";
-import { createGetDossier } from "@/api/getDossier";
-import { createListerScrutinsDossier } from "@/api/listerScrutinsDossier";
-import { FilesystemDossierRepository } from "@/spi/filesystem/dossierRepository";
-import { FilesystemGroupeRepository } from "@/spi/filesystem/groupes";
-import { FilesystemScrutinRepository } from "@/spi/filesystem/scrutinRepository";
-
-const scrutinRepository = new FilesystemScrutinRepository();
-const getDossier = createGetDossier(new FilesystemDossierRepository());
-const listerScrutinsDossier = createListerScrutinsDossier(scrutinRepository);
-const agregerPositionsDossier = createAgregerPositionsDossier(
-  scrutinRepository,
-  new FilesystemGroupeRepository()
-);
+import {
+  agregerPositionsDossiers,
+  getDossier,
+  listerScrutinsDossier,
+} from "@/app/_composition";
 
 export function generateStaticParams() {
   return [{ dossierRef: "DLR5L17N52767" }];
@@ -33,7 +24,7 @@ export default async function DossierPage({
   }
 
   const [comparaison, scrutins] = await Promise.all([
-    agregerPositionsDossier(dossierRef),
+    agregerPositionsDossiers([dossierRef]),
     listerScrutinsDossier(dossierRef),
   ]);
 

@@ -8,7 +8,9 @@ export type DossierAvecPosition = {
 
 export function createListerDossiersSousTheme(
   dossierRepository: DossierRepository,
-  agregerPositionsDossier: (dossierRef: string) => Promise<ComparaisonGroupe[]>
+  agregerPositionsDossiers: (
+    dossierRefs: string[]
+  ) => Promise<ComparaisonGroupe[]>
 ) {
   return async function listerDossiersSousTheme(
     slug: string
@@ -18,7 +20,7 @@ export function createListerDossiersSousTheme(
     return Promise.all(
       dossiers.map(async (dossier) => ({
         dossier,
-        comparaison: await agregerPositionsDossier(dossier.dossierRef),
+        comparaison: await agregerPositionsDossiers([dossier.dossierRef]),
       }))
     );
   };

@@ -1,30 +1,66 @@
-import type {
-  SousTheme,
-  TaxonomyRepository,
-  ThemeRacine,
+import {
+  tousLesSousThemes,
+  type Branche,
+  type SousTheme,
+  type TaxonomyRepository,
+  type ThemeRacine,
 } from "@/domain/taxonomie";
 
 const TAXONOMIE: ThemeRacine[] = [
   {
     slug: "souverainete",
     nom: "Souveraineté & rôle de la France",
+    branches: [],
     sousThemes: [
       {
         slug: "reparation-memorielle",
         nom: "Réparation et reconnaissance mémorielle",
         type: "consensuel",
-        branche: null,
       },
     ],
+  },
+  {
+    slug: "education-culture",
+    nom: "Éducation & culture",
+    branches: [
+      {
+        slug: "ecole",
+        nom: "École",
+        sousThemes: [
+          {
+            slug: "role-civique",
+            nom: "Rôle de l'école dans la formation civique et patriotique",
+            type: "consensuel",
+          },
+        ],
+      },
+    ],
+    sousThemes: [],
   },
 ];
 
 export class DeclaredTaxonomyRepository implements TaxonomyRepository {
   trouverSousTheme(slug: string): SousTheme | undefined {
     for (const theme of TAXONOMIE) {
-      const sousTheme = theme.sousThemes.find((s) => s.slug === slug);
+      const sousTheme = tousLesSousThemes(theme).find((s) => s.slug === slug);
       if (sousTheme) {
         return sousTheme;
+      }
+    }
+    return undefined;
+  }
+
+  trouverTheme(slug: string): ThemeRacine | undefined {
+    return TAXONOMIE.find((theme) => theme.slug === slug);
+  }
+
+  trouverBranche(
+    slug: string
+  ): { theme: ThemeRacine; branche: Branche } | undefined {
+    for (const theme of TAXONOMIE) {
+      const branche = theme.branches.find((b) => b.slug === slug);
+      if (branche) {
+        return { theme, branche };
       }
     }
     return undefined;
