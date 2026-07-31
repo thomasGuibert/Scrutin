@@ -70,6 +70,7 @@ describe("DeclaredTaxonomyRepository", () => {
       "acces-ecole",
       "inclusion-scolaire-eleves-handicap",
       "vie-etudiante-bourses-precarite",
+      "lutte-discriminations-enseignement-superieur",
     ]);
   });
 

@@ -172,6 +172,88 @@ const DOSSIER_REF_OVERRIDE: Record<string, string> = {
   // convention n° 155 sur la sécurité et la santé des travailleurs, 1981"
   // (1re lecture, adopté)
   VTANR5L17V3057: "DLR5L16N50115",
+  // Lot 2/6 de l'audit #33 (issue #35) : 20 dossiers, même situation que le
+  // lot 1 (cf. commentaire ci-dessus).
+  // "l'ensemble de la proposition de loi organique portant réforme du
+  // financement de l'audiovisuel public" (1re lecture, adopté)
+  VTANR5L17V451: "DLR5L17N50168",
+  // "l'ensemble de la proposition de loi visant à sortir la France du
+  // piège du narcotrafic" (texte CMP, adopté — le plus récent des deux
+  // votes décisifs du dossier, la motion de rejet préalable en CMP ayant
+  // été rejetée)
+  VTANR5L17V1473: "DLR5L17N50169",
+  // "l'ensemble de la proposition de loi sur le remboursement intégral des
+  // fauteuils roulants par l'Assurance maladie" (1re lecture, adopté)
+  VTANR5L17V516: "DLR5L17N50370",
+  // "l'ensemble de la proposition de loi portant programmation nationale
+  // pour l'énergie et le climat pour les années 2025 à 2035"
+  // (1re lecture, rejeté — seul et unique vote décisif du dossier, qui n'a
+  // pas connu de suite après ce rejet en première lecture)
+  VTANR5L17V2653: "DLR5L17N50407",
+  // "l'ensemble de la proposition de loi visant à créer une croix de la
+  // valeur des sapeurs-pompiers volontaires et professionnels"
+  // (1re lecture, adopté)
+  VTANR5L17V1724: "DLR5L17N50413",
+  // "l'ensemble de la proposition de loi organique visant à reporter le
+  // renouvellement général des membres du congrès et des assemblées de
+  // province de la Nouvelle-Calédonie afin de permettre la poursuite de
+  // la discussion en vue d'un accord consensuel..." (texte CMP, adopté —
+  // à distinguer de VTANR5L17V266, décisif d'un dossier de report
+  // antérieur et distinct, hors périmètre de ce lot)
+  VTANR5L17V3182: "DLR5L17N50450",
+  // "l'ensemble de la proposition de loi visant à restaurer un système de
+  // retraite plus juste en annulant les dernières réformes portant sur
+  // l'âge de départ et le nombre d'annuités" (1re lecture, rejeté)
+  VTANR5L17V217: "DLR5L17N50453",
+  // "l'ensemble de la proposition de loi visant à harmoniser le mode de
+  // scrutin aux élections municipales..." (2e lecture, adopté — à
+  // distinguer de VTANR5L17V1304, déjà rattaché à DLR5L17N50579, décisif
+  // de la proposition de loi organique compagnon)
+  VTANR5L17V1303: "DLR5L17N50578",
+  // "l'ensemble de la deuxième partie du projet de loi de financement de
+  // la sécurité sociale pour 2025" (1re lecture, adopté — seul vote de
+  // portée "l'ensemble" du dossier dans l'export, faute de vote sur
+  // l'ensemble du texte complet)
+  VTANR5L17V242: "DLR5L17N50588",
+  // "l'ensemble de la proposition de loi visant à la création d'un centre
+  // hospitalier universitaire en Corse" (1re lecture, adopté)
+  VTANR5L17V502: "DLR5L17N50604",
+  // "l'ensemble de la proposition de loi visant à lutter contre la
+  // pédocriminalité" (1re lecture, adopté)
+  VTANR5L17V1725: "DLR5L17N50627",
+  // "l'ensemble de la proposition de loi visant à faire exécuter les
+  // peines d'emprisonnement ferme" (1re lecture, adopté)
+  VTANR5L17V1262: "DLR5L17N50631",
+  // "l'ensemble de la proposition de loi visant à améliorer le traitement
+  // des maladies affectant les cultures végétales à l'aide d'aéronefs
+  // télépilotés" (1re lecture, adopté)
+  VTANR5L17V617: "DLR5L17N50636",
+  // "l'ensemble de la proposition de loi visant à protéger les personnes
+  // engagées dans un projet parental des discriminations au travail"
+  // (1re lecture, adopté)
+  VTANR5L17V1553: "DLR5L17N50689",
+  // "l'ensemble de la proposition de loi visant à renforcer l'autorité de
+  // la justice à l'égard des mineurs délinquants et de leurs parents"
+  // (texte CMP, adopté — le plus récent des votes décisifs du dossier,
+  // retitré "renforcer" par la CMP)
+  VTANR5L17V1624: "DLR5L17N50690",
+  // "l'ensemble de la proposition de loi relative au mode d'élection des
+  // membres du Conseil de Paris et des conseils municipaux de Lyon et de
+  // Marseille" (lecture définitive, adopté)
+  VTANR5L17V3018: "DLR5L17N50692",
+  // "l'ensemble de la proposition de loi contre toutes les fraudes aux
+  // aides publiques" (1re lecture, adopté)
+  VTANR5L17V653: "DLR5L17N50715",
+  // "l'ensemble de la proposition de loi relative à la lutte contre
+  // l'antisémitisme dans l'enseignement supérieur" (texte CMP, adopté)
+  VTANR5L17V2880: "DLR5L17N50724",
+  // "l'ensemble de la proposition de loi prenant des mesures d'urgence
+  // pour protéger nos enfants accueillis en crèches privées à but
+  // lucratif" (1re lecture, adopté)
+  VTANR5L17V612: "DLR5L17N50775",
+  // "l'ensemble de la proposition de loi visant à lutter contre les
+  // pannes d'ascenceur non prises en charge" (1re lecture, adopté)
+  VTANR5L17V611: "DLR5L17N50777",
 };
 
 function normaliserDossierRef(

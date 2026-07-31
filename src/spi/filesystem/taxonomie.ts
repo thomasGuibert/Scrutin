@@ -65,6 +65,11 @@ const TAXONOMIE: ThemeRacine[] = [
             nom: "Vie étudiante : bourses et lutte contre la précarité",
             type: "consensuel",
           },
+          {
+            slug: "lutte-discriminations-enseignement-superieur",
+            nom: "Lutte contre les discriminations et l'antisémitisme dans l'enseignement supérieur",
+            type: "consensuel",
+          },
         ],
       },
       {
@@ -85,6 +90,11 @@ const TAXONOMIE: ThemeRacine[] = [
           {
             slug: "droits-voisins-remuneration-presse",
             nom: "Droits voisins et rémunération de la presse",
+            type: "consensuel",
+          },
+          {
+            slug: "financement-audiovisuel-public",
+            nom: "Financement de l'audiovisuel public",
             type: "consensuel",
           },
         ],
@@ -165,6 +175,11 @@ const TAXONOMIE: ThemeRacine[] = [
           {
             slug: "gouvernance-gestion-moyens-etat",
             nom: "Gouvernance et gestion des moyens de l'État",
+            type: "consensuel",
+          },
+          {
+            slug: "reconnaissance-engagement-securite-civile",
+            nom: "Reconnaissance de l'engagement des acteurs de la sécurité civile",
             type: "consensuel",
           },
           {
@@ -323,6 +338,11 @@ const TAXONOMIE: ThemeRacine[] = [
             nom: "Mobilisation du parc de logements existants",
             type: "consensuel",
           },
+          {
+            slug: "entretien-accessibilite-logements-collectifs",
+            nom: "Entretien et accessibilité des logements collectifs",
+            type: "consensuel",
+          },
         ],
       },
     ],
@@ -360,6 +380,11 @@ const TAXONOMIE: ThemeRacine[] = [
       {
         slug: "prevention-sanitaire-contaminations",
         nom: "Prévention sanitaire et lutte contre les contaminations",
+        type: "consensuel",
+      },
+      {
+        slug: "financement-securite-sociale",
+        nom: "Financement et équilibre de la sécurité sociale",
         type: "consensuel",
       },
     ],
