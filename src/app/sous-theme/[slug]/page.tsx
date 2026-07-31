@@ -4,7 +4,11 @@ import { Breadcrumb, type BreadcrumbItem } from "@/app/_components/Breadcrumb";
 import { ComparaisonGroupes } from "@/app/_components/ComparaisonGroupes";
 import { FicheDossier } from "@/app/_components/FicheDossier";
 import { ResultatBadge } from "@/app/_components/ResultatBadge";
-import { listerDossiersSousTheme, taxonomyRepository } from "@/app/_composition";
+import {
+  agregerPositionsDossiers,
+  listerDossiersSousTheme,
+  taxonomyRepository,
+} from "@/app/_composition";
 import { tousLesSousThemes } from "@/domain/taxonomie";
 
 export function generateStaticParams() {
@@ -28,6 +32,15 @@ export default async function SousThemePage({
 
   const { theme, branche, sousTheme } = contexte;
   const dossiers = await listerDossiersSousTheme(slug);
+  // Vue d'ensemble du sous-thème : agrège tous les dossiers affichés sur
+  // cette page, y compris ceux affichés ici seulement via un Tag d'impact
+  // partagé (cf. viaTag) — un résumé pour ce que montre la page, pas la
+  // Position propre du sous-thème (celle-ci, réservée aux seuls dossiers qui
+  // lui appartiennent réellement, reste affichée telle quelle depuis les
+  // pages thème/branche via SousThemeRow).
+  const comparaisonPage = await agregerPositionsDossiers(
+    dossiers.map(({ dossier }) => dossier.dossierRef)
+  );
 
   const fil: BreadcrumbItem[] = [{ href: `/theme/${theme.slug}`, label: theme.nom }];
   if (branche) {
@@ -42,6 +55,10 @@ export default async function SousThemePage({
     <main>
       <Breadcrumb items={fil} />
       <h1 className="page-title">{sousTheme.nom}</h1>
+      <ComparaisonGroupes
+        titre="Position par groupe, sur l'ensemble des dossiers affichés ici"
+        comparaison={comparaisonPage}
+      />
 
       <div className="dossier-list">
         {dossiers.map(({ dossier, comparaison, viaTag, nombreScrutins, resultat }) => (
