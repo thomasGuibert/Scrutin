@@ -29,6 +29,11 @@ const TAXONOMIE: ThemeRacine[] = [
         nom: "Housekeeping / technique",
         type: "housekeeping",
       },
+      {
+        slug: "soutien-diplomatique-partenaires-europeens",
+        nom: "Soutien diplomatique aux partenaires européens",
+        type: "consensuel",
+      },
     ],
   },
   {
@@ -212,6 +217,11 @@ const TAXONOMIE: ThemeRacine[] = [
           {
             slug: "protection-interet-enfant-procedures-familiales",
             nom: "Protection de l'intérêt de l'enfant dans les procédures familiales",
+            type: "consensuel",
+          },
+          {
+            slug: "simplification-droit-successoral",
+            nom: "Simplification du droit successoral",
             type: "consensuel",
           },
         ],
