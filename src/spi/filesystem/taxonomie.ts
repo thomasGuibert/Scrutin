@@ -199,9 +199,29 @@ const TAXONOMIE: ThemeRacine[] = [
             type: "consensuel",
           },
           {
+            slug: "statut-elu-local",
+            nom: "Statut et protection de l'élu local",
+            type: "consensuel",
+          },
+          {
             slug: "financement-competences-communes",
             nom: "Financement des compétences déléguées aux communes",
             type: "consensuel",
+          },
+          {
+            slug: "financement-investissement-communal",
+            nom: "Financement de l'investissement communal",
+            type: "consensuel",
+          },
+          {
+            slug: "regularisation-fonciere-outre-mer",
+            nom: "Régularisation foncière en outre-mer",
+            type: "consensuel",
+          },
+          {
+            slug: "housekeeping-collectivites-territoriales",
+            nom: "Housekeeping / technique",
+            type: "housekeeping",
           },
         ],
       },
@@ -333,6 +353,11 @@ const TAXONOMIE: ThemeRacine[] = [
         type: "consensuel",
       },
       {
+        slug: "prise-en-charge-maladies-graves",
+        nom: "Prise en charge des maladies graves",
+        type: "consensuel",
+      },
+      {
         slug: "prevention-sanitaire-contaminations",
         nom: "Prévention sanitaire et lutte contre les contaminations",
         type: "consensuel",
@@ -366,6 +391,16 @@ const TAXONOMIE: ThemeRacine[] = [
           {
             slug: "amenagement-developpement-territoires-montagne",
             nom: "Aménagement et développement des territoires de montagne",
+            type: "consensuel",
+          },
+          {
+            slug: "biodiversite-especes-invasives",
+            nom: "Biodiversité et lutte contre les espèces invasives",
+            type: "consensuel",
+          },
+          {
+            slug: "souverainete-alimentaire-renouvellement-generations",
+            nom: "Souveraineté alimentaire et renouvellement des générations agricoles",
             type: "consensuel",
           },
         ],

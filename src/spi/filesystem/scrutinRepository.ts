@@ -92,8 +92,86 @@ function normaliserOrganeRef(organeRef: string): string {
 //   autre scrutin lié à DLR5L17N50579 dans l'export
 //   est une motion procédurale (prolongation de séance), sans lien vers ce
 //   vote de fond pourtant bien réel (numéro 1304, adopté).
+// - Lot 1/6 de l'audit #33 (issue #34) : 21 dossiers dont tous les scrutins
+//   ont "objet.dossierLegislatif" à null dans l'export AN, retrouvés par
+//   rapprochement de titre (méthode de #33) entre le scrutin décisif
+//   ("l'ensemble de..."/"l'article unique de...") et Dossiers_Legislatifs.json.zip.
+//   Chaque entrée est annotée du fragment de titre du scrutin décisif ayant
+//   servi au rapprochement, dans le même esprit de traçabilité que VTANR5L17V1304.
 const DOSSIER_REF_OVERRIDE: Record<string, string> = {
   VTANR5L17V1304: "DLR5L17N50579",
+  // "l'ensemble de la proposition de loi portant réparation des personnes
+  // condamnées pour homosexualité entre 1945 et 1982" (2e lecture, adopté)
+  VTANR5L17V4836: "DLR5L16N46127",
+  // "l'ensemble de la proposition de loi... relative à l'instauration d'un
+  // nombre minimum de soignants par patient hospitalisé" (1re lecture, adopté)
+  VTANR5L17V600: "DLR5L16N46650",
+  // "l'ensemble de la proposition de loi visant à interdire les dispositifs
+  // électroniques de vapotage à usage unique" (texte CMP, adopté)
+  VTANR5L17V692: "DLR5L16N46655",
+  // "l'article unique de la proposition de loi visant à mettre en place un
+  // registre national des cancers" (1re lecture, adopté)
+  VTANR5L17V2633: "DLR5L16N47676",
+  // "l'article unique de la proposition de loi créant une dérogation à la
+  // participation minimale pour la maîtrise d'ouvrage pour les communes
+  // rurales" (1re lecture, adopté)
+  VTANR5L17V946: "DLR5L16N48701",
+  // "l'article unique de la proposition de loi visant à proroger la loi
+  // n° 2017-285 du 6 mars 2017 relative à l'assainissement cadastral..."
+  // (1re lecture, adopté)
+  VTANR5L17V654: "DLR5L16N48725",
+  // "l'ensemble de la proposition de loi créant l'homicide routier et
+  // visant à lutter contre la violence routière" (2e lecture, adopté)
+  VTANR5L17V2217: "DLR5L16N48739",
+  // "l'ensemble de la proposition de loi visant à faciliter la
+  // transformation des bureaux et autres bâtiments en logements"
+  // (texte CMP, adopté)
+  VTANR5L17V2215: "DLR5L16N49107",
+  // "l'ensemble de la proposition de loi relative au renforcement de la
+  // sûreté dans les transports" (texte CMP, adopté)
+  VTANR5L17V1041: "DLR5L16N49176",
+  // "l'ensemble de la proposition de loi visant à réduire et à encadrer
+  // les frais bancaires sur succession" (2e lecture, adopté)
+  VTANR5L17V504: "DLR5L16N49258",
+  // "l'ensemble de la proposition de loi portant création d'un statut de
+  // l'élu local" (2e lecture, adopté)
+  VTANR5L17V4691: "DLR5L16N49280",
+  // "l'ensemble de la proposition de loi visant à renforcer la sécurité
+  // des professionnels de santé" (texte CMP, adopté)
+  VTANR5L17V2685: "DLR5L16N49299",
+  // "l'ensemble de la proposition de loi visant à protéger la population
+  // des risques liés aux substances per- et polyfluoroalkylées"
+  // (2e lecture, adopté)
+  VTANR5L17V852: "DLR5L16N49455",
+  // "l'ensemble de la proposition de loi visant à endiguer la prolifération
+  // du frelon asiatique et à préserver la filière apicole" (1re lecture, adopté)
+  VTANR5L17V914: "DLR5L16N49472",
+  // "l'ensemble du projet de loi d'orientation pour la souveraineté
+  // alimentaire et agricole et le renouvellement des générations en
+  // agriculture" (texte CMP, adopté)
+  VTANR5L17V844: "DLR5L16N49726",
+  // "l'ensemble de la proposition de loi... pour améliorer la prise en
+  // charge de la sclérose latérale amyotrophique et d'autres maladies
+  // évolutives graves" (1re lecture, adopté)
+  VTANR5L17V740: "DLR5L16N49796",
+  // "l'ensemble de la proposition de loi visant à améliorer la prise en
+  // charge des soins et dispositifs spécifiques au traitement du cancer
+  // du sein par l'assurance maladie" (2e lecture, adopté)
+  VTANR5L17V658: "DLR5L16N49801",
+  // "l'ensemble de la proposition de loi visant à permettre l'élection du
+  // maire d'une commune nouvelle en cas de conseil municipal incomplet"
+  // (1re lecture, adopté)
+  VTANR5L17V742: "DLR5L16N49843",
+  // "l'ensemble de la proposition de loi visant à assouplir la gestion des
+  // compétences 'eau' et 'assainissement'" (1re lecture, adopté)
+  VTANR5L17V997: "DLR5L16N49927",
+  // "l'ensemble de la proposition de loi visant à sécuriser le mécanisme
+  // de purge des nullités" (1re lecture, adopté)
+  VTANR5L17V452: "DLR5L16N50082",
+  // "l'article unique du projet de loi autorisant la ratification de la
+  // convention n° 155 sur la sécurité et la santé des travailleurs, 1981"
+  // (1re lecture, adopté)
+  VTANR5L17V3057: "DLR5L16N50115",
 };
 
 function normaliserDossierRef(
