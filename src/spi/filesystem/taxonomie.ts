@@ -45,6 +45,22 @@ const TAXONOMIE: ThemeRacine[] = [
             nom: "Rôle de l'école dans la formation civique et patriotique",
             type: "consensuel",
           },
+          {
+            slug: "acces-ecole",
+            nom: "Accès à l'école : égalité territoriale vs adaptation aux réalités locales",
+            type: "clivant",
+          },
+        ],
+      },
+      {
+        slug: "culture-patrimoine",
+        nom: "Culture & patrimoine",
+        sousThemes: [
+          {
+            slug: "patrimoine-transmission",
+            nom: "Financement et transmission du patrimoine",
+            type: "consensuel",
+          },
         ],
       },
     ],

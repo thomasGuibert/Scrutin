@@ -44,7 +44,10 @@ describe("DeclaredTaxonomyRepository", () => {
     const theme = repository.trouverTheme("education-culture");
 
     expect(theme?.nom).toBe("Éducation & culture");
-    expect(theme?.branches.map((b) => b.slug)).toEqual(["ecole"]);
+    expect(theme?.branches.map((b) => b.slug)).toEqual([
+      "ecole",
+      "culture-patrimoine",
+    ]);
   });
 
   it("retourne undefined pour un thème racine inconnu", () => {
@@ -62,6 +65,18 @@ describe("DeclaredTaxonomyRepository", () => {
     expect(resultat?.branche.nom).toBe("École");
     expect(resultat?.branche.sousThemes.map((s) => s.slug)).toEqual([
       "role-civique",
+      "acces-ecole",
+    ]);
+  });
+
+  it("retrouve la branche Culture & patrimoine avec son sous-thème", () => {
+    const repository = new DeclaredTaxonomyRepository();
+
+    const resultat = repository.trouverBranche("culture-patrimoine");
+
+    expect(resultat?.theme.slug).toBe("education-culture");
+    expect(resultat?.branche.sousThemes.map((s) => s.slug)).toEqual([
+      "patrimoine-transmission",
     ]);
   });
 
