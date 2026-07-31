@@ -93,6 +93,7 @@ function parseScrutin(raw: RawScrutinFile): Scrutin {
 
 export class FilesystemScrutinRepository implements ScrutinRepository {
   private zip: AdmZip | null = null;
+  private indexParDossier: Map<string, Scrutin[]> | null = null;
 
   constructor(private readonly zipPath: string = ZIP_PATH) {}
 
@@ -120,22 +121,40 @@ export class FilesystemScrutinRepository implements ScrutinRepository {
   }
 
   async getByDossierRef(dossierRef: string): Promise<Scrutin[]> {
-    const scrutins: Scrutin[] = [];
+    return this.getIndexParDossier().get(dossierRef) ?? [];
+  }
 
-    for (const entry of this.getZip().getEntries()) {
-      if (!entry.entryName.startsWith("json/") || entry.isDirectory) {
-        continue;
-      }
+  // Construit l'index dossierRef -> scrutins en un seul passage sur les 8000+
+  // entrées de l'archive, plutôt que de la reparcourir en entier à chaque
+  // dossier demandé (le nombre de dossiers classés a fini par rendre ce
+  // deuxième coût prohibitif : pages theme/sous-theme/dossier appellent
+  // getByDossierRef pour chaque dossier de leur périmètre).
+  private getIndexParDossier(): Map<string, Scrutin[]> {
+    if (!this.indexParDossier) {
+      const index = new Map<string, Scrutin[]>();
 
-      const raw = JSON.parse(
-        entry.getData().toString("utf-8")
-      ) as RawScrutinFile;
+      for (const entry of this.getZip().getEntries()) {
+        if (!entry.entryName.startsWith("json/") || entry.isDirectory) {
+          continue;
+        }
 
-      if (raw.scrutin.objet.dossierLegislatif?.dossierRef === dossierRef) {
+        const raw = JSON.parse(
+          entry.getData().toString("utf-8")
+        ) as RawScrutinFile;
+
+        const dossierRef = raw.scrutin.objet.dossierLegislatif?.dossierRef;
+        if (!dossierRef) {
+          continue;
+        }
+
+        const scrutins = index.get(dossierRef) ?? [];
         scrutins.push(parseScrutin(raw));
+        index.set(dossierRef, scrutins);
       }
+
+      this.indexParDossier = index;
     }
 
-    return scrutins;
+    return this.indexParDossier;
   }
 }
