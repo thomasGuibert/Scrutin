@@ -6,10 +6,10 @@ export default async function Home() {
 
   return (
     <main>
-      <h1 className="page-title">Scrutin</h1>
+      <h1 className="page-title">Scrutins</h1>
       <p className="page-gloss">
         Consultez les votes réels de l&apos;Assemblée nationale, classés par
-        thème, sans jugement de valeur.
+        thème.
       </p>
 
       <div className="a-grid">

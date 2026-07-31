@@ -3,9 +3,9 @@ import Link from "next/link";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Scrutin",
+  title: "Scrutins",
   description:
-    "Consultez les votes réels de l'Assemblée nationale, classés par thème, sans jugement de valeur.",
+    "Consultez les votes réels de l'Assemblée nationale, classés par thème.",
 };
 
 export default function RootLayout({
@@ -20,7 +20,7 @@ export default function RootLayout({
           <div className="measure">
             <div className="masthead-row">
               <Link className="wordmark" href="/">
-                Scrutin <span className="rule">·</span> Au-delà du discours
+                Scrutins <span className="rule">·</span> Au-delà du discours
               </Link>
               <p className="masthead-meta">
                 17e législature — Assemblée nationale
