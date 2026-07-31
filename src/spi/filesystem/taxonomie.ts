@@ -34,7 +34,7 @@ const TAXONOMIE: ThemeRacine[] = [
   {
     slug: "education-culture",
     nom: "Éducation & culture",
-    description: "École, audiovisuel & médias, culture & patrimoine.",
+    description: "École, audiovisuel & médias, culture & patrimoine, sport.",
     branches: [
       {
         slug: "ecole",
@@ -50,6 +50,16 @@ const TAXONOMIE: ThemeRacine[] = [
             nom: "Accès à l'école : égalité territoriale vs adaptation aux réalités locales",
             type: "clivant",
           },
+          {
+            slug: "inclusion-scolaire-eleves-handicap",
+            nom: "Inclusion scolaire des élèves en situation de handicap",
+            type: "consensuel",
+          },
+          {
+            slug: "vie-etudiante-bourses-precarite",
+            nom: "Vie étudiante : bourses et lutte contre la précarité",
+            type: "consensuel",
+          },
         ],
       },
       {
@@ -59,6 +69,28 @@ const TAXONOMIE: ThemeRacine[] = [
           {
             slug: "patrimoine-transmission",
             nom: "Financement et transmission du patrimoine",
+            type: "consensuel",
+          },
+        ],
+      },
+      {
+        slug: "audiovisuel-medias",
+        nom: "Audiovisuel & médias",
+        sousThemes: [
+          {
+            slug: "droits-voisins-remuneration-presse",
+            nom: "Droits voisins et rémunération de la presse",
+            type: "consensuel",
+          },
+        ],
+      },
+      {
+        slug: "sport",
+        nom: "Sport",
+        sousThemes: [
+          {
+            slug: "gouvernance-financement-sport-professionnel",
+            nom: "Gouvernance et financement du sport professionnel",
             type: "consensuel",
           },
         ],

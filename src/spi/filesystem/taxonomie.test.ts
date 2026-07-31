@@ -47,6 +47,8 @@ describe("DeclaredTaxonomyRepository", () => {
     expect(theme?.branches.map((b) => b.slug)).toEqual([
       "ecole",
       "culture-patrimoine",
+      "audiovisuel-medias",
+      "sport",
     ]);
   });
 
@@ -66,6 +68,8 @@ describe("DeclaredTaxonomyRepository", () => {
     expect(resultat?.branche.sousThemes.map((s) => s.slug)).toEqual([
       "role-civique",
       "acces-ecole",
+      "inclusion-scolaire-eleves-handicap",
+      "vie-etudiante-bourses-precarite",
     ]);
   });
 
