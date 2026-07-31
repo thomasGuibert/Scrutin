@@ -90,6 +90,42 @@ const TAXONOMIE: ThemeRacine[] = [
     ],
     sousThemes: [],
   },
+  {
+    slug: "institutions",
+    nom: "Institutions",
+    description:
+      "Vie démocratique & pouvoirs publics, collectivités territoriales & décentralisation, droit civil & état des personnes.",
+    branches: [
+      {
+        slug: "vie-democratique",
+        nom: "Vie démocratique & pouvoirs publics",
+        sousThemes: [
+          {
+            slug: "mode-scrutin",
+            nom: "Mode de scrutin : proportionnelle vs scrutin majoritaire",
+            type: "clivant",
+          },
+        ],
+      },
+      {
+        slug: "collectivites-territoriales",
+        nom: "Collectivités territoriales & décentralisation",
+        sousThemes: [
+          {
+            slug: "statuts-outre-mer",
+            nom: "Statuts spéciaux outre-mer : autonomie vs unité républicaine",
+            type: "clivant",
+          },
+          {
+            slug: "organisation-territoriale",
+            nom: "Organisation territoriale : simplifier les échelons vs préserver la proximité",
+            type: "clivant",
+          },
+        ],
+      },
+    ],
+    sousThemes: [],
+  },
 ];
 
 export class DeclaredTaxonomyRepository implements TaxonomyRepository {

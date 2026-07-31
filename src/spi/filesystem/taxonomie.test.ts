@@ -123,6 +123,7 @@ describe("DeclaredTaxonomyRepository", () => {
 
     expect(themes.map((t) => t.slug).sort()).toEqual([
       "education-culture",
+      "institutions",
       "libertes-securite",
       "souverainete",
     ]);

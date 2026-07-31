@@ -55,12 +55,19 @@ function toArray<T>(value: T | T[]): T[] {
   return Array.isArray(value) ? value : [value];
 }
 
-// Anomalie confirmée de l'export AN (14 scrutins sur 8434) : le groupe RN
-// (PO845401) y apparaît sous "PO0" à la place de son organeRef réel — jamais
-// les deux en même temps, effectif cohérent avec le RN à la date du scrutin.
-const ORGANE_REF_RN = "PO845401";
+// organeRef historiques confirmés dans l'export AN, à faire correspondre à
+// l'organeRef actuel du même groupe déclaré dans le référentiel (spi/filesystem/groupes.ts) :
+// - "PO0" (14 scrutins/8434) : anomalie, le RN y apparaît sous ce code au lieu
+//   de PO845401 — jamais les deux en même temps, effectif cohérent avec le RN.
+// - "PO847173" (3041 scrutins, jusqu'au 2025-07-10) : ancien organeRef de l'UDR
+//   avant sa nouvelle immatriculation sous PO872880 (utilisé à partir du
+//   2025-09-08, sans chevauchement) — effectif stable (~15-17) des deux côtés.
+const ORGANE_REF_ALIAS: Record<string, string> = {
+  PO0: "PO845401",
+  PO847173: "PO872880",
+};
 function normaliserOrganeRef(organeRef: string): string {
-  return organeRef === "PO0" ? ORGANE_REF_RN : organeRef;
+  return ORGANE_REF_ALIAS[organeRef] ?? organeRef;
 }
 
 function parseScrutin(raw: RawScrutinFile): Scrutin {

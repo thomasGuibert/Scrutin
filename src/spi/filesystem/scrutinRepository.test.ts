@@ -77,6 +77,18 @@ describe("FilesystemScrutinRepository", () => {
     });
   });
 
+  it("normalise l'ancien organeRef \"PO847173\" (UDR avant réimmatriculation) vers PO872880", async () => {
+    const repository = new FilesystemScrutinRepository(FIXTURE_ZIP_PATH);
+
+    const scrutin = await repository.getByUid("VTANR5L17VPO847173");
+
+    expect(scrutin?.positionsParGroupe).toContainEqual({
+      organeRef: "PO872880",
+      decompte: { pour: 10, contre: 2, abstentions: 0 },
+      effectif: 16,
+    });
+  });
+
   it("retourne tous les scrutins réels rattachés à un dossierRef donné", async () => {
     const repository = new FilesystemScrutinRepository(FIXTURE_ZIP_PATH);
 
