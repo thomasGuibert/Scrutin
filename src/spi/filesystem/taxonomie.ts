@@ -259,6 +259,11 @@ const TAXONOMIE: ThemeRacine[] = [
             nom: "Simplification du droit successoral",
             type: "consensuel",
           },
+          {
+            slug: "acces-nationalite-francaise",
+            nom: "Accès à la nationalité française : durcissement des conditions vs droit du sol",
+            type: "clivant",
+          },
         ],
       },
     ],
@@ -286,6 +291,11 @@ const TAXONOMIE: ThemeRacine[] = [
           {
             slug: "lutte-fraude-sociale-fiscale",
             nom: "Lutte contre la fraude sociale et fiscale",
+            type: "consensuel",
+          },
+          {
+            slug: "vie-chere-regulation-marches-outre-mer",
+            nom: "Vie chère et régulation des marchés en outre-mer",
             type: "consensuel",
           },
         ],
@@ -341,6 +351,11 @@ const TAXONOMIE: ThemeRacine[] = [
           {
             slug: "entretien-accessibilite-logements-collectifs",
             nom: "Entretien et accessibilité des logements collectifs",
+            type: "consensuel",
+          },
+          {
+            slug: "encadrement-loyers-habitat-outre-mer",
+            nom: "Encadrement des loyers et qualité de l'habitat en outre-mer",
             type: "consensuel",
           },
         ],
@@ -416,6 +431,11 @@ const TAXONOMIE: ThemeRacine[] = [
           {
             slug: "amenagement-developpement-territoires-montagne",
             nom: "Aménagement et développement des territoires de montagne",
+            type: "consensuel",
+          },
+          {
+            slug: "gouvernance-representation-agricole",
+            nom: "Gouvernance et représentation dans les instances agricoles",
             type: "consensuel",
           },
           {

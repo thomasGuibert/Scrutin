@@ -254,6 +254,87 @@ const DOSSIER_REF_OVERRIDE: Record<string, string> = {
   // "l'ensemble de la proposition de loi visant à lutter contre les
   // pannes d'ascenceur non prises en charge" (1re lecture, adopté)
   VTANR5L17V611: "DLR5L17N50777",
+  // Lot 3/6 de l'audit #33 (issue #36) : 19 dossiers, même situation que les
+  // lots précédents (cf. commentaires ci-dessus).
+  // "l'ensemble de la proposition de loi visant à rendre accessible à tous
+  // les étudiants le repas à 1 euro" (1re lecture, adopté)
+  VTANR5L17V606: "DLR5L17N50778",
+  // "l'ensemble de la proposition de loi visant à prendre des mesures
+  // d'urgence contre la vie chère et à réguler la concentration des
+  // acteurs économiques dans les territoires d'outre-mer" (1re lecture,
+  // adopté — à distinguer de VTANR5L17V4755, décisif d'un dossier
+  // ultérieur et distinct au périmètre plus restreint, hors de ce lot)
+  VTANR5L17V596: "DLR5L17N50779",
+  // "l'ensemble du projet de loi portant diverses dispositions
+  // d'adaptation au droit de l'Union européenne..." (texte CMP, adopté)
+  VTANR5L17V1203: "DLR5L17N50796",
+  // "l'ensemble de la proposition de loi visant à lever les contraintes à
+  // l'exercice du métier d'agriculteur" (texte CMP, adopté — le plus
+  // récent des votes décisifs du dossier ; celui de première lecture
+  // (VTANR5L17V2105) est une motion de rejet préalable de la majorité
+  // elle-même, adoptée pour transmettre le texte au Sénat sans débat,
+  // sans tuer le dossier qui a bien poursuivi sa navette jusqu'en CMP)
+  VTANR5L17V2957: "DLR5L17N50819",
+  // "l'ensemble de la proposition de loi visant à prolonger la dérogation
+  // d'usage des titres restaurant pour tout produit alimentaire"
+  // (1re lecture, adopté)
+  VTANR5L17V455: "DLR5L17N50820",
+  // "l'ensemble du projet de loi de finances de fin de gestion pour 2024"
+  // (texte CMP, adopté — le plus récent des votes décisifs du dossier ;
+  // le vote de la première partie en 1re lecture (VTANR5L17V445) a été
+  // rejeté mais le dossier a poursuivi sa navette jusqu'en CMP)
+  VTANR5L17V518: "DLR5L17N50838",
+  // "l'article unique de la proposition de loi relative à la restitution
+  // d'un bien culturel à la République de Côte d'Ivoire" (1re lecture,
+  // adopté)
+  VTANR5L17V2936: "DLR5L17N50882",
+  // "l'ensemble de la proposition de loi visant à restreindre la vente de
+  // protoxyde d'azote aux seuls professionnels..." (1re lecture, adopté)
+  VTANR5L17V682: "DLR5L17N50911",
+  // "l'ensemble de la proposition de loi relative à l'exercice de la
+  // démocratie agricole" (1re lecture, adopté)
+  VTANR5L17V589: "DLR5L17N50915",
+  // "l'article unique du projet de loi autorisant la ratification du
+  // traité sur la coopération dans le domaine de la défense entre la
+  // République française et le Royaume d'Espagne" (1re lecture, adopté)
+  VTANR5L17V841: "DLR5L17N50946",
+  // "l'ensemble de la proposition de loi sur la profession d'infirmier"
+  // (texte CMP, adopté — le plus récent des deux votes décisifs du
+  // dossier)
+  VTANR5L17V2278: "DLR5L17N51002",
+  // "l'ensemble de la proposition de loi visant à renforcer la
+  // démographie professionnelle des orthophonistes" (1re lecture, adopté)
+  VTANR5L17V1265: "DLR5L17N51014",
+  // "l'ensemble de la proposition de loi visant à lutter contre les
+  // déserts médicaux, d'initiative transpartisane" (1re lecture, adopté)
+  VTANR5L17V1607: "DLR5L17N51029",
+  // "l'ensemble de la proposition de loi visant à renforcer les
+  // conditions d'accès à la nationalité française à Mayotte" (texte CMP,
+  // adopté — le plus récent des votes décisifs du dossier)
+  VTANR5L17V1308: "DLR5L17N51039",
+  // "l'ensemble de la proposition de loi relative au droit de vote par
+  // correspondance des personnes détenues" (1re lecture, adopté)
+  VTANR5L17V2244: "DLR5L17N51052",
+  // "l'ensemble de la proposition de loi organique fixant le statut du
+  // procureur de la République national anti-criminalité organisée"
+  // (texte CMP, adopté — même dossier que la 1re lecture, retitré en
+  // cours de navette ; numéro de scrutin consécutif à celui du dossier
+  // compagnon DLR5L17N50169, voté à la même séance de CMP)
+  VTANR5L17V1474: "DLR5L17N51078",
+  // "l'ensemble du projet de loi spéciale prévue par l'article 45 de la
+  // loi organique du 1er août 2001 relative aux lois de finances"
+  // (1re lecture, adopté, 2024-12-16 — à distinguer de VTANR5L17V4947,
+  // même intitulé mais scrutin du 2025-12-23, décisif d'un dossier
+  // distinct de l'année suivante, hors de ce lot)
+  VTANR5L17V525: "DLR5L17N51079",
+  // "l'ensemble de la proposition de loi expérimentant l'encadrement des
+  // loyers et améliorant l'habitat dans les outre-mer" (1re lecture,
+  // adopté)
+  VTANR5L17V2262: "DLR5L17N51115",
+  // "l'ensemble de la proposition de loi permettant aux salariés de
+  // participer aux collectes de sang, de plaquettes ou de plasma sur
+  // leur temps de travail" (1re lecture, adopté)
+  VTANR5L17V2256: "DLR5L17N51132",
 };
 
 function normaliserDossierRef(
