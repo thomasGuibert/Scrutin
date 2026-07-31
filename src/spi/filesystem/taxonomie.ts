@@ -126,6 +126,36 @@ const TAXONOMIE: ThemeRacine[] = [
     ],
     sousThemes: [],
   },
+  {
+    slug: "repartition-richesses",
+    nom: "Répartition des richesses",
+    description: "Fiscalité, salaires, aides sociales, retraites, pouvoir d'achat.",
+    branches: [
+      {
+        slug: "fiscalite-regulation",
+        nom: "Fiscalité & régulation économique",
+        sousThemes: [
+          {
+            slug: "nationalisations-marche",
+            nom: "Rôle de l'État dans l'économie : nationalisations vs marché",
+            type: "clivant",
+          },
+        ],
+      },
+      {
+        slug: "retraites-salaires-minima",
+        nom: "Retraites, salaires & minima sociaux",
+        sousThemes: [
+          {
+            slug: "retraites",
+            nom: "Retraites : capitalisation vs répartition",
+            type: "clivant",
+          },
+        ],
+      },
+    ],
+    sousThemes: [],
+  },
 ];
 
 export class DeclaredTaxonomyRepository implements TaxonomyRepository {
