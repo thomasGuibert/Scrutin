@@ -38,6 +38,10 @@ class FakeDossierRepository implements DossierRepository {
   async getBySousTheme(slug: string): Promise<Dossier[]> {
     return this.dossiers[slug] ?? [];
   }
+
+  async getByTagImpact(): Promise<Dossier[]> {
+    throw new Error("not used in this test");
+  }
 }
 
 function unSousTheme(slug: string): SousTheme {

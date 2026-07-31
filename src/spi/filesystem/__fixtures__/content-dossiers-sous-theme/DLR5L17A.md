@@ -2,7 +2,8 @@
 dossierRef: DLR5L17A
 titre: Dossier A
 sousTheme: sous-theme-cible
-tagsImpact: []
+tagsImpact:
+  - Tag partagé
 ---
 
 ## Contexte

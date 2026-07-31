@@ -124,4 +124,31 @@ describe("FilesystemDossierRepository", () => {
       "DLR5L17B",
     ]);
   });
+
+  it("liste les dossiers portant un Tag d'impact donné, quel que soit leur sous-thème d'appartenance", async () => {
+    const repository = new FilesystemDossierRepository({
+      contentDir: FIXTURE_CONTENT_DIR_SOUS_THEME,
+      taxonomyRepository: TAXONOMIE_DE_TEST,
+    });
+
+    const dossiers = await repository.getByTagImpact("Tag partagé");
+
+    // DLR5L17A (sous-theme-cible) et DLR5L17C (autre-sous-theme) partagent
+    // le tag mais ont chacun un sous-thème d'appartenance différent.
+    expect(dossiers.map((d) => d.dossierRef).sort()).toEqual([
+      "DLR5L17A",
+      "DLR5L17C",
+    ]);
+  });
+
+  it("retourne une liste vide pour un tag que personne ne porte", async () => {
+    const repository = new FilesystemDossierRepository({
+      contentDir: FIXTURE_CONTENT_DIR_SOUS_THEME,
+      taxonomyRepository: TAXONOMIE_DE_TEST,
+    });
+
+    const dossiers = await repository.getByTagImpact("Tag inexistant");
+
+    expect(dossiers).toEqual([]);
+  });
 });

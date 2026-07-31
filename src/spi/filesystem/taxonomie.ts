@@ -18,6 +18,11 @@ const TAXONOMIE: ThemeRacine[] = [
         nom: "Réparation et reconnaissance mémorielle",
         type: "consensuel",
       },
+      {
+        slug: "doctrine-defense",
+        nom: "Doctrine de défense et effort militaire",
+        type: "consensuel",
+      },
     ],
   },
   {

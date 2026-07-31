@@ -14,6 +14,10 @@ class FakeDossierRepository implements DossierRepository {
       (dossier) => dossier.sousTheme === slug
     );
   }
+
+  async getByTagImpact(): Promise<Dossier[]> {
+    throw new Error("not used in this test");
+  }
 }
 
 const A_DOSSIER: Dossier = {

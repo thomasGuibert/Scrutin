@@ -2,7 +2,8 @@
 dossierRef: DLR5L17C
 titre: Dossier C
 sousTheme: autre-sous-theme
-tagsImpact: []
+tagsImpact:
+  - Tag partagé
 ---
 
 ## Contexte

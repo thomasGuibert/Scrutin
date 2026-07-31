@@ -4,7 +4,11 @@ import { ComparaisonGroupes } from "@/app/_components/ComparaisonGroupes";
 import { listerDossiersSousTheme, taxonomyRepository } from "@/app/_composition";
 
 export function generateStaticParams() {
-  return [{ slug: "reparation-memorielle" }, { slug: "role-civique" }];
+  return [
+    { slug: "reparation-memorielle" },
+    { slug: "role-civique" },
+    { slug: "doctrine-defense" },
+  ];
 }
 
 export default async function SousThemePage({
@@ -26,13 +30,11 @@ export default async function SousThemePage({
       <h1 className="page-title">{sousTheme.nom}</h1>
 
       <div className="dossier-list">
-        {dossiers.map(({ dossier, comparaison }) => (
+        {dossiers.map(({ dossier, comparaison, viaTag }) => (
           <div className="dossier-row" key={dossier.dossierRef}>
-            <Link
-              className="dossier-header"
-              href={`/dossier/${dossier.dossierRef}`}
-            >
+            <Link className="dossier-header" href={`/dossier/${dossier.dossierRef}`}>
               <span className="dossier-title">{dossier.titre}</span>
+              {viaTag && <span className="dossier-tag">{viaTag}</span>}
             </Link>
             <ComparaisonGroupes titre="Position par groupe" comparaison={comparaison} />
           </div>

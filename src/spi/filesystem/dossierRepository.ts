@@ -83,9 +83,15 @@ export class FilesystemDossierRepository implements DossierRepository {
     return dossiers.filter((dossier) => dossier.sousTheme === slug);
   }
 
+  async getByTagImpact(tag: string): Promise<Dossier[]> {
+    const dossiers = await this.getTousLesDossiers();
+    return dossiers.filter((dossier) => dossier.tagsImpact.includes(tag));
+  }
+
   // Lit et parse chaque fichier de content/dossiers/ une seule fois par
-  // instance de repository, plutôt qu'à chaque appel de getBySousTheme —
-  // même logique que le cache d'archive de FilesystemScrutinRepository.
+  // instance de repository, plutôt qu'à chaque appel de getBySousTheme ou
+  // getByTagImpact — même logique que le cache d'archive de
+  // FilesystemScrutinRepository.
   private getTousLesDossiers(): Promise<Dossier[]> {
     if (!this.tousLesDossiers) {
       this.tousLesDossiers = this.lireTousLesDossiers();

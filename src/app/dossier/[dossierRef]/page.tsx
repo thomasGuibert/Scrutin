@@ -8,7 +8,11 @@ import {
 } from "@/app/_composition";
 
 export function generateStaticParams() {
-  return [{ dossierRef: "DLR5L17N52767" }];
+  return [
+    { dossierRef: "DLR5L17N52767" },
+    { dossierRef: "DLR5L17N53672" },
+    { dossierRef: "DLR5L17N54083" },
+  ];
 }
 
 export default async function DossierPage({
