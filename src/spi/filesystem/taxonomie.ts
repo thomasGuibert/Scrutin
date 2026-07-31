@@ -301,7 +301,34 @@ const TAXONOMIE: ThemeRacine[] = [
     slug: "environnement",
     nom: "Environnement & ressources",
     description: "Écologie, énergie, agriculture, aménagement du territoire.",
-    branches: [],
+    branches: [
+      {
+        slug: "agriculture",
+        nom: "Agriculture",
+        sousThemes: [
+          {
+            slug: "pesticides-sante-environnementale",
+            nom: "Pesticides et santé environnementale",
+            type: "consensuel",
+          },
+          {
+            slug: "conditions-vie-sante-agriculteurs",
+            nom: "Conditions de vie et santé des agriculteurs",
+            type: "consensuel",
+          },
+          {
+            slug: "resilience-agriculture-changement-climatique",
+            nom: "Résilience de l'agriculture face au changement climatique",
+            type: "consensuel",
+          },
+          {
+            slug: "amenagement-developpement-territoires-montagne",
+            nom: "Aménagement et développement des territoires de montagne",
+            type: "consensuel",
+          },
+        ],
+      },
+    ],
     sousThemes: [
       {
         slug: "souverainete-energetique",
@@ -316,6 +343,16 @@ const TAXONOMIE: ThemeRacine[] = [
       {
         slug: "economie-circulaire",
         nom: "Déchets et économie circulaire",
+        type: "consensuel",
+      },
+      {
+        slug: "adaptation-changement-climatique-gestion-risques",
+        nom: "Adaptation au changement climatique et gestion des risques",
+        type: "consensuel",
+      },
+      {
+        slug: "decarbonation-transport-maritime",
+        nom: "Décarbonation du transport maritime",
         type: "consensuel",
       },
     ],
