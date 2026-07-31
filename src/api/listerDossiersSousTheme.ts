@@ -1,5 +1,6 @@
 import type { ComparaisonGroupe } from "@/api/comparerGroupes";
 import type { Dossier, DossierRepository } from "@/domain/dossier";
+import type { Scrutin } from "@/domain/scrutin";
 
 type DossierAffiche = {
   dossier: Dossier;
@@ -12,13 +13,15 @@ type DossierAffiche = {
 
 export type DossierAvecPosition = DossierAffiche & {
   comparaison: ComparaisonGroupe[];
+  nombreScrutins: number;
 };
 
 export function createListerDossiersSousTheme(
   dossierRepository: DossierRepository,
   agregerPositionsDossiers: (
     dossierRefs: string[]
-  ) => Promise<ComparaisonGroupe[]>
+  ) => Promise<ComparaisonGroupe[]>,
+  listerScrutinsDossier: (dossierRef: string) => Promise<Scrutin[]>
 ) {
   return async function listerDossiersSousTheme(
     slug: string
@@ -48,11 +51,18 @@ export function createListerDossiersSousTheme(
     ];
 
     return Promise.all(
-      entrees.map(async ({ dossier, viaTag }) => ({
-        dossier,
-        viaTag,
-        comparaison: await agregerPositionsDossiers([dossier.dossierRef]),
-      }))
+      entrees.map(async ({ dossier, viaTag }) => {
+        const [comparaison, scrutins] = await Promise.all([
+          agregerPositionsDossiers([dossier.dossierRef]),
+          listerScrutinsDossier(dossier.dossierRef),
+        ]);
+        return {
+          dossier,
+          viaTag,
+          comparaison,
+          nombreScrutins: scrutins.length,
+        };
+      })
     );
   };
 }

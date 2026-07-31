@@ -43,14 +43,20 @@ const AGREGATION_FACTICE = vi
     },
   ]);
 
+const LISTER_SCRUTINS_FACTICE = vi.fn().mockResolvedValue([]);
+
 describe("listerDossiersSousTheme", () => {
-  it("associe à chaque dossier du sous-thème sa Position agrégée", async () => {
+  it("associe à chaque dossier du sous-thème sa Position agrégée et son nombre de scrutins", async () => {
     const dossierA = unDossier("DLR5L17A", "cible");
     const dossierB = unDossier("DLR5L17B", "cible");
     const dossierRepository = new FakeDossierRepository([dossierA, dossierB]);
+    const listerScrutinsDossier = vi
+      .fn()
+      .mockResolvedValue([{ uid: "V1" }, { uid: "V2" }]);
     const listerDossiersSousTheme = createListerDossiersSousTheme(
       dossierRepository,
-      AGREGATION_FACTICE
+      AGREGATION_FACTICE,
+      listerScrutinsDossier
     );
 
     const resultat = await listerDossiersSousTheme("cible");
@@ -59,13 +65,15 @@ describe("listerDossiersSousTheme", () => {
     expect(resultat[0].dossier).toEqual(dossierA);
     expect(resultat[0].viaTag).toBeNull();
     expect(resultat[0].comparaison[0].position).toBe("Pour");
+    expect(resultat[0].nombreScrutins).toBe(2);
   });
 
   it("retourne une liste vide quand aucun dossier n'est classé dans ce sous-thème", async () => {
     const dossierRepository = new FakeDossierRepository([]);
     const listerDossiersSousTheme = createListerDossiersSousTheme(
       dossierRepository,
-      AGREGATION_FACTICE
+      AGREGATION_FACTICE,
+      LISTER_SCRUTINS_FACTICE
     );
 
     const resultat = await listerDossiersSousTheme("vide");
@@ -82,7 +90,8 @@ describe("listerDossiersSousTheme", () => {
     ]);
     const listerDossiersSousTheme = createListerDossiersSousTheme(
       dossierRepository,
-      AGREGATION_FACTICE
+      AGREGATION_FACTICE,
+      LISTER_SCRUTINS_FACTICE
     );
 
     const resultat = await listerDossiersSousTheme("cible");
@@ -106,7 +115,8 @@ describe("listerDossiersSousTheme", () => {
     const dossierRepository = new FakeDossierRepository([dossierA, dossierB]);
     const listerDossiersSousTheme = createListerDossiersSousTheme(
       dossierRepository,
-      AGREGATION_FACTICE
+      AGREGATION_FACTICE,
+      LISTER_SCRUTINS_FACTICE
     );
 
     const resultat = await listerDossiersSousTheme("cible");

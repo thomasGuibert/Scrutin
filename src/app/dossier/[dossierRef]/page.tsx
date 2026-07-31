@@ -60,9 +60,6 @@ export default async function DossierPage({
       <div className="node-header">
         <span className="dossier-tag">Dossier</span>
         <h1 className="page-title">{dossier.titre}</h1>
-        <a className="dossier-count" href="#scrutins">
-          {scrutins.length} scrutin{scrutins.length > 1 ? "s" : ""} →
-        </a>
       </div>
 
       <FicheDossier fiche={dossier.ficheDossier} />
@@ -72,7 +69,7 @@ export default async function DossierPage({
         comparaison={comparaison}
       />
 
-      <div className="dossier-list" id="scrutins">
+      <div className="dossier-list">
         {scrutins.map((scrutin) => (
           <div className="dossier-row" key={scrutin.uid}>
             <Link className="dossier-header" href={`/scrutin/${scrutin.uid}`}>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumb, type BreadcrumbItem } from "@/app/_components/Breadcrumb";
 import { ComparaisonGroupes } from "@/app/_components/ComparaisonGroupes";
+import { FicheDossier } from "@/app/_components/FicheDossier";
 import { listerDossiersSousTheme, taxonomyRepository } from "@/app/_composition";
 
 export function generateStaticParams() {
@@ -42,12 +43,16 @@ export default async function SousThemePage({
       <h1 className="page-title">{sousTheme.nom}</h1>
 
       <div className="dossier-list">
-        {dossiers.map(({ dossier, comparaison, viaTag }) => (
+        {dossiers.map(({ dossier, comparaison, viaTag, nombreScrutins }) => (
           <div className="dossier-row" key={dossier.dossierRef}>
             <Link className="dossier-header" href={`/dossier/${dossier.dossierRef}`}>
+              <span className="dossier-tag">{viaTag ?? "Dossier"}</span>
               <span className="dossier-title">{dossier.titre}</span>
-              {viaTag && <span className="dossier-tag">{viaTag}</span>}
+              <span className="dossier-count">
+                {nombreScrutins} scrutin{nombreScrutins > 1 ? "s" : ""} →
+              </span>
             </Link>
+            <FicheDossier fiche={dossier.ficheDossier} />
             <ComparaisonGroupes titre="Position par groupe" comparaison={comparaison} />
           </div>
         ))}

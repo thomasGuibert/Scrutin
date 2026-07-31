@@ -32,7 +32,8 @@ export const agregerPositionsDossiers = createAgregerPositionsDossiers(
 );
 export const listerDossiersSousTheme = createListerDossiersSousTheme(
   dossierRepository,
-  agregerPositionsDossiers
+  agregerPositionsDossiers,
+  listerScrutinsDossier
 );
 export const listerSousThemesAvecPosition = createListerSousThemesAvecPosition(
   dossierRepository,
