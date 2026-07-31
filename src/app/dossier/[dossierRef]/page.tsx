@@ -23,9 +23,22 @@ export async function generateStaticParams() {
     sousThemes.map((sousTheme) => dossierRepository.getBySousTheme(sousTheme.slug))
   );
 
-  return dossiersParSousTheme
-    .flat()
-    .map((dossier) => ({ dossierRef: dossier.dossierRef }));
+  const dossiers = dossiersParSousTheme.flat();
+
+  // Un dossier sans scrutin n'apparaît pas sur le site (cf. CONTEXT.md,
+  // Dossier législatif) — pas la peine de pré-générer sa page statique.
+  const dossiersAvecScrutin = (
+    await Promise.all(
+      dossiers.map(async (dossier) => ({
+        dossier,
+        scrutins: await listerScrutinsDossier(dossier.dossierRef),
+      }))
+    )
+  ).filter(({ scrutins }) => scrutins.length > 0);
+
+  return dossiersAvecScrutin.map(({ dossier }) => ({
+    dossierRef: dossier.dossierRef,
+  }));
 }
 
 export default async function DossierPage({
@@ -44,6 +57,13 @@ export default async function DossierPage({
     agregerPositionsDossiers([dossierRef]),
     listerScrutinsDossier(dossierRef),
   ]);
+
+  // Un dossier sans scrutin n'a encore aucun vote décisif à afficher (cf.
+  // CONTEXT.md, Dossier législatif) — en v1, il n'apparaît pas sur le site.
+  if (scrutins.length === 0) {
+    notFound();
+  }
+
   const contexte = taxonomyRepository.trouverContexteSousTheme(
     dossier.sousTheme
   );

@@ -70,6 +70,11 @@ const TAXONOMIE: ThemeRacine[] = [
             nom: "Lutte contre les discriminations et l'antisémitisme dans l'enseignement supérieur",
             type: "consensuel",
           },
+          {
+            slug: "education-alimentation-sante-scolaire",
+            nom: "Éducation à l'alimentation et santé à l'école",
+            type: "consensuel",
+          },
         ],
       },
       {
@@ -108,6 +113,11 @@ const TAXONOMIE: ThemeRacine[] = [
             nom: "Gouvernance et financement du sport professionnel",
             type: "consensuel",
           },
+          {
+            slug: "organisation-grands-evenements-sportifs",
+            nom: "Organisation de grands événements sportifs",
+            type: "consensuel",
+          },
         ],
       },
     ],
@@ -140,6 +150,11 @@ const TAXONOMIE: ThemeRacine[] = [
           {
             slug: "securite-routiere",
             nom: "Sécurité routière",
+            type: "consensuel",
+          },
+          {
+            slug: "simplification-titres-sejour",
+            nom: "Simplification du renouvellement des titres de séjour",
             type: "consensuel",
           },
           {
@@ -236,6 +251,11 @@ const TAXONOMIE: ThemeRacine[] = [
           {
             slug: "urgence-reconstruction-outre-mer",
             nom: "Urgence et reconstruction après une catastrophe naturelle en outre-mer",
+            type: "consensuel",
+          },
+          {
+            slug: "egalite-acces-services-publics-outre-mer",
+            nom: "Égalité d'accès aux services publics en outre-mer",
             type: "consensuel",
           },
           {
@@ -387,6 +407,11 @@ const TAXONOMIE: ThemeRacine[] = [
             slug: "simplification-droit-urbanisme-logement",
             nom: "Simplification du droit de l'urbanisme et du logement",
             type: "consensuel",
+          },
+          {
+            slug: "equilibre-rapports-locatifs",
+            nom: "Rapports locatifs : protection des locataires vs droits des propriétaires",
+            type: "clivant",
           },
         ],
       },

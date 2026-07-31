@@ -44,6 +44,11 @@ const AGREGATION_FACTICE = vi
   ]);
 
 const LISTER_SCRUTINS_FACTICE = vi.fn().mockResolvedValue([]);
+const UN_SCRUTIN_FACTICE = vi
+  .fn()
+  .mockResolvedValue([
+    { uid: "V1", titre: "l'article premier de la loi.", numero: 1 },
+  ]);
 
 describe("listerDossiersSousTheme", () => {
   it("associe à chaque dossier du sous-thème sa Position agrégée et son nombre de scrutins", async () => {
@@ -92,6 +97,31 @@ describe("listerDossiersSousTheme", () => {
     expect(resultat[0].resultat).toBe("adopté");
   });
 
+  it("n'affiche pas un dossier sans scrutin (encore en cours d'examen)", async () => {
+    const dossierSansScrutin = unDossier("DLR5L17A", "cible");
+    const dossierAvecScrutin = unDossier("DLR5L17B", "cible");
+    const dossierRepository = new FakeDossierRepository([
+      dossierSansScrutin,
+      dossierAvecScrutin,
+    ]);
+    const listerScrutinsDossier = vi
+      .fn()
+      .mockImplementation(async (dossierRef: string) =>
+        dossierRef === "DLR5L17B"
+          ? [{ uid: "V1", titre: "l'article premier de la loi.", numero: 1 }]
+          : []
+      );
+    const listerDossiersSousTheme = createListerDossiersSousTheme(
+      dossierRepository,
+      AGREGATION_FACTICE,
+      listerScrutinsDossier
+    );
+
+    const resultat = await listerDossiersSousTheme("cible");
+
+    expect(resultat.map((r) => r.dossier.dossierRef)).toEqual(["DLR5L17B"]);
+  });
+
   it("retourne une liste vide quand aucun dossier n'est classé dans ce sous-thème", async () => {
     const dossierRepository = new FakeDossierRepository([]);
     const listerDossiersSousTheme = createListerDossiersSousTheme(
@@ -115,7 +145,7 @@ describe("listerDossiersSousTheme", () => {
     const listerDossiersSousTheme = createListerDossiersSousTheme(
       dossierRepository,
       AGREGATION_FACTICE,
-      LISTER_SCRUTINS_FACTICE
+      UN_SCRUTIN_FACTICE
     );
 
     const resultat = await listerDossiersSousTheme("cible");
@@ -140,7 +170,7 @@ describe("listerDossiersSousTheme", () => {
     const listerDossiersSousTheme = createListerDossiersSousTheme(
       dossierRepository,
       AGREGATION_FACTICE,
-      LISTER_SCRUTINS_FACTICE
+      UN_SCRUTIN_FACTICE
     );
 
     const resultat = await listerDossiersSousTheme("cible");

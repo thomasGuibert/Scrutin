@@ -51,7 +51,7 @@ export function createListerDossiersSousTheme(
       })),
     ];
 
-    return Promise.all(
+    const dossiersAvecPosition = await Promise.all(
       entrees.map(async ({ dossier, viaTag }) => {
         const [comparaison, scrutins] = await Promise.all([
           agregerPositionsDossiers([dossier.dossierRef]),
@@ -66,5 +66,9 @@ export function createListerDossiersSousTheme(
         };
       })
     );
+
+    // Un dossier sans scrutin n'a encore aucun vote décisif à afficher (cf.
+    // CONTEXT.md, Dossier législatif) — en v1, il n'apparaît pas sur le site.
+    return dossiersAvecPosition.filter(({ nombreScrutins }) => nombreScrutins > 0);
   };
 }

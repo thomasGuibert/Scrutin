@@ -71,6 +71,7 @@ describe("DeclaredTaxonomyRepository", () => {
       "inclusion-scolaire-eleves-handicap",
       "vie-etudiante-bourses-precarite",
       "lutte-discriminations-enseignement-superieur",
+      "education-alimentation-sante-scolaire",
     ]);
   });
 

@@ -469,6 +469,95 @@ const DOSSIER_REF_OVERRIDE: Record<string, string> = {
   // personnels enseignants de l'enseignement du premier degré dans les
   // îles Wallis et Futuna" (1re lecture, adopté)
   VTANR5L17V2104: "DLR5L17N51986",
+  // Lot 6/6 de l'audit #33 (issue #39, dernier lot) : 19 dossiers, même
+  // situation que les lots précédents (cf. commentaires ci-dessus).
+  // DLR5L17N53063 ("Lutter contre les violences sexistes et sexuelles au
+  // travail") ne figure volontairement pas dans cette table : son fichier
+  // content/dossiers/ existe (classé, cf. #39), mais son dossierParlementaire
+  // n'a qu'un seul acte enregistré ("1ère lecture, renvoi en commission au
+  // fond", 2025-10-28, aucun acte postérieur) — encore en commission, sans
+  // vote décisif réel malgré l'annotation "(adopté)" de #39. Le seul
+  // scrutin candidat trouvé par recoupement de titre (VTANR5L17V657,
+  // "l'ensemble de la proposition de loi visant à renforcer la lutte
+  // contre les violences sexuelles et sexistes") ne correspond à aucun
+  // dossierParlementaire du corpus 17e législature — probablement un faux
+  // positif de recoupement, pas ce dossier. À vérifier manuellement (cf.
+  // méthode des cas ambigus de #41) avant tout rattachement.
+  // "l'ensemble du projet de loi portant création de l'établissement
+  // public du commerce et de l'industrie de Corse" (1re lecture, adopté)
+  VTANR5L17V2900: "DLR5L17N52002",
+  // "l'article unique de la proposition de loi appelant à élever Alfred
+  // Dreyfus au grade de général de brigade" (1re lecture, adopté)
+  VTANR5L17V2207: "DLR5L17N52037",
+  // "l'ensemble du projet de loi portant transposition des accords
+  // nationaux interprofessionnels en faveur de l'emploi des salariés
+  // expérimentés..." (texte CMP, adopté — le plus récent des deux votes
+  // décisifs du dossier)
+  VTANR5L17V3055: "DLR5L17N52040",
+  // "l'ensemble du projet de loi relatif à l'organisation des jeux
+  // Olympiques et Paralympiques de 2030" (texte CMP, adopté — le plus
+  // récent des votes décisifs du dossier ; les deux motions de rejet
+  // préalable (VTANR5L17V4756, VTANR5L17V5295) ont été rejetées)
+  VTANR5L17V5296: "DLR5L17N52100",
+  // "l'ensemble de la proposition de loi visant à la nationalisation
+  // d'ArcelorMittal France afin de préserver la souveraineté
+  // industrielle de la France" (1re lecture, adopté)
+  VTANR5L17V4438: "DLR5L17N52207",
+  // "l'article unique du projet de loi autorisant l'approbation de la
+  // convention de coopération judiciaire internationale entre le
+  // Gouvernement de la République française et l'Organisation des
+  // Nations unies représentée par le Mécanisme d'enquête indépendant
+  // pour le Myanmar" (1re lecture, adopté)
+  VTANR5L17V4801: "DLR5L17N52429",
+  // "l'ensemble de la proposition de loi visant à garantir la gratuité
+  // des parkings des hôpitaux publics..." (1re lecture, adopté)
+  VTANR5L17V5254: "DLR5L17N52744",
+  // "l'ensemble de la proposition de loi visant à garantir un
+  // renouvellement automatique des titres de séjour de longue durée"
+  // (1re lecture, adopté)
+  VTANR5L17V4754: "DLR5L17N52749",
+  // "l'ensemble de la proposition de loi visant à rendre systématique
+  // l'information du consommateur sur l'origine des denrées alimentaires
+  // par le moyen de l'étiquetage" (1re lecture, rejeté)
+  VTANR5L17V3273: "DLR5L17N52787",
+  // "l'ensemble du projet de loi de financement de la sécurité sociale
+  // pour 2026" (lecture définitive, adopté — le plus récent des votes
+  // décisifs du dossier ; les trois motions de rejet préalable aux
+  // lectures successives ont toutes été rejetées)
+  VTANR5L17V4758: "DLR5L17N52922",
+  // "l'ensemble de la proposition de loi relative à l'établissement de
+  // l'égalité d'accès au service public postal en outre-mer" (1re
+  // lecture, adopté)
+  VTANR5L17V4287: "DLR5L17N52976",
+  // "l'ensemble de la proposition de loi visant à protéger les mineurs
+  // isolés et à lutter contre le sans-abrisme" (1re lecture, adopté)
+  VTANR5L17V4723: "DLR5L17N53051",
+  // "l'ensemble de la proposition de loi visant à prendre des mesures
+  // d'urgence contre la vie chère en outre-mer dans le secteur des
+  // services" (1re lecture, adopté — à distinguer de VTANR5L17V596,
+  // décisif du dossier compagnon au périmètre plus large, déjà rattaché
+  // à DLR5L17N50779)
+  VTANR5L17V4755: "DLR5L17N53058",
+  // "l'ensemble de la proposition de loi pour retrouver la confiance et
+  // l'équilibre dans les rapports locatifs" (1re lecture, adopté)
+  VTANR5L17V4745: "DLR5L17N53069",
+  // "l'ensemble du projet de loi de fin de gestion pour 2025" (texte CMP,
+  // adopté — le plus récent des votes décisifs du dossier ; le vote de
+  // première lecture (VTANR5L17V3936) a été rejeté mais le dossier a
+  // poursuivi sa navette jusqu'en CMP)
+  VTANR5L17V4442: "DLR5L17N53135",
+  // "l'ensemble de la proposition de loi d'expérimentation pour
+  // l'instauration d'un enseignement d'éducation à l'alimentation
+  // obligatoire à l'école" (1re lecture, adopté)
+  VTANR5L17V5435: "DLR5L17N53171",
+  // "l'ensemble de la proposition de loi visant à reconnaître les
+  // victimes de l'exposition aux essais nucléaires français et à
+  // améliorer leur indemnisation" (1re lecture, adopté)
+  VTANR5L17V5266: "DLR5L17N53276",
+  // "l'ensemble de la proposition de loi améliorant la protection des
+  // personnes ciblées par les réseaux de criminalité organisée" (1re
+  // lecture, adopté)
+  VTANR5L17V5358: "DLR5L17N53427",
 };
 
 function normaliserDossierRef(
