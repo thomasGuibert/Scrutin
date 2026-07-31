@@ -32,6 +32,10 @@ class FakeTaxonomyRepository implements TaxonomyRepository {
   trouverBranche(): { theme: ThemeRacine; branche: Branche } | undefined {
     throw new Error("not used in this test");
   }
+
+  listerThemes(): ThemeRacine[] {
+    throw new Error("not used in this test");
+  }
 }
 
 const TAXONOMIE_DE_TEST = new FakeTaxonomyRepository({

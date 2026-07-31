@@ -213,6 +213,77 @@ p.page-gloss {
   line-height: 1.45;
 }
 
+/* Grille de tuiles de la page d'accueil : 2 colonnes, la première tuile
+   (plus grand volume) en pleine largeur. */
+.a-grid {
+  margin-top: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.a-tile {
+  background: var(--paper);
+  padding: 1.35rem 1.25rem;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  min-height: 9.5rem;
+  transition: background 0.15s ease;
+  cursor: pointer;
+}
+
+.a-tile:hover {
+  background: var(--paper-raised);
+}
+
+.a-tile:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.a-tile-feature {
+  grid-column: 1 / -1;
+  min-height: 12rem;
+  flex-direction: row;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.a-tile-feature .a-tile-name {
+  font-size: 1.3rem;
+}
+
+.a-tile-feature .a-tile-gloss {
+  max-width: 26rem;
+}
+
+.a-tile-name {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+.a-tile-gloss {
+  font-size: 0.82rem;
+  color: var(--ink-muted);
+  line-height: 1.45;
+  flex: 1;
+}
+
+.a-tile-arrow {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--accent-warm);
+  align-self: flex-start;
+  white-space: nowrap;
+}
+
 .cmp-block {
   margin: 1rem 0 1.6rem;
   border: 1px solid var(--line);

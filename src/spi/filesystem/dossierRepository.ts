@@ -55,6 +55,7 @@ export type FilesystemDossierRepositoryOptions = {
 export class FilesystemDossierRepository implements DossierRepository {
   private readonly contentDir: string;
   private readonly taxonomyRepository: TaxonomyRepository;
+  private tousLesDossiers: Promise<Dossier[]> | null = null;
 
   constructor({
     contentDir = CONTENT_DIR,
@@ -78,8 +79,23 @@ export class FilesystemDossierRepository implements DossierRepository {
   }
 
   async getBySousTheme(slug: string): Promise<Dossier[]> {
+    const dossiers = await this.getTousLesDossiers();
+    return dossiers.filter((dossier) => dossier.sousTheme === slug);
+  }
+
+  // Lit et parse chaque fichier de content/dossiers/ une seule fois par
+  // instance de repository, plutôt qu'à chaque appel de getBySousTheme —
+  // même logique que le cache d'archive de FilesystemScrutinRepository.
+  private getTousLesDossiers(): Promise<Dossier[]> {
+    if (!this.tousLesDossiers) {
+      this.tousLesDossiers = this.lireTousLesDossiers();
+    }
+    return this.tousLesDossiers;
+  }
+
+  private async lireTousLesDossiers(): Promise<Dossier[]> {
     const fichiers = await fs.readdir(this.contentDir);
-    const dossiers = await Promise.all(
+    return Promise.all(
       fichiers
         .filter((fichier) => fichier.endsWith(".md"))
         .map(async (fichier) => {
@@ -90,8 +106,6 @@ export class FilesystemDossierRepository implements DossierRepository {
           return this.parseDossier(raw);
         })
     );
-
-    return dossiers.filter((dossier) => dossier.sousTheme === slug);
   }
 
   private parseDossier(raw: string): Dossier {

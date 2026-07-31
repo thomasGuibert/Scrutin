@@ -60,4 +60,16 @@ describe("DeclaredTaxonomyRepository", () => {
 
     expect(repository.trouverBranche("slug-inconnu")).toBeUndefined();
   });
+
+  it("liste tous les thèmes racines déclarés, chacun avec sa description", () => {
+    const repository = new DeclaredTaxonomyRepository();
+
+    const themes = repository.listerThemes();
+
+    expect(themes.map((t) => t.slug).sort()).toEqual([
+      "education-culture",
+      "souverainete",
+    ]);
+    expect(themes.every((t) => t.description.length > 0)).toBe(true);
+  });
 });

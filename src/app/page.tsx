@@ -1,6 +1,9 @@
 import Link from "next/link";
+import { listerThemesTries } from "@/app/_composition";
 
-export default function Home() {
+export default async function Home() {
+  const themes = await listerThemesTries();
+
   return (
     <main>
       <h1 className="page-title">Scrutin</h1>
@@ -8,9 +11,22 @@ export default function Home() {
         Consultez les votes réels de l&apos;Assemblée nationale, classés par
         thème, sans jugement de valeur.
       </p>
-      <Link className="back-link" href="/dossier/DLR5L17N52767">
-        Voir un dossier →
-      </Link>
+
+      <div className="a-grid">
+        {themes.map(({ theme, nombreDossiers }, index) => (
+          <Link
+            key={theme.slug}
+            href={`/theme/${theme.slug}`}
+            className={index === 0 ? "a-tile a-tile-feature" : "a-tile"}
+          >
+            <span className="a-tile-name">{theme.nom}</span>
+            <span className="a-tile-gloss">{theme.description}</span>
+            <span className="a-tile-arrow">
+              {nombreDossiers} dossier{nombreDossiers > 1 ? "s" : ""} →
+            </span>
+          </Link>
+        ))}
+      </div>
     </main>
   );
 }

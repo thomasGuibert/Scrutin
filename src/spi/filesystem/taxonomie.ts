@@ -10,6 +10,7 @@ const TAXONOMIE: ThemeRacine[] = [
   {
     slug: "souverainete",
     nom: "Souveraineté & rôle de la France",
+    description: "Défense, diplomatie, Europe, commerce international.",
     branches: [],
     sousThemes: [
       {
@@ -22,6 +23,7 @@ const TAXONOMIE: ThemeRacine[] = [
   {
     slug: "education-culture",
     nom: "Éducation & culture",
+    description: "École, audiovisuel & médias, culture & patrimoine.",
     branches: [
       {
         slug: "ecole",
@@ -64,5 +66,9 @@ export class DeclaredTaxonomyRepository implements TaxonomyRepository {
       }
     }
     return undefined;
+  }
+
+  listerThemes(): ThemeRacine[] {
+    return TAXONOMIE;
   }
 }

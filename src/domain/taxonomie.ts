@@ -15,6 +15,7 @@ export type Branche = {
 export type ThemeRacine = {
   slug: string;
   nom: string;
+  description: string;
   // Une branche est un niveau intermédiaire optionnel (cf. CONTEXT.md) : un
   // thème racine peut n'avoir aucune branche et rattacher ses sous-thèmes
   // directement (`sousThemes`), ou regrouper certains sous-thèmes par branche.
@@ -28,6 +29,7 @@ export interface TaxonomyRepository {
   trouverBranche(
     slug: string
   ): { theme: ThemeRacine; branche: Branche } | undefined;
+  listerThemes(): ThemeRacine[];
 }
 
 // Tous les sous-thèmes d'un thème racine, qu'ils soient rattachés

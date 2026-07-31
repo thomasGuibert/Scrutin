@@ -8,6 +8,7 @@ import { createGetDossier } from "@/api/getDossier";
 import { createGetScrutin } from "@/api/getScrutin";
 import { createListerDossiersSousTheme } from "@/api/listerDossiersSousTheme";
 import { createListerScrutinsDossier } from "@/api/listerScrutinsDossier";
+import { createListerThemesTries } from "@/api/listerThemesTries";
 import { FilesystemDossierRepository } from "@/spi/filesystem/dossierRepository";
 import { FilesystemGroupeRepository } from "@/spi/filesystem/groupes";
 import { FilesystemScrutinRepository } from "@/spi/filesystem/scrutinRepository";
@@ -36,4 +37,8 @@ export const agregerPositionsSousThemes = createAgregerPositionsSousThemes(
 export const listerDossiersSousTheme = createListerDossiersSousTheme(
   dossierRepository,
   agregerPositionsDossiers
+);
+export const listerThemesTries = createListerThemesTries(
+  taxonomyRepository,
+  dossierRepository
 );

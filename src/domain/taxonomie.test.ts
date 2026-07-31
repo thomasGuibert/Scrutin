@@ -6,6 +6,7 @@ describe("tousLesSousThemes", () => {
     const theme: ThemeRacine = {
       slug: "theme-test",
       nom: "Thème de test",
+      description: "Description de test.",
       sousThemes: [{ slug: "direct", nom: "Direct", type: "consensuel" }],
       branches: [
         {
@@ -32,6 +33,7 @@ describe("tousLesSousThemes", () => {
     const theme: ThemeRacine = {
       slug: "theme-test",
       nom: "Thème de test",
+      description: "Description de test.",
       sousThemes: [{ slug: "direct", nom: "Direct", type: "consensuel" }],
       branches: [],
     };
