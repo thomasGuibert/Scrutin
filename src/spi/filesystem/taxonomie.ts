@@ -201,6 +201,16 @@ const TAXONOMIE: ThemeRacine[] = [
             nom: "Rôle de l'État dans l'économie : nationalisations vs marché",
             type: "clivant",
           },
+          {
+            slug: "simplification-droit-vie-economique",
+            nom: "Simplification du droit et de la vie économique",
+            type: "consensuel",
+          },
+          {
+            slug: "lutte-fraude-sociale-fiscale",
+            nom: "Lutte contre la fraude sociale et fiscale",
+            type: "consensuel",
+          },
         ],
       },
       {
@@ -211,6 +221,21 @@ const TAXONOMIE: ThemeRacine[] = [
             slug: "retraites",
             nom: "Retraites : capitalisation vs répartition",
             type: "clivant",
+          },
+          {
+            slug: "emploi-formation-professionnelle",
+            nom: "Emploi et formation professionnelle",
+            type: "consensuel",
+          },
+          {
+            slug: "temps-travail-jours-feries",
+            nom: "Temps de travail et jours fériés",
+            type: "consensuel",
+          },
+          {
+            slug: "gouvernance-assurance-chomage",
+            nom: "Gouvernance de l'assurance chômage",
+            type: "consensuel",
           },
         ],
       },
