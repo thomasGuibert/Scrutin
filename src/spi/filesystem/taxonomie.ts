@@ -1,6 +1,7 @@
 import {
   tousLesSousThemes,
   type Branche,
+  type ContexteSousTheme,
   type SousTheme,
   type TaxonomyRepository,
   type ThemeRacine,
@@ -68,6 +69,22 @@ export class DeclaredTaxonomyRepository implements TaxonomyRepository {
       const branche = theme.branches.find((b) => b.slug === slug);
       if (branche) {
         return { theme, branche };
+      }
+    }
+    return undefined;
+  }
+
+  trouverContexteSousTheme(slug: string): ContexteSousTheme | undefined {
+    for (const theme of TAXONOMIE) {
+      const direct = theme.sousThemes.find((s) => s.slug === slug);
+      if (direct) {
+        return { theme, branche: null, sousTheme: direct };
+      }
+      for (const branche of theme.branches) {
+        const sousTheme = branche.sousThemes.find((s) => s.slug === slug);
+        if (sousTheme) {
+          return { theme, branche, sousTheme };
+        }
       }
     }
     return undefined;

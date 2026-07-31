@@ -2,12 +2,12 @@
 // api, une seule fois. Les routes (app/**/page.tsx) importent d'ici plutôt
 // que de reconstruire ce graphe de dépendances chacune de leur côté.
 import { createAgregerPositionsDossiers } from "@/api/agregerPositionsDossiers";
-import { createAgregerPositionsSousThemes } from "@/api/agregerPositionsSousThemes";
 import { createComparerGroupes } from "@/api/comparerGroupes";
 import { createGetDossier } from "@/api/getDossier";
 import { createGetScrutin } from "@/api/getScrutin";
 import { createListerDossiersSousTheme } from "@/api/listerDossiersSousTheme";
 import { createListerScrutinsDossier } from "@/api/listerScrutinsDossier";
+import { createListerSousThemesAvecPosition } from "@/api/listerSousThemesAvecPosition";
 import { createListerThemesTries } from "@/api/listerThemesTries";
 import { FilesystemDossierRepository } from "@/spi/filesystem/dossierRepository";
 import { FilesystemGroupeRepository } from "@/spi/filesystem/groupes";
@@ -30,11 +30,11 @@ export const agregerPositionsDossiers = createAgregerPositionsDossiers(
   scrutinRepository,
   groupeRepository
 );
-export const agregerPositionsSousThemes = createAgregerPositionsSousThemes(
+export const listerDossiersSousTheme = createListerDossiersSousTheme(
   dossierRepository,
   agregerPositionsDossiers
 );
-export const listerDossiersSousTheme = createListerDossiersSousTheme(
+export const listerSousThemesAvecPosition = createListerSousThemesAvecPosition(
   dossierRepository,
   agregerPositionsDossiers
 );

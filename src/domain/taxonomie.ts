@@ -23,12 +23,21 @@ export type ThemeRacine = {
   sousThemes: SousTheme[];
 };
 
+// Le fil d'ariane d'un sous-thème : son thème racine, et sa branche quand
+// il y en a une (cf. Branche, niveau intermédiaire optionnel).
+export type ContexteSousTheme = {
+  theme: ThemeRacine;
+  branche: Branche | null;
+  sousTheme: SousTheme;
+};
+
 export interface TaxonomyRepository {
   trouverSousTheme(slug: string): SousTheme | undefined;
   trouverTheme(slug: string): ThemeRacine | undefined;
   trouverBranche(
     slug: string
   ): { theme: ThemeRacine; branche: Branche } | undefined;
+  trouverContexteSousTheme(slug: string): ContexteSousTheme | undefined;
   listerThemes(): ThemeRacine[];
 }
 

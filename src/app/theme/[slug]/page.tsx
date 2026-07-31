@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ComparaisonGroupes } from "@/app/_components/ComparaisonGroupes";
-import { agregerPositionsSousThemes, taxonomyRepository } from "@/app/_composition";
-import { tousLesSousThemes } from "@/domain/taxonomie";
+import { Breadcrumb } from "@/app/_components/Breadcrumb";
+import { SousThemeRow } from "@/app/_components/SousThemeRow";
+import { listerSousThemesAvecPosition, taxonomyRepository } from "@/app/_composition";
 
 export function generateStaticParams() {
   return [{ slug: "souverainete" }, { slug: "education-culture" }];
@@ -20,36 +20,43 @@ export default async function ThemePage({
     notFound();
   }
 
-  const comparaison = await agregerPositionsSousThemes(
-    tousLesSousThemes(theme).map((sousTheme) => sousTheme.slug)
-  );
+  const [sousThemesDirects, sousThemesParBranche] = await Promise.all([
+    listerSousThemesAvecPosition(theme.sousThemes),
+    Promise.all(
+      theme.branches.map((branche) =>
+        listerSousThemesAvecPosition(branche.sousThemes)
+      )
+    ),
+  ]);
 
   return (
     <main>
+      <Breadcrumb items={[{ label: theme.nom }]} />
       <h1 className="page-title">{theme.nom}</h1>
+      <p className="page-gloss">{theme.description}</p>
 
-      <ComparaisonGroupes
-        titre="Position par groupe, sur l'ensemble du thème"
-        comparaison={comparaison}
-      />
+      {theme.branches.map((branche, index) => (
+        <div className="branch-group" key={branche.slug}>
+          <p className="branch-title">{branche.nom}</p>
+          {branche.sousThemes.length ? (
+            sousThemesParBranche[index].map((entree) => (
+              <SousThemeRow key={entree.sousTheme.slug} {...entree} />
+            ))
+          ) : (
+            <p className="branch-placeholder">
+              Détail des sous-thèmes pas encore fait — branche identifiée
+              mais non descendue plus bas.
+            </p>
+          )}
+        </div>
+      ))}
 
-      <ul>
-        {theme.branches.map((branche) => (
-          <li key={branche.slug}>
-            <Link href={`/branche/${branche.slug}`}>{branche.nom}</Link>
-          </li>
-        ))}
-        {theme.sousThemes.map((sousTheme) => (
-          <li key={sousTheme.slug}>
-            <Link href={`/sous-theme/${sousTheme.slug}`}>
-              {sousTheme.nom}
-            </Link>
-          </li>
-        ))}
-      </ul>
+      {sousThemesDirects.map((entree) => (
+        <SousThemeRow key={entree.sousTheme.slug} {...entree} />
+      ))}
 
       <Link className="back-link" href="/">
-        ← Retour
+        ← Retour à l&apos;accueil
       </Link>
     </main>
   );

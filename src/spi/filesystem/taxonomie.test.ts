@@ -61,6 +61,36 @@ describe("DeclaredTaxonomyRepository", () => {
     expect(repository.trouverBranche("slug-inconnu")).toBeUndefined();
   });
 
+  it("retrouve le contexte d'un sous-thème rattaché à une branche", () => {
+    const repository = new DeclaredTaxonomyRepository();
+
+    const contexte = repository.trouverContexteSousTheme("role-civique");
+
+    expect(contexte?.theme.slug).toBe("education-culture");
+    expect(contexte?.branche?.slug).toBe("ecole");
+    expect(contexte?.sousTheme.slug).toBe("role-civique");
+  });
+
+  it("retrouve le contexte d'un sous-thème rattaché directement à un thème racine, sans branche", () => {
+    const repository = new DeclaredTaxonomyRepository();
+
+    const contexte = repository.trouverContexteSousTheme(
+      "reparation-memorielle"
+    );
+
+    expect(contexte?.theme.slug).toBe("souverainete");
+    expect(contexte?.branche).toBeNull();
+    expect(contexte?.sousTheme.slug).toBe("reparation-memorielle");
+  });
+
+  it("retourne undefined pour le contexte d'un sous-thème inconnu", () => {
+    const repository = new DeclaredTaxonomyRepository();
+
+    expect(
+      repository.trouverContexteSousTheme("slug-inconnu")
+    ).toBeUndefined();
+  });
+
   it("liste tous les thèmes racines déclarés, chacun avec sa description", () => {
     const repository = new DeclaredTaxonomyRepository();
 

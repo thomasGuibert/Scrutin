@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Breadcrumb, type BreadcrumbItem } from "@/app/_components/Breadcrumb";
 import { ComparaisonGroupes } from "@/app/_components/ComparaisonGroupes";
 import { listerDossiersSousTheme, taxonomyRepository } from "@/app/_composition";
 
@@ -17,16 +18,27 @@ export default async function SousThemePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const sousTheme = taxonomyRepository.trouverSousTheme(slug);
+  const contexte = taxonomyRepository.trouverContexteSousTheme(slug);
 
-  if (!sousTheme) {
+  if (!contexte) {
     notFound();
   }
 
+  const { theme, branche, sousTheme } = contexte;
   const dossiers = await listerDossiersSousTheme(slug);
+
+  const fil: BreadcrumbItem[] = [{ href: `/theme/${theme.slug}`, label: theme.nom }];
+  if (branche) {
+    fil.push({ href: `/branche/${branche.slug}`, label: branche.nom });
+  }
+  fil.push({ label: sousTheme.nom });
+
+  const retourHref = branche ? `/branche/${branche.slug}` : `/theme/${theme.slug}`;
+  const retourLabel = branche ? branche.nom : theme.nom;
 
   return (
     <main>
+      <Breadcrumb items={fil} />
       <h1 className="page-title">{sousTheme.nom}</h1>
 
       <div className="dossier-list">
@@ -41,8 +53,8 @@ export default async function SousThemePage({
         ))}
       </div>
 
-      <Link className="back-link" href="/">
-        ← Retour
+      <Link className="back-link" href={retourHref}>
+        ← Retour à {retourLabel}
       </Link>
     </main>
   );

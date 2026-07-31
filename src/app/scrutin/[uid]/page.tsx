@@ -1,6 +1,8 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Breadcrumb, type BreadcrumbItem } from "@/app/_components/Breadcrumb";
 import { ComparaisonGroupes } from "@/app/_components/ComparaisonGroupes";
-import { comparerGroupes, getScrutin } from "@/app/_composition";
+import { comparerGroupes, getDossier, getScrutin, taxonomyRepository } from "@/app/_composition";
 import { calculerVotants } from "@/domain/scrutin";
 
 export function generateStaticParams() {
@@ -20,9 +22,33 @@ export default async function ScrutinPage({
   }
 
   const comparaison = comparerGroupes(scrutin);
+  const dossier = scrutin.dossierRef ? await getDossier(scrutin.dossierRef) : null;
+  const contexte = dossier
+    ? taxonomyRepository.trouverContexteSousTheme(dossier.sousTheme)
+    : null;
+
+  const fil: BreadcrumbItem[] = [];
+  if (contexte) {
+    fil.push({ href: `/theme/${contexte.theme.slug}`, label: contexte.theme.nom });
+    if (contexte.branche) {
+      fil.push({
+        href: `/branche/${contexte.branche.slug}`,
+        label: contexte.branche.nom,
+      });
+    }
+    fil.push({
+      href: `/sous-theme/${contexte.sousTheme.slug}`,
+      label: contexte.sousTheme.nom,
+    });
+  }
+  if (dossier) {
+    fil.push({ href: `/dossier/${dossier.dossierRef}`, label: dossier.titre });
+  }
+  fil.push({ label: scrutin.titre });
 
   return (
     <main>
+      <Breadcrumb items={fil} />
       <h1 className="page-title">{scrutin.titre}</h1>
 
       <dl>
@@ -37,6 +63,12 @@ export default async function ScrutinPage({
       </dl>
 
       <ComparaisonGroupes titre="Position par groupe" comparaison={comparaison} />
+
+      {dossier && (
+        <Link className="back-link" href={`/dossier/${dossier.dossierRef}`}>
+          ← Retour à {dossier.titre}
+        </Link>
+      )}
     </main>
   );
 }

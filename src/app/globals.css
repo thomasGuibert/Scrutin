@@ -158,6 +158,76 @@ p.page-gloss {
   max-width: 36rem;
 }
 
+.branch-group {
+  margin-bottom: 2.2rem;
+}
+
+.branch-title {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-warm);
+  margin: 0 0 0.8rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.sous-theme-block {
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 1.1rem;
+  margin-bottom: 1.1rem;
+}
+
+.sous-theme-block:first-child {
+  border-top: 1px solid var(--line);
+  padding-top: 1rem;
+}
+
+.sous-theme-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 1rem;
+  padding-bottom: 0.7rem;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.sous-theme-name {
+  font-family: var(--serif);
+  font-size: 1.02rem;
+  display: block;
+}
+
+.sous-theme-gloss {
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+  margin-top: 0.2rem;
+  max-width: 30rem;
+}
+
+.sous-theme-count {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
+.sous-theme-row:hover .sous-theme-name {
+  color: var(--accent);
+}
+
+.branch-placeholder {
+  padding: 0.9rem 0;
+  font-size: 0.82rem;
+  color: var(--ink-muted);
+  font-style: italic;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
 .dossier-brief {
   display: flex;
   flex-direction: column;
@@ -223,6 +293,22 @@ p.page-gloss {
   padding: 0.15rem 0.4rem;
   white-space: nowrap;
   align-self: start;
+}
+
+.dossier-count {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--accent-warm);
+  white-space: nowrap;
+  align-self: start;
+}
+
+.dossier-note {
+  margin-top: 1.2rem;
+  font-size: 0.72rem;
+  color: var(--ink-muted);
+  border-top: 1px dashed var(--line);
+  padding-top: 0.7rem;
 }
 
 /* Grille de tuiles de la page d'accueil : 2 colonnes, la première tuile

@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ComparaisonGroupes } from "@/app/_components/ComparaisonGroupes";
-import { agregerPositionsSousThemes, taxonomyRepository } from "@/app/_composition";
+import { Breadcrumb } from "@/app/_components/Breadcrumb";
+import { SousThemeRow } from "@/app/_components/SousThemeRow";
+import { listerSousThemesAvecPosition, taxonomyRepository } from "@/app/_composition";
 
 export function generateStaticParams() {
   return [{ slug: "ecole" }];
@@ -19,32 +20,32 @@ export default async function BranchePage({
     notFound();
   }
 
-  const { branche } = resultat;
-  const comparaison = await agregerPositionsSousThemes(
-    branche.sousThemes.map((sousTheme) => sousTheme.slug)
-  );
+  const { theme, branche } = resultat;
+  const sousThemes = await listerSousThemesAvecPosition(branche.sousThemes);
 
   return (
     <main>
+      <Breadcrumb
+        items={[
+          { href: `/theme/${theme.slug}`, label: theme.nom },
+          { label: branche.nom },
+        ]}
+      />
       <h1 className="page-title">{branche.nom}</h1>
 
-      <ComparaisonGroupes
-        titre="Position par groupe, sur l'ensemble de la branche"
-        comparaison={comparaison}
-      />
+      {sousThemes.length ? (
+        sousThemes.map((entree) => (
+          <SousThemeRow key={entree.sousTheme.slug} {...entree} />
+        ))
+      ) : (
+        <p className="branch-placeholder">
+          Détail des sous-thèmes pas encore fait — branche identifiée mais
+          non descendue plus bas.
+        </p>
+      )}
 
-      <ul>
-        {branche.sousThemes.map((sousTheme) => (
-          <li key={sousTheme.slug}>
-            <Link href={`/sous-theme/${sousTheme.slug}`}>
-              {sousTheme.nom}
-            </Link>
-          </li>
-        ))}
-      </ul>
-
-      <Link className="back-link" href="/">
-        ← Retour
+      <Link className="back-link" href={`/theme/${theme.slug}`}>
+        ← Retour à {theme.nom}
       </Link>
     </main>
   );
