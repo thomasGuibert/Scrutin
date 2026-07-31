@@ -85,6 +85,21 @@ const TAXONOMIE: ThemeRacine[] = [
             nom: "Protection des victimes (violences sexuelles, intrafamiliales, mineurs)",
             type: "consensuel",
           },
+          {
+            slug: "controle-transparence-lieux-privation-liberte",
+            nom: "Contrôle et transparence des lieux de privation de liberté",
+            type: "consensuel",
+          },
+          {
+            slug: "securite-routiere",
+            nom: "Sécurité routière",
+            type: "consensuel",
+          },
+          {
+            slug: "housekeeping-justice-police-immigration",
+            nom: "Housekeeping / technique",
+            type: "housekeeping",
+          },
         ],
       },
     ],
