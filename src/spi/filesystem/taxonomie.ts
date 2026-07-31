@@ -246,7 +246,24 @@ const TAXONOMIE: ThemeRacine[] = [
     slug: "solidarite",
     nom: "Solidarité & protection sociale",
     description: "Santé, handicap, famille, logement.",
-    branches: [],
+    branches: [
+      {
+        slug: "logement",
+        nom: "Logement",
+        sousThemes: [
+          {
+            slug: "logement-travailleurs-services-publics",
+            nom: "Logement des travailleurs des services publics",
+            type: "consensuel",
+          },
+          {
+            slug: "mobilisation-parc-logements-existants",
+            nom: "Mobilisation du parc de logements existants",
+            type: "consensuel",
+          },
+        ],
+      },
+    ],
     sousThemes: [
       {
         slug: "fin-de-vie",
@@ -267,6 +284,16 @@ const TAXONOMIE: ThemeRacine[] = [
         slug: "sante-publique-risque",
         nom: "Santé publique : réguler les produits à risque vs liberté de consommation",
         type: "clivant",
+      },
+      {
+        slug: "prise-en-charge-cancers-maladies-rares-enfant",
+        nom: "Prise en charge des cancers et maladies rares de l'enfant",
+        type: "consensuel",
+      },
+      {
+        slug: "prevention-sanitaire-contaminations",
+        nom: "Prévention sanitaire et lutte contre les contaminations",
+        type: "consensuel",
       },
     ],
   },
