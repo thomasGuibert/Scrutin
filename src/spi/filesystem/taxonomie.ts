@@ -313,6 +313,11 @@ const TAXONOMIE: ThemeRacine[] = [
             nom: "Fiscalité des grandes fortunes : taxation renforcée vs libre circulation des capitaux",
             type: "clivant",
           },
+          {
+            slug: "protection-consommateurs-commercants",
+            nom: "Protection des consommateurs et des commerçants",
+            type: "consensuel",
+          },
         ],
       },
       {
@@ -337,6 +342,11 @@ const TAXONOMIE: ThemeRacine[] = [
           {
             slug: "gouvernance-assurance-chomage",
             nom: "Gouvernance de l'assurance chômage",
+            type: "consensuel",
+          },
+          {
+            slug: "allocations-familiales-soutien-familles",
+            nom: "Allocations familiales et soutien financier aux familles",
             type: "consensuel",
           },
         ],
@@ -371,6 +381,11 @@ const TAXONOMIE: ThemeRacine[] = [
           {
             slug: "encadrement-loyers-habitat-outre-mer",
             nom: "Encadrement des loyers et qualité de l'habitat en outre-mer",
+            type: "consensuel",
+          },
+          {
+            slug: "simplification-droit-urbanisme-logement",
+            nom: "Simplification du droit de l'urbanisme et du logement",
             type: "consensuel",
           },
         ],
@@ -456,6 +471,11 @@ const TAXONOMIE: ThemeRacine[] = [
           {
             slug: "protection-foncier-agricole",
             nom: "Protection du foncier agricole",
+            type: "consensuel",
+          },
+          {
+            slug: "stabilite-competitivite-filiere-agroalimentaire",
+            nom: "Stabilité économique et compétitivité de la filière agroalimentaire",
             type: "consensuel",
           },
           {

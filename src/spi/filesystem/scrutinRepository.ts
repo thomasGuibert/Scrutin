@@ -388,6 +388,87 @@ const DOSSIER_REF_OVERRIDE: Record<string, string> = {
   // Nation envers les rapatriés d'Indochine et réparation des préjudices
   // subis par ceux-ci et leurs familles..." (1re lecture, adopté)
   VTANR5L17V2220: "DLR5L17N51499",
+  // Lot 5/6 de l'audit #33 (issue #38) : 20 dossiers, même situation que les
+  // lots précédents (cf. commentaires ci-dessus).
+  // "l'ensemble de la proposition de loi visant à renforcer la stabilité
+  // économique et la compétitivité du secteur agroalimentaire" (texte CMP,
+  // adopté — le plus récent des deux votes décisifs du dossier)
+  VTANR5L17V1319: "DLR5L17N51504",
+  // "l'ensemble de la proposition de loi visant à renforcer le contrôle du
+  // Parlement en période d'expédition des affaires courantes" (1re lecture,
+  // adopté)
+  VTANR5L17V1212: "DLR5L17N51510",
+  // "l'ensemble de la proposition de loi visant à valoriser la réserve
+  // communale de sécurité civile" (1re lecture, adopté)
+  VTANR5L17V1234: "DLR5L17N51518",
+  // "l'ensemble de la proposition de loi pour un démarchage téléphonique
+  // consenti et une protection renforcée des consommateurs contre les
+  // abus" (1re lecture, adopté)
+  VTANR5L17V898: "DLR5L17N51563",
+  // "l'article unique de la proposition de loi élargissant la possibilité
+  // pour les collectivités territoriales et leurs groupements d'avoir
+  // recours au modèle de la société portuaire..." (1re lecture, adopté)
+  VTANR5L17V4697: "DLR5L17N51581",
+  // "l'ensemble de la proposition de loi visant à mettre fin au devoir
+  // conjugal" (1re lecture, adopté)
+  VTANR5L17V5243: "DLR5L17N51671",
+  // "l'ensemble de la proposition de loi visant à garantir l'égal accès de
+  // tous à l'accompagnement et aux soins palliatifs" (2e lecture, adopté —
+  // le plus récent des deux votes décisifs du dossier)
+  VTANR5L17V5728: "DLR5L17N51672",
+  // "l'ensemble de la proposition de loi visant à l'extension de la
+  // possibilité de préemption de baux commerciaux dans les mairies aux
+  // sociétés civiles immobilières" (1re lecture, adopté)
+  VTANR5L17V5432: "DLR5L17N51713",
+  // "l'ensemble de la proposition de loi visant à préserver les droits des
+  // victimes dont la plainte est classée sans suite" (1re lecture, adopté)
+  VTANR5L17V1604: "DLR5L17N51716",
+  // "l'ensemble de la proposition de loi visant à améliorer la protection
+  // des commerçants grâce à l'usage d'outils numériques" (1re lecture,
+  // adopté — le plus récent des votes décisifs du dossier ; la motion de
+  // rejet préalable (VTANR5L17V5286) a été rejetée)
+  VTANR5L17V5427: "DLR5L17N51720",
+  // "l'article unique de la proposition de loi autorisant la ratification
+  // du Traité de coopération en matière de défense entre la République
+  // française et la République de Djibouti" (1re lecture, adopté — à
+  // distinguer de VTANR5L17V841, décisif du traité de défense compagnon
+  // avec l'Espagne, déjà rattaché à DLR5L17N50946)
+  VTANR5L17V2634: "DLR5L17N51789",
+  // "l'ensemble de la proposition de loi visant à réparer les préjudices
+  // causés par la transplantation de mineurs de La Réunion en France
+  // hexagonale de 1962 à 1984" (1re lecture, adopté)
+  VTANR5L17V5244: "DLR5L17N51845",
+  // "l'ensemble de la proposition de loi visant à lutter contre la
+  // mortalité infantile" (1re lecture, adopté)
+  VTANR5L17V1723: "DLR5L17N51849",
+  // "l'ensemble de la proposition de loi de simplification du droit de
+  // l'urbanisme et du logement" (texte CMP, adopté — le plus récent des
+  // deux votes décisifs du dossier)
+  VTANR5L17V3056: "DLR5L17N51852",
+  // "l'ensemble de la proposition de loi visant à exercer l'accès à
+  // l'emploi, à pérenniser et à étendre progressivement l'expérimentation
+  // « territoires zéro chômeur de longue durée »..." (1re lecture, adopté)
+  VTANR5L17V5222: "DLR5L17N51962",
+  // "l'ensemble de la proposition de loi visant à garantir un cadre fiscal
+  // stable, juste et lisible pour nos micro-entrepreneurs et nos petites
+  // entreprises" (1re lecture, adopté)
+  VTANR5L17V2214: "DLR5L17N51973",
+  // "l'ensemble de la proposition de loi visant à accorder le versement
+  // des allocations familiales dès le premier enfant" (1re lecture,
+  // adopté)
+  VTANR5L17V2272: "DLR5L17N51979",
+  // "l'ensemble du projet de loi organique relatif au Département-Région
+  // de Mayotte" (texte CMP, adopté — le plus récent des deux votes
+  // décisifs du dossier)
+  VTANR5L17V2976: "DLR5L17N51984",
+  // "l'ensemble du projet de loi de programmation pour la refondation de
+  // Mayotte" (texte CMP, adopté — le plus récent des deux votes décisifs
+  // du dossier)
+  VTANR5L17V2975: "DLR5L17N51985",
+  // "l'ensemble du projet de loi relatif au transfert à l'Etat des
+  // personnels enseignants de l'enseignement du premier degré dans les
+  // îles Wallis et Futuna" (1re lecture, adopté)
+  VTANR5L17V2104: "DLR5L17N51986",
 };
 
 function normaliserDossierRef(
