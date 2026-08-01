@@ -439,7 +439,7 @@ p.page-gloss {
 
 .cmp-row {
   display: grid;
-  grid-template-columns: 2.6rem 1fr 3.4rem;
+  grid-template-columns: 4rem 1fr 3.4rem;
   align-items: center;
   gap: 0.7rem;
   padding: 0.22rem 0;
@@ -449,6 +449,7 @@ p.page-gloss {
 .cmp-group {
   font-family: var(--mono);
   color: var(--ink-muted);
+  white-space: nowrap;
 }
 
 .cmp-bar {
@@ -540,6 +541,7 @@ p.page-gloss {
 .back-link {
   display: inline-block;
   margin-top: 2rem;
+  padding: 0.5rem 0;
   font-size: 0.85rem;
   color: var(--accent);
   text-decoration: none;
@@ -547,4 +549,31 @@ p.page-gloss {
 
 .back-link:hover {
   text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .a-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .node-header,
+  .dossier-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 0.6rem;
+    row-gap: 0.3rem;
+  }
+
+  .node-header .page-title,
+  .dossier-header .dossier-title {
+    order: 3;
+    flex-basis: 100%;
+  }
+
+  .node-header .dossier-count,
+  .dossier-header .dossier-count,
+  .node-header .resultat-tag {
+    margin-left: auto;
+  }
 }
