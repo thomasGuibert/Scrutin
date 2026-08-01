@@ -63,6 +63,56 @@ describe("genererFicheScrutinEnrichie", () => {
     });
   });
 
+  it("borne l'Action et le Résultat attendu à ~10 lignes quand le contenu réel est très long", async () => {
+    const phraseLongue =
+      "Ceci est une phrase de test suffisamment longue pour dépasser la limite fixée. ".repeat(
+        15
+      );
+    const repository = new FakeAmendementRepository({
+      dispositif: phraseLongue,
+      exposeSommaire: phraseLongue,
+    });
+    const genererFicheScrutinEnrichie =
+      createGenererFicheScrutinEnrichie(repository);
+
+    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), "Un dossier");
+
+    expect(fiche.action.length).toBeLessThanOrEqual(801);
+    expect(fiche.action.endsWith("…")).toBe(true);
+    expect(fiche.resultatAttendu.length).toBeLessThanOrEqual(801);
+    expect(fiche.resultatAttendu.endsWith("…")).toBe(true);
+  });
+
+  it("borne le Contexte à ~10 lignes quand les paragraphes de fond sont longs", async () => {
+    const fondLong = "Motif détaillé numéro un très long. ".repeat(30);
+    const repository = new FakeAmendementRepository({
+      dispositif: "Dispositif court.",
+      exposeSommaire: `${fondLong}\n\nCet amendement propose l'effet visé.`,
+    });
+    const genererFicheScrutinEnrichie =
+      createGenererFicheScrutinEnrichie(repository);
+
+    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), "Un dossier");
+
+    expect(fiche.contexte.length).toBeLessThanOrEqual(801);
+    expect(fiche.contexte.endsWith("…")).toBe(true);
+    expect(fiche.resultatAttendu).toBe("Cet amendement propose l'effet visé.");
+  });
+
+  it("ne tronque pas un contenu déjà court", async () => {
+    const repository = new FakeAmendementRepository({
+      dispositif: "Dispositif court.",
+      exposeSommaire: "Cet amendement propose l'effet visé.",
+    });
+    const genererFicheScrutinEnrichie =
+      createGenererFicheScrutinEnrichie(repository);
+
+    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), "Un dossier");
+
+    expect(fiche.action).toBe("Dispositif court.");
+    expect(fiche.resultatAttendu).toBe("Cet amendement propose l'effet visé.");
+  });
+
   it("retombe sur la Fiche dérivée du titre quand le repository ne trouve rien", async () => {
     const repository = new FakeAmendementRepository(null);
     const genererFicheScrutinEnrichie =

@@ -34,6 +34,34 @@ function scinderExposeSommaire(exposeSommaire: string): {
   };
 }
 
+// Le contenu réel d'un amendement (dispositif, exposé des motifs) n'a pas
+// de limite de longueur côté AN — certains dispositifs enchaînent une
+// dizaine d'alinéas. On borne chaque champ de la Fiche à ~10 lignes plutôt
+// que de l'afficher en entier (estimation à 80 caractères/ligne, une
+// approximation volontairement simple — pas un calcul de rendu réel, qui
+// dépend de la largeur d'écran). Coupe à la dernière fin de phrase avant la
+// limite pour ne jamais tronquer en plein milieu d'une phrase.
+const CARACTERES_PAR_LIGNE = 80;
+const LIGNES_MAX = 10;
+
+function limiterALignes(texte: string, lignesMax: number = LIGNES_MAX): string {
+  const maxCaracteres = lignesMax * CARACTERES_PAR_LIGNE;
+  if (texte.length <= maxCaracteres) {
+    return texte;
+  }
+
+  const tronque = texte.slice(0, maxCaracteres);
+  const finDePhrase = tronque.lastIndexOf(". ");
+
+  // Coupe à la dernière phrase complète si elle laisse au moins la moitié
+  // du budget (évite un résultat ridiculement court si la première phrase
+  // dépasse déjà la limite) ; sinon coupe brute au mot le plus proche.
+  if (finDePhrase > maxCaracteres * 0.5) {
+    return `${tronque.slice(0, finDePhrase + 1)}…`;
+  }
+  return `${tronque.trimEnd()}…`;
+}
+
 export function createGenererFicheScrutinEnrichie(
   amendementRepository: AmendementRepository
 ) {
@@ -46,7 +74,8 @@ export function createGenererFicheScrutinEnrichie(
     // Pas de contenu réel trouvé (amendement hors périmètre curé, ou tout
     // scrutin non-amendement) : repli sur la Fiche dérivée du seul titre,
     // avec son "Résultat" = issue déjà connue du vote — jamais d'erreur,
-    // jamais de contenu manquant (cf. issue #46).
+    // jamais de contenu manquant (cf. issue #46). Déjà toujours courte
+    // (une phrase), pas besoin de la borner davantage.
     if (!detail) {
       return genererFicheScrutin(scrutin, dossierTitre);
     }
@@ -61,9 +90,9 @@ export function createGenererFicheScrutinEnrichie(
     const { fond, effetAttendu } = scinderExposeSommaire(detail.exposeSommaire);
 
     return {
-      contexte: fond ? `${attribution}\n\n${fond}` : attribution,
-      action: detail.dispositif,
-      resultatAttendu: effetAttendu,
+      contexte: limiterALignes(fond ? `${attribution}\n\n${fond}` : attribution),
+      action: limiterALignes(detail.dispositif),
+      resultatAttendu: limiterALignes(effetAttendu),
     };
   };
 }
