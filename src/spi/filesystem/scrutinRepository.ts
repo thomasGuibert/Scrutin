@@ -227,8 +227,16 @@ const DOSSIER_REF_OVERRIDE: Record<string, string> = {
   // "l'ensemble de la proposition de loi visant à harmoniser le mode de
   // scrutin aux élections municipales..." (2e lecture, adopté — à
   // distinguer de VTANR5L17V1304, déjà rattaché à DLR5L17N50579, décisif
-  // de la proposition de loi organique compagnon)
-  VTANR5L17V1303: "DLR5L17N50578",
+  // de la proposition de loi organique compagnon) — corrige un rattachement
+  // à DLR5L17N50578 (dossier réel mais vide, aucun acte "Décision" propre).
+  // La page officielle assemblee-nationale.fr de ce texte affiche "15e ➜
+  // 17e législature" : la proposition a été déposée en 2021 sous la 15e
+  // législature ("Renforcement de la parité dans les fonctions électives et
+  // exécutives du bloc communal", dossierRef DLR5L15N43846), puis retitrée
+  // en cours de navette lors de sa reprise en 2e lecture sous la 17e —
+  // confirmé par voteRefs=VTANR5L17V1303 sur la décision d'adoption du
+  // 2025-04-07 de ce même dossier DLR5L15N43846.
+  VTANR5L17V1303: "DLR5L15N43846",
   // "l'ensemble de la deuxième partie du projet de loi de financement de
   // la sécurité sociale pour 2025" (1re lecture, adopté — seul vote de
   // portée "l'ensemble" du dossier dans l'export, faute de vote sur
