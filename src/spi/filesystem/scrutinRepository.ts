@@ -186,21 +186,40 @@ const DOSSIER_REF_OVERRIDE: Record<string, string> = {
   // fauteuils roulants par l'Assurance maladie" (1re lecture, adopté)
   VTANR5L17V516: "DLR5L17N50370",
   // "l'ensemble de la proposition de loi portant programmation nationale
-  // pour l'énergie et le climat pour les années 2025 à 2035"
-  // (1re lecture, rejeté — seul et unique vote décisif du dossier, qui n'a
-  // pas connu de suite après ce rejet en première lecture)
-  VTANR5L17V2653: "DLR5L17N50407",
+  // pour l'énergie et le climat pour les années 2025 à 2035" (1re lecture,
+  // rejeté) — corrige une erreur de rapprochement par titre : DLR5L17N50407
+  // ("Programmation énergie-climat") n'a jamais eu de vote décisif dans son
+  // propre historique AN (aucun acte "Décision"). Le vrai dossier de ce
+  // scrutin, référencé explicitement par voteRefs dans
+  // Dossiers_Legislatifs.json, est DLR5L16N49849 — un dossier repris de la
+  // 16e législature (dépôt 2024-04-26, avant la dissolution de 2024). Note
+  // pour une curation future : ce même dossier connaît ensuite une étape
+  // "adoptée avec modifications" le 2025-07-08, sans voteRef exploitable
+  // dans cette même source — donc potentiellement pas le mot de la fin,
+  // mais aucun scrutin identifiable pour ce vote plus récent à ce jour.
+  VTANR5L17V2653: "DLR5L16N49849",
   // "l'ensemble de la proposition de loi visant à créer une croix de la
   // valeur des sapeurs-pompiers volontaires et professionnels"
   // (1re lecture, adopté)
   VTANR5L17V1724: "DLR5L17N50413",
   // "l'ensemble de la proposition de loi organique visant à reporter le
   // renouvellement général des membres du congrès et des assemblées de
-  // province de la Nouvelle-Calédonie afin de permettre la poursuite de
-  // la discussion en vue d'un accord consensuel..." (texte CMP, adopté —
-  // à distinguer de VTANR5L17V266, décisif d'un dossier de report
-  // antérieur et distinct, hors périmètre de ce lot)
-  VTANR5L17V3182: "DLR5L17N50450",
+  // province de la Nouvelle-Calédonie afin de permettre la mise en oeuvre
+  // de l'accord du 12 juillet 2025" (texte CMP, adopté) — corrige une
+  // erreur de rapprochement par titre : ce scrutin est le vote décisif de
+  // DLR5L17N52655 (dossier distinct et postérieur à DLR5L17N50450, dépôt
+  // 2025-08-13, spécifiquement lié à l'accord du 12 juillet 2025), pas de
+  // DLR5L17N50450 — confirmé par voteRefs dans Dossiers_Legislatifs.json.
+  VTANR5L17V3182: "DLR5L17N52655",
+  // "l'ensemble de la proposition de loi organique visant à reporter le
+  // renouvellement général des membres du congrès et des assemblées de
+  // province de la Nouvelle-Calédonie" (1re lecture, adopté) — vote décisif
+  // propre de DLR5L17N50450 (à ne pas confondre avec VTANR5L17V3182
+  // ci-dessus, décisif du dossier distinct DLR5L17N52655). Jamais lié
+  // nativement (dossierLegislatif null, même lacune que #33) ni curé
+  // jusqu'ici — trouvé en vérifiant DLR5L17N50450 après la correction de
+  // VTANR5L17V3182, qui laissait ce dossier sans aucun scrutin réel.
+  VTANR5L17V266: "DLR5L17N50450",
   // "l'ensemble de la proposition de loi visant à restaurer un système de
   // retraite plus juste en annulant les dernières réformes portant sur
   // l'âge de départ et le nombre d'annuités" (1re lecture, rejeté)
@@ -306,8 +325,13 @@ const DOSSIER_REF_OVERRIDE: Record<string, string> = {
   // démographie professionnelle des orthophonistes" (1re lecture, adopté)
   VTANR5L17V1265: "DLR5L17N51014",
   // "l'ensemble de la proposition de loi visant à lutter contre les
-  // déserts médicaux, d'initiative transpartisane" (1re lecture, adopté)
-  VTANR5L17V1607: "DLR5L17N51029",
+  // déserts médicaux, d'initiative transpartisane" (1re lecture, adopté) —
+  // corrige une erreur de rapprochement par titre : DLR5L17N51029 (dépôt
+  // 2024-12-03, même titre exact) n'a jamais eu de vote décisif dans son
+  // propre historique AN. Le vrai dossier de ce scrutin, référencé
+  // explicitement par voteRefs dans Dossiers_Legislatifs.json, est
+  // DLR5L17N51516 — un redépôt du même texte (dépôt 2025-02-13).
+  VTANR5L17V1607: "DLR5L17N51516",
   // "l'ensemble de la proposition de loi visant à renforcer les
   // conditions d'accès à la nationalité française à Mayotte" (texte CMP,
   // adopté — le plus récent des votes décisifs du dossier)
@@ -410,8 +434,13 @@ const DOSSIER_REF_OVERRIDE: Record<string, string> = {
   // recours au modèle de la société portuaire..." (1re lecture, adopté)
   VTANR5L17V4697: "DLR5L17N51581",
   // "l'ensemble de la proposition de loi visant à mettre fin au devoir
-  // conjugal" (1re lecture, adopté)
-  VTANR5L17V5243: "DLR5L17N51671",
+  // conjugal" (1re lecture, adopté) — corrige une erreur de rapprochement
+  // par titre : DLR5L17N51671 (dépôt 2025-03-11, "Mettre fin au « devoir
+  // conjugal »") n'a jamais eu de vote décisif dans son propre historique
+  // AN. Le vrai dossier de ce scrutin, référencé explicitement par
+  // voteRefs dans Dossiers_Legislatifs.json, est DLR5L17N53279 — un
+  // redépôt du même texte (dépôt 2025-12-02).
+  VTANR5L17V5243: "DLR5L17N53279",
   // "l'ensemble de la proposition de loi visant à garantir l'égal accès de
   // tous à l'accompagnement et aux soins palliatifs" (2e lecture, adopté —
   // le plus récent des deux votes décisifs du dossier)
