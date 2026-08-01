@@ -269,6 +269,10 @@ p.page-gloss {
   font-size: 0.79rem;
   color: var(--ink-muted);
   line-height: 1.4;
+  /* Un Contexte enrichi (issue #46) peut porter plusieurs paragraphes
+     séparés par un saut de ligne double — sans effet sur les champs à une
+     seule ligne, qui n'en contiennent pas. */
+  white-space: pre-line;
 }
 
 .brief-label {

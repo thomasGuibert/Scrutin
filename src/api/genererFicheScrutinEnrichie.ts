@@ -7,6 +7,33 @@ import {
   type Scrutin,
 } from "@/domain/scrutin";
 
+// L'exposé des motifs enchaîne généralement un ou plusieurs paragraphes de
+// fond (le problème qui motive l'amendement) puis un dernier paragraphe
+// conclusif ("Cet amendement propose ainsi de...", "Cet amendement vise
+// à...") qui énonce l'effet visé — vérifié sur les données réelles (ex.
+// amendement n°820 de M. Biteau, dossier "Loi Duplomb"). On ne garde que ce
+// dernier paragraphe comme "Résultat attendu" (court, et sans redite du
+// Contexte) ; les paragraphes de fond, s'il y en a, rejoignent le Contexte
+// plutôt que d'être dupliqués ou perdus.
+function scinderExposeSommaire(exposeSommaire: string): {
+  fond: string | null;
+  effetAttendu: string;
+} {
+  const paragraphes = exposeSommaire
+    .split(/\n{2,}/)
+    .map((p) => p.trim())
+    .filter((p) => p.length > 0);
+
+  if (paragraphes.length <= 1) {
+    return { fond: null, effetAttendu: exposeSommaire };
+  }
+
+  return {
+    fond: paragraphes.slice(0, -1).join("\n\n"),
+    effetAttendu: paragraphes[paragraphes.length - 1],
+  };
+}
+
 export function createGenererFicheScrutinEnrichie(
   amendementRepository: AmendementRepository
 ) {
@@ -25,20 +52,18 @@ export function createGenererFicheScrutinEnrichie(
     }
 
     const amendement = extraireAmendement(scrutin.titre);
-    const contexte = amendement
+    const attribution = amendement
       ? `Amendement de ${amendement.auteur}${
           amendement.article ? ` à l'article ${amendement.article}` : ""
         }.`
       : "Amendement.";
 
-    // L'exposé des motifs argue l'effet visé par l'amendement s'il est
-    // appliqué — c'est un "Résultat attendu" (même concept que
-    // FicheDossier.resultatAttendu), pas l'issue du vote lui-même (déjà
-    // affichée séparément dans le décompte du scrutin de la page).
+    const { fond, effetAttendu } = scinderExposeSommaire(detail.exposeSommaire);
+
     return {
-      contexte,
+      contexte: fond ? `${attribution}\n\n${fond}` : attribution,
       action: detail.dispositif,
-      resultatAttendu: detail.exposeSommaire,
+      resultatAttendu: effetAttendu,
     };
   };
 }

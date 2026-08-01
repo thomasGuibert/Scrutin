@@ -44,6 +44,25 @@ describe("genererFicheScrutinEnrichie", () => {
     });
   });
 
+  it("ne garde que le dernier paragraphe de l'exposé des motifs comme Résultat attendu, le reste rejoint le Contexte", async () => {
+    const repository = new FakeAmendementRepository({
+      dispositif: "Insérer l'alinéa suivant : « ... ».",
+      exposeSommaire:
+        "Premier paragraphe de fond.\n\nDeuxième paragraphe de fond.\n\nCet amendement propose ainsi l'effet visé.",
+    });
+    const genererFicheScrutinEnrichie =
+      createGenererFicheScrutinEnrichie(repository);
+
+    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), "Un dossier");
+
+    expect(fiche).toEqual({
+      contexte:
+        "Amendement de M. Amirshahi à l'article 2.\n\nPremier paragraphe de fond.\n\nDeuxième paragraphe de fond.",
+      action: "Insérer l'alinéa suivant : « ... ».",
+      resultatAttendu: "Cet amendement propose ainsi l'effet visé.",
+    });
+  });
+
   it("retombe sur la Fiche dérivée du titre quand le repository ne trouve rien", async () => {
     const repository = new FakeAmendementRepository(null);
     const genererFicheScrutinEnrichie =
