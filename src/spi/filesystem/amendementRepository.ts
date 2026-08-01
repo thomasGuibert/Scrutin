@@ -8,17 +8,25 @@ const ZIP_PATH = path.join(
   "data/raw/an/17/Amendements-scrutins-classifies.json.zip"
 );
 
+// L'export AN garde la sémantique XML "nil" pour un champ vide : dateSort
+// vaut alors un objet `{ "@xsi:nil": "true" }` plutôt que null ou une
+// chaîne (vérifié sur des amendements jamais tranchés, ex. déclarés
+// irrecevables) — jamais un `string | null` simple.
+type ValeurOuNil = string | { "@xsi:nil"?: string };
+
+// Un amendement déclaré irrecevable (ex. article 40 de la Constitution) n'a
+// ni dispositif ni exposé des motifs — corps.contenuAuteur est alors lui
+// aussi un objet "nil" plutôt que { dispositif, exposeSommaire } (vérifié
+// sur des données réelles).
 type RawAmendementFile = {
   amendement: {
     corps: {
-      contenuAuteur: {
-        dispositif: string;
-        exposeSommaire: string;
-      };
+      contenuAuteur:
+        | { dispositif: string; exposeSommaire: string }
+        | { "@xsi:nil"?: string };
     };
     cycleDeVie: {
-      dateSort: string | null;
-      sort: string;
+      dateSort: ValeurOuNil;
     };
   };
 };
@@ -42,39 +50,62 @@ function decoderEntitesHtml(texte: string): string {
 }
 
 function htmlVersTexte(html: string): string {
-  const sansBalises = html
+  // Décodé deux fois : une partie du jeu de données AN a des entités
+  // doublement échappées ("&amp;nbsp;" au lieu de "&nbsp;", vérifié sur des
+  // données réelles) — un seul passage laisserait un "&nbsp;" littéral
+  // après décodage du "&amp;" qui le précédait. Décoder AVANT de retirer
+  // les balises (plutôt qu'après) permet aussi de retirer les
+  // pseudo-balises révélées par ce décodage (ex. "&lt;sup&gt;" mal formé).
+  const decode = (s: string) => decoderEntitesHtml(decoderEntitesHtml(s));
+
+  return decode(html)
     .replace(/<\/p>/gi, "\n\n")
     .replace(/<br\s*\/?>/gi, "\n")
-    .replace(/<[^>]+>/g, "");
-
-  return decoderEntitesHtml(sansBalises)
+    .replace(/<[^>]+>/g, "")
     .replace(/[ \t]+/g, " ")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
 }
 
+type AmendementAvecContenu = RawAmendementFile & {
+  amendement: {
+    corps: { contenuAuteur: { dispositif: string; exposeSommaire: string } };
+  };
+};
+
+function lireAmendement(entry: AdmZip.IZipEntry): RawAmendementFile {
+  return JSON.parse(entry.getData().toString("utf-8")) as RawAmendementFile;
+}
+
+function aDuContenuReel(raw: RawAmendementFile): raw is AmendementAvecContenu {
+  return typeof (raw.amendement.corps.contenuAuteur as { dispositif?: unknown })
+    .dispositif === "string";
+}
+
 // Un même numéro d'amendement peut apparaître dans plusieurs
 // texteLegislatifRef (une lecture différente ne le renumérote pas, mais le
-// dossier peut être voté à plusieurs lectures). On retient celui dont la
-// date de décision (partie date de cycleDeVie.dateSort) correspond à la
-// date du scrutin ; à défaut (candidat unique, ou aucune date ne
-// correspond), le premier candidat.
+// dossier peut être voté à plusieurs lectures). Parmi les candidats ayant
+// un contenu réel (cf. aDuContenuReel — un candidat irrecevable/nil est
+// écarté même s'il correspond par ailleurs), on retient celui dont la date
+// de décision (partie date de cycleDeVie.dateSort) correspond à la date du
+// scrutin ; à défaut, n'importe lequel avec du contenu réel ; s'il n'y en a
+// aucun, aucune correspondance (repli sur la Fiche générique).
 function choisirCandidat(
   candidats: AdmZip.IZipEntry[],
   dateScrutin: string
-): AdmZip.IZipEntry {
-  if (candidats.length === 1) {
-    return candidats[0];
+): AmendementAvecContenu | null {
+  const avecContenu = candidats.map(lireAmendement).filter(aDuContenuReel);
+
+  if (avecContenu.length === 0) {
+    return null;
   }
 
-  const correspondant = candidats.find((entry) => {
-    const raw = JSON.parse(
-      entry.getData().toString("utf-8")
-    ) as RawAmendementFile;
-    return raw.amendement.cycleDeVie.dateSort?.slice(0, 10) === dateScrutin;
+  const correspondant = avecContenu.find((raw) => {
+    const dateSort = raw.amendement.cycleDeVie.dateSort;
+    return typeof dateSort === "string" && dateSort.slice(0, 10) === dateScrutin;
   });
 
-  return correspondant ?? candidats[0];
+  return correspondant ?? avecContenu[0];
 }
 
 export class FilesystemAmendementRepository implements AmendementRepository {
@@ -141,10 +172,10 @@ export class FilesystemAmendementRepository implements AmendementRepository {
       return null;
     }
 
-    const entry = choisirCandidat(candidats, scrutin.date);
-    const raw = JSON.parse(
-      entry.getData().toString("utf-8")
-    ) as RawAmendementFile;
+    const raw = choisirCandidat(candidats, scrutin.date);
+    if (!raw) {
+      return null;
+    }
 
     return {
       dispositif: htmlVersTexte(raw.amendement.corps.contenuAuteur.dispositif),

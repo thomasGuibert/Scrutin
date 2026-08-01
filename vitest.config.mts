@@ -12,7 +12,10 @@ export default defineConfig({
     exclude: [
       "**/node_modules/**",
       ".claude/worktrees/**",
-      "**/auditDossiersManquants.test.ts",
+      // Audits contre les archives réelles (des milliers d'entrées) plutôt
+      // que des fixtures — trop lents pour le `npm test` par défaut, cf.
+      // vitest.audit.config.mts (`npm run audit:dossiers`/`audit:fiches`).
+      "**/audit*.test.ts",
     ],
   },
 });

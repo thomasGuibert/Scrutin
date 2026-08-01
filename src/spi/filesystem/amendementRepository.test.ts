@@ -56,6 +56,36 @@ describe("FilesystemAmendementRepository", () => {
     expect(detailB).toEqual({ dispositif: "Dispositif B.", exposeSommaire: "Exposé B." });
   });
 
+  it("écarte un candidat irrecevable (sans contenu réel) au profit d'un candidat avec du contenu", async () => {
+    const repository = new FilesystemAmendementRepository(FIXTURE_ZIP_PATH);
+
+    const detail = await repository.getByScrutin(
+      creerScrutin({
+        titre:
+          "l'amendement n° 777 de M. Test à l'article premier de la proposition de loi (première lecture).",
+        date: "2025-07-01",
+      })
+    );
+
+    expect(detail).toEqual({
+      dispositif: "Dispositif réel.",
+      exposeSommaire: "Exposé réel.",
+    });
+  });
+
+  it("décode des entités doublement échappées (&amp;nbsp; -> espace, pas &nbsp; littéral)", async () => {
+    const repository = new FilesystemAmendementRepository(FIXTURE_ZIP_PATH);
+
+    const detail = await repository.getByScrutin(
+      creerScrutin({
+        titre:
+          "l'amendement n° 888 de M. Test à l'article premier de la proposition de loi (première lecture).",
+      })
+    );
+
+    expect(detail?.dispositif).toBe("I. – Test.");
+  });
+
   it("retourne null quand le dossier n'a pas de correspondance", async () => {
     const repository = new FilesystemAmendementRepository(FIXTURE_ZIP_PATH);
 
