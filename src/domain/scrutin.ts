@@ -190,12 +190,27 @@ export function determinerResultatDossier(
 // métadonnées déjà disponibles (titre nettoyé, dossier rattaché, décompte),
 // plutôt que rédigée à la main comme la fiche d'un dossier : le volume de
 // scrutins (des milliers) rend une rédaction manuelle par scrutin hors de
-// portée. Contrairement à la fiche dossier, le troisième volet ("Résultat")
-// décrit une issue déjà connue, jamais un effet attendu.
+// portée. Le troisième volet ("Résultat") décrit ici une issue déjà connue
+// (adopté/rejeté + décompte), jamais un effet attendu — cf. FicheScrutin
+// EffetAttendu ci-dessous pour le cas où un effet attendu réel est
+// disponible (contenu d'un amendement, issue #46).
 export type FicheScrutin = {
   contexte: string;
   action: string;
   resultat: string;
+};
+
+// Variante utilisée quand le contenu réel d'un amendement est disponible
+// (genererFicheScrutinEnrichie, issue #46) : contrairement au cas générique
+// ci-dessus, l'exposé des motifs rédigé par l'auteur·ice décrit un effet
+// visé si l'amendement est appliqué — pas l'issue du vote lui-même (déjà
+// affichée séparément dans le décompte du scrutin). Même vocabulaire que
+// FicheDossier.resultatAttendu (domain/dossier.ts), pas une coïncidence :
+// c'est le même concept, à l'échelle d'un amendement plutôt que du dossier.
+export type FicheScrutinEffetAttendu = {
+  contexte: string;
+  action: string;
+  resultatAttendu: string;
 };
 
 function pluraliser(valeur: number, mot: string): string {

@@ -38,10 +38,9 @@ describe("genererFicheScrutinEnrichie", () => {
     const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), "Un dossier");
 
     expect(fiche).toEqual({
-      contexte:
-        "Amendement de M. Amirshahi à l'article 2. Cet amendement vise à garantir une prise en charge adaptée.",
+      contexte: "Amendement de M. Amirshahi à l'article 2.",
       action: "Insérer l'alinéa suivant : « ... ».",
-      resultat: "Ce scrutin a été adopté (184 pour, 92 contre, 1 abstention).",
+      resultatAttendu: "Cet amendement vise à garantir une prise en charge adaptée.",
     });
   });
 

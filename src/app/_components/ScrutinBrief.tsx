@@ -1,9 +1,17 @@
-import type { FicheScrutin } from "@/domain/scrutin";
+import type { FicheScrutin, FicheScrutinEffetAttendu } from "@/domain/scrutin";
 
-// Fiche Contexte / Action / Résultat propre à un scrutin (cf. FicheDossier) —
-// contrairement à celle-ci, le résultat décrit une issue déjà connue, pas un
-// effet attendu.
-export function ScrutinBrief({ fiche }: { fiche: FicheScrutin }) {
+// Fiche Contexte / Action / Résultat propre à un scrutin (cf. FicheDossier)
+// — deux formes possibles pour le troisième volet : "Résultat" (issue déjà
+// connue du vote, cas générique) ou "Résultat attendu" (effet visé par le
+// contenu réel d'un amendement, quand disponible — cf.
+// genererFicheScrutinEnrichie et FicheScrutinEffetAttendu, issue #46).
+// Jamais les deux à la fois : le champ présent sur `fiche` détermine quel
+// libellé afficher.
+export function ScrutinBrief({
+  fiche,
+}: {
+  fiche: FicheScrutin | FicheScrutinEffetAttendu;
+}) {
   return (
     <div className="dossier-brief">
       <div>
@@ -15,8 +23,17 @@ export function ScrutinBrief({ fiche }: { fiche: FicheScrutin }) {
         {fiche.action}
       </div>
       <div>
-        <span className="brief-label">Résultat</span>
-        {fiche.resultat}
+        {"resultatAttendu" in fiche ? (
+          <>
+            <span className="brief-label">Résultat attendu</span>
+            {fiche.resultatAttendu}
+          </>
+        ) : (
+          <>
+            <span className="brief-label">Résultat</span>
+            {fiche.resultat}
+          </>
+        )}
       </div>
     </div>
   );
