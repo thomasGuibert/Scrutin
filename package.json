@@ -10,6 +10,7 @@
     "test": "vitest run",
     "audit:dossiers": "vitest run --config vitest.audit.config.mts src/spi/filesystem/auditDossiersManquants.test.ts",
     "audit:fiches": "vitest run --config vitest.audit.config.mts src/api/auditFichesScrutin.test.ts",
+    "audit:rattachements": "vitest run --config vitest.audit.config.mts src/spi/filesystem/auditRattachementsScrutins.test.ts",
     "curer:amendements": "node --experimental-transform-types scripts/extraire-amendements.ts"
   },
   "dependencies": {
