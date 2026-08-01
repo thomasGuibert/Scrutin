@@ -5,6 +5,7 @@ import {
   calculerTauxParticipation,
   calculerVotants,
   determinerResultatDossier,
+  estVoteSurAmendement,
   estVoteSurEnsemble,
   formaterTitreScrutin,
   genererFicheScrutin,
@@ -337,7 +338,7 @@ describe("trouverScrutinDecisif", () => {
 });
 
 describe("genererFicheScrutin", () => {
-  it("dérive contexte/action/résultat des métadonnées du scrutin et du dossier", () => {
+  it("dérive un contexte spécifique à l'amendement plutôt que le titre du dossier", () => {
     const scrutin = creerScrutin({
       titre:
         "l'amendement n° 44 de M. Arnaud Bonnet à l'article premier de la proposition de loi visant à garantir l'information (première lecture).",
@@ -351,21 +352,32 @@ describe("genererFicheScrutin", () => {
     );
 
     expect(fiche).toEqual({
-      contexte:
-        "Ce scrutin porte sur le dossier « Garantir l'information et la protection effective des victimes ».",
+      contexte: "Amendement de M. Arnaud Bonnet à l'article premier.",
       action:
         "L'amendement n° 44 de M. Arnaud Bonnet à l'article premier de la proposition de loi (première lecture).",
       resultat: "Ce scrutin a été adopté (46 pour, 36 contre, 32 abstentions).",
     });
   });
 
-  it("indique l'absence de dossier rattaché quand il n'y en a pas", () => {
+  it("indique l'absence de dossier rattaché quand il n'y en a pas et que le titre n'est pas classifiable", () => {
     const scrutin = creerScrutin({ dossierRef: null });
 
     const fiche = genererFicheScrutin(scrutin, null);
 
     expect(fiche.contexte).toBe(
       "Ce scrutin ne se rattache à aucun dossier législatif recensé."
+    );
+  });
+
+  it("retombe sur le titre du dossier quand le titre du scrutin n'est classifiable par aucun type de vote connu", () => {
+    const scrutin = creerScrutin({
+      titre: "l'article premier de la proposition de loi (première lecture).",
+    });
+
+    const fiche = genererFicheScrutin(scrutin, "Un dossier quelconque");
+
+    expect(fiche.contexte).toBe(
+      "Ce scrutin porte sur le dossier « Un dossier quelconque »."
     );
   });
 
@@ -377,5 +389,147 @@ describe("genererFicheScrutin", () => {
     const fiche = genererFicheScrutin(scrutin, null);
 
     expect(fiche.resultat).toContain("1 abstention)");
+  });
+
+  it("mentionne la lecture pour un vote sur l'ensemble", () => {
+    const scrutin = creerScrutin({
+      titre:
+        "l'ensemble de la proposition de loi visant à garantir l'information (première lecture).",
+    });
+
+    const fiche = genererFicheScrutin(scrutin, "Un dossier");
+
+    expect(fiche.contexte).toBe(
+      "Vote sur l'ensemble du texte, à l'issue de sa première lecture."
+    );
+  });
+
+  it("décrit le texte issu de la commission mixte paritaire pour un vote sur l'ensemble en CMP", () => {
+    const scrutin = creerScrutin({
+      titre:
+        "l'ensemble de la proposition de loi visant à sortir la France du piège du narcotrafic (texte de la commission mixte paritaire).",
+    });
+
+    const fiche = genererFicheScrutin(scrutin, "Un dossier");
+
+    expect(fiche.contexte).toBe(
+      "Vote sur l'ensemble du texte, à l'issue de l'examen du texte issu de la commission mixte paritaire."
+    );
+  });
+
+  it("mentionne la lecture pour un vote sur l'article unique", () => {
+    const scrutin = creerScrutin({
+      titre:
+        "l'article unique de la proposition de loi relative à la sortie des collections publiques (première lecture).",
+    });
+
+    const fiche = genererFicheScrutin(scrutin, "Un dossier");
+
+    expect(fiche.contexte).toBe(
+      "Vote sur l'article unique du texte, à l'issue de sa première lecture."
+    );
+  });
+
+  it("mentionne la lecture pour un vote direct sur le texte (ex. ratification de traité)", () => {
+    const scrutin = creerScrutin({
+      titre:
+        "le projet de loi autorisant l'approbation de l'accord entre le Gouvernement de la République française et la Communauté des Caraïbes (première lecture).",
+    });
+
+    const fiche = genererFicheScrutin(scrutin, "Un dossier");
+
+    expect(fiche.contexte).toBe(
+      "Vote sur le texte lui-même, à l'issue de sa première lecture."
+    );
+  });
+
+  it("nomme l'auteur·ice d'une motion de rejet préalable", () => {
+    const scrutin = creerScrutin({
+      titre:
+        "la motion de rejet préalable, déposée par Mme Mathilde Panot, de la proposition de loi visant à sortir la France du piège du narcotrafic (texte de la commission mixte paritaire).",
+    });
+
+    const fiche = genererFicheScrutin(scrutin, "Un dossier");
+
+    expect(fiche.contexte).toBe(
+      "Mme Mathilde Panot dépose une motion de rejet préalable visant à écarter le texte avant tout débat sur son contenu."
+    );
+  });
+
+  it("nomme le·la premier·ère signataire d'une motion de censure", () => {
+    const scrutin = creerScrutin({
+      titre:
+        "la motion de censure déposée en application de l'article 49, alinéa 2, de la Constitution par M. Boris Vallaud, Mme Mathilde Panot, Mme Cyrielle Chatelain, M. André Chassaigne et 188 de leurs collègues.",
+    });
+
+    const fiche = genererFicheScrutin(scrutin, null);
+
+    expect(fiche.contexte).toBe(
+      "Motion de censure déposée par M. Boris Vallaud."
+    );
+  });
+
+  it("nomme l'auteur·ice et l'article visé pour un vote sur amendement", () => {
+    const scrutin = creerScrutin({
+      titre:
+        "l'amendement n° 674 de M. Amirshahi à l'article 2 de la proposition de loi visant à sortir la France du piège du narcotrafic (première lecture).",
+    });
+
+    const fiche = genererFicheScrutin(scrutin, "Un dossier");
+
+    expect(fiche.contexte).toBe("Amendement de M. Amirshahi à l'article 2.");
+  });
+
+  it("distingue un sous-amendement d'un amendement", () => {
+    const scrutin = creerScrutin({
+      titre:
+        "le sous-amendement n° 973 de M. Caure à l'amendement n° 674 de M. Amirshahi à l'article 2 de la proposition de loi visant à sortir la France du piège du narcotrafic (première lecture).",
+    });
+
+    const fiche = genererFicheScrutin(scrutin, "Un dossier");
+
+    expect(fiche.contexte).toBe("Sous-amendement de M. Caure à l'article 2.");
+  });
+
+  it("retrouve l'auteur et l'article d'un amendement de suppression", () => {
+    const scrutin = creerScrutin({
+      titre:
+        "l'amendement de suppression n° 265 de M. Bernalicis de suppression de l'article 5 bis de la proposition de loi visant à sortir la France du piège du narcotrafic (première lecture).",
+    });
+
+    const fiche = genererFicheScrutin(scrutin, "Un dossier");
+
+    expect(fiche.contexte).toBe(
+      "Amendement de M. Bernalicis à l'article 5 bis."
+    );
+  });
+});
+
+describe("estVoteSurAmendement", () => {
+  it("reconnaît un vote sur un amendement", () => {
+    expect(
+      estVoteSurAmendement(
+        "l'amendement n° 9 de M. Di Filippo à l'article unique de la proposition de loi."
+      )
+    ).toBe(true);
+  });
+
+  it("reconnaît un vote sur un sous-amendement", () => {
+    expect(
+      estVoteSurAmendement(
+        "le sous-amendement n° 973 de M. Caure à l'amendement n° 674 de M. Amirshahi à l'article 2."
+      )
+    ).toBe(true);
+  });
+
+  it("ne reconnaît pas un vote sur l'ensemble ou un article", () => {
+    expect(
+      estVoteSurAmendement(
+        "l'ensemble de la proposition de loi (première lecture)."
+      )
+    ).toBe(false);
+    expect(
+      estVoteSurAmendement("l'article premier de la proposition de loi.")
+    ).toBe(false);
   });
 });

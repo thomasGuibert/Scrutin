@@ -202,13 +202,144 @@ function pluraliser(valeur: number, mot: string): string {
   return `${valeur} ${mot}${valeur > 1 ? "s" : ""}`;
 }
 
+// Le suffixe parenthésé final du titre AN donne la lecture/l'étape du texte
+// (12 variantes recensées sur les 8434 scrutins de la 17e législature).
+// Formulé pour s'insérer dans "à l'issue de {stade}" — null pour les rares
+// variantes non recensées (~0,2%), auquel cas la phrase reste valide sans
+// mention de lecture (cf. avecStade).
+const LIBELLES_LECTURE: Record<string, string> = {
+  "première lecture": "sa première lecture",
+  "deuxième lecture": "sa deuxième lecture",
+  "nouvelle lecture": "sa nouvelle lecture",
+  "lecture définitive": "sa lecture définitive",
+  "seconde délibération": "sa seconde délibération",
+  "texte de la commission mixte paritaire":
+    "l'examen du texte issu de la commission mixte paritaire",
+};
+
+function extraireStadeLecture(titre: string): string | null {
+  const match = titre.trim().match(/\(([^)]*)\)\.?\s*$/);
+  if (!match) {
+    return null;
+  }
+  return LIBELLES_LECTURE[match[1].trim().toLowerCase()] ?? null;
+}
+
+function avecStade(phrase: string, stade: string | null): string {
+  return stade ? `${phrase}, à l'issue de ${stade}.` : `${phrase}.`;
+}
+
+// "la motion de rejet préalable, déposée par Mme X, de la/du <dossier>..." —
+// formulation stable observée sur l'ensemble des motions de rejet préalable
+// de la 17e législature.
+function extraireAuteurRejetPrealable(titre: string): string | null {
+  const match = titre.match(
+    /^la motion de rejet préalable,\s*déposée par ([^,]+),/i
+  );
+  return match ? match[1].trim() : null;
+}
+
+// "la motion de censure[,] déposée en application de l'article 49[...] par
+// <premier·ère signataire>[, <autres signataires>][ et N (autres) député·es
+// /collègues]." — on ne retient que le·la premier·ère signataire, pas la
+// liste complète.
+function extraireAuteurMotionCensure(titre: string): string | null {
+  const match = titre.match(/\bpar ([^,]+?)(?:,| et \d)/i);
+  return match ? match[1].trim() : null;
+}
+
+export function estVoteSurAmendement(titre: string): boolean {
+  return /^(?:l['’]amendement|le sous-amendement)\b/i.test(titre.trim());
+}
+
+// "l'amendement n° X [rectifié] de <auteur> {à|après|de suppression} ..." —
+// l'auteur est tout ce qui suit "n° X de " jusqu'au premier marqueur de fin
+// (préposition introduisant l'article, "et les amendements identiques...",
+// ou "de suppression"). Cherché sans ancre de début pour couvrir aussi les
+// sous-amendements ("le sous-amendement n° Y de <auteur> à l'amendement
+// n° X...", où le n° pertinent pour l'auteur est le premier rencontré).
+function extraireAmendement(
+  titre: string
+): { auteur: string; article: string | null } | null {
+  const auteurMatch = titre.match(
+    /n°\s*(?:\d+)(?:\s+rectifié)?\s+de\s+(.+?)\s+(?:à\s|après\s|et\s|de\s+suppression\b)/i
+  );
+  if (!auteurMatch) {
+    return null;
+  }
+
+  const articleMatch = titre.match(
+    /(?:à|après|de)\s+l['’]article\s+([^(.]+?)(?:\s*\(|\s+de\s+la\b|\s+du\b|\.|$)/i
+  );
+
+  return {
+    auteur: auteurMatch[1].trim(),
+    article: articleMatch ? articleMatch[1].trim() : null,
+  };
+}
+
+function contextePourAmendement(titre: string): string | null {
+  const amendement = extraireAmendement(titre);
+  if (!amendement) {
+    return null;
+  }
+
+  const prefixe = /^le sous-amendement/i.test(titre.trim())
+    ? "Sous-amendement"
+    : "Amendement";
+  const suffixeArticle = amendement.article
+    ? ` à l'article ${amendement.article}`
+    : "";
+
+  return `${prefixe} de ${amendement.auteur}${suffixeArticle}.`;
+}
+
+// Contexte spécifique au type de vote plutôt qu'un copié-collé du titre du
+// dossier (identique pour tous les scrutins d'un même dossier — cf. issue
+// GitHub #44) : chaque type de scrutin déjà distingué par estScrutinDecisif/
+// trouverScrutinDecisif ci-dessus a sa propre formulation. Tout titre non
+// reconnu par ces classifications garde le comportement d'origine (repli),
+// pour ne jamais casser un cas imprévu.
+function contextePourTypeDeVote(titre: string): string | null {
+  const stade = extraireStadeLecture(titre);
+
+  if (estVoteSurEnsemble(titre)) {
+    return avecStade("Vote sur l'ensemble du texte", stade);
+  }
+  if (estVoteSurArticleUnique(titre)) {
+    return avecStade("Vote sur l'article unique du texte", stade);
+  }
+  if (estVoteDirectSurLeTexte(titre)) {
+    return avecStade("Vote sur le texte lui-même", stade);
+  }
+  if (estMotionDeRejetPrealable(titre)) {
+    const auteur = extraireAuteurRejetPrealable(titre);
+    return auteur
+      ? `${auteur} dépose une motion de rejet préalable visant à écarter le texte avant tout débat sur son contenu.`
+      : "Une motion de rejet préalable vise à écarter le texte avant tout débat sur son contenu.";
+  }
+  if (estMotionDeCensure(titre)) {
+    const auteur = extraireAuteurMotionCensure(titre);
+    return auteur
+      ? `Motion de censure déposée par ${auteur}.`
+      : "Motion de censure déposée en application de l'article 49 de la Constitution.";
+  }
+  if (estVoteSurAmendement(titre)) {
+    return contextePourAmendement(titre);
+  }
+
+  return null;
+}
+
 export function genererFicheScrutin(
   scrutin: Scrutin,
   dossierTitre: string | null
 ): FicheScrutin {
-  const contexte = dossierTitre
-    ? `Ce scrutin porte sur le dossier « ${dossierTitre} ».`
-    : "Ce scrutin ne se rattache à aucun dossier législatif recensé.";
+  const contexte =
+    contextePourTypeDeVote(scrutin.titre) ??
+    (dossierTitre
+      ? `Ce scrutin porte sur le dossier « ${dossierTitre} ».`
+      : "Ce scrutin ne se rattache à aucun dossier législatif recensé.");
 
   const action = formaterTitreScrutin(scrutin.titre);
 
