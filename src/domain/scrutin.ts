@@ -345,14 +345,21 @@ export function genererFicheScrutin(
       ? `Ce scrutin porte sur le dossier « ${dossierTitre} ».`
       : "Ce scrutin ne se rattache à aucun dossier législatif recensé.");
 
-  const action = formaterTitreScrutin(scrutin.titre);
+  return {
+    contexte,
+    action: formaterTitreScrutin(scrutin.titre),
+    resultat: formaterResultatScrutin(scrutin),
+  };
+}
 
-  const resultat = `Ce scrutin a été ${scrutin.resultat} (${scrutin.decompte.pour} pour, ${scrutin.decompte.contre} contre, ${pluraliser(
+// Partagé avec genererFicheScrutinEnrichie (cf. issue #46) : l'issue d'un
+// scrutin ne dépend jamais de la source de son Contexte/Action (titre seul
+// ou contenu réel d'un amendement), une seule formulation pour les deux.
+export function formaterResultatScrutin(scrutin: Scrutin): string {
+  return `Ce scrutin a été ${scrutin.resultat} (${scrutin.decompte.pour} pour, ${scrutin.decompte.contre} contre, ${pluraliser(
     scrutin.decompte.abstentions,
     "abstention"
   )}).`;
-
-  return { contexte, action, resultat };
 }
 
 export function calculerVotants(decompte: DecompteScrutin): number {

@@ -4,8 +4,14 @@ import { Breadcrumb, type BreadcrumbItem } from "@/app/_components/Breadcrumb";
 import { ComparaisonGroupes } from "@/app/_components/ComparaisonGroupes";
 import { ResultatBadge } from "@/app/_components/ResultatBadge";
 import { ScrutinBrief } from "@/app/_components/ScrutinBrief";
-import { comparerGroupes, getDossier, getScrutin, taxonomyRepository } from "@/app/_composition";
-import { calculerVotants, formaterTitreScrutin, genererFicheScrutin } from "@/domain/scrutin";
+import {
+  comparerGroupes,
+  genererFicheScrutinEnrichie,
+  getDossier,
+  getScrutin,
+  taxonomyRepository,
+} from "@/app/_composition";
+import { calculerVotants, formaterTitreScrutin } from "@/domain/scrutin";
 
 export function generateStaticParams() {
   return [{ uid: "VTANR5L17V6993" }, { uid: "VTANR5L17V6994" }];
@@ -29,7 +35,10 @@ export default async function ScrutinPage({
     ? taxonomyRepository.trouverContexteSousTheme(dossier.sousTheme)
     : null;
   const titreScrutin = formaterTitreScrutin(scrutin.titre);
-  const ficheScrutin = genererFicheScrutin(scrutin, dossier?.titre ?? null);
+  const ficheScrutin = await genererFicheScrutinEnrichie(
+    scrutin,
+    dossier?.titre ?? null
+  );
 
   const fil: BreadcrumbItem[] = [];
   if (contexte) {
