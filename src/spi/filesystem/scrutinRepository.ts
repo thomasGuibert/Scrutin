@@ -501,8 +501,16 @@ const DOSSIER_REF_OVERRIDE: Record<string, string> = {
   VTANR5L17V5296: "DLR5L17N52100",
   // "l'ensemble de la proposition de loi visant à la nationalisation
   // d'ArcelorMittal France afin de préserver la souveraineté
-  // industrielle de la France" (1re lecture, adopté)
-  VTANR5L17V4438: "DLR5L17N52207",
+  // industrielle de la France" (1re lecture, adopté) — corrige une
+  // erreur de rapprochement par titre du lot 6/6 (#33) : DLR5L17N52207
+  // est une proposition antérieure du même député (dépôt 2025-06-04),
+  // restée bloquée en commission sans jamais aller au vote. Le vrai
+  // dossier de ce scrutin est DLR5L17N52977 (dépôt 2025-10-14), dont
+  // l'acte "Décision" de 1re lecture AN référence explicitement
+  // voteRefs=VTANR5L17V4438 dans Dossiers_Legislatifs.json — la
+  // proposition qui a réellement été débattue, adoptée en 1re lecture,
+  // rejetée au Sénat, puis adoptée en 2e lecture (VTANR5L17V7380).
+  VTANR5L17V4438: "DLR5L17N52977",
   // "l'article unique du projet de loi autorisant l'approbation de la
   // convention de coopération judiciaire internationale entre le
   // Gouvernement de la République française et l'Organisation des
