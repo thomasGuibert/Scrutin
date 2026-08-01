@@ -258,11 +258,14 @@ export function estVoteSurAmendement(titre: string): boolean {
 // ou "de suppression"). Cherché sans ancre de début pour couvrir aussi les
 // sous-amendements ("le sous-amendement n° Y de <auteur> à l'amendement
 // n° X...", où le n° pertinent pour l'auteur est le premier rencontré).
-function extraireAmendement(
+// `numero` est exposé (pas seulement utilisé pour la Fiche) pour permettre
+// à un consommateur externe (ex. script de curation de l'issue #45) de
+// retrouver l'amendement correspondant dans le jeu de données AN dédié.
+export function extraireAmendement(
   titre: string
-): { auteur: string; article: string | null } | null {
+): { numero: string; auteur: string; article: string | null } | null {
   const auteurMatch = titre.match(
-    /n°\s*(?:\d+)(?:\s+rectifié)?\s+de\s+(.+?)\s+(?:à\s|après\s|et\s|de\s+suppression\b)/i
+    /n°\s*(\d+)(?:\s+rectifié)?\s+de\s+(.+?)\s+(?:à\s|après\s|et\s|de\s+suppression\b)/i
   );
   if (!auteurMatch) {
     return null;
@@ -273,7 +276,8 @@ function extraireAmendement(
   );
 
   return {
-    auteur: auteurMatch[1].trim(),
+    numero: auteurMatch[1],
+    auteur: auteurMatch[2].trim(),
     article: articleMatch ? articleMatch[1].trim() : null,
   };
 }

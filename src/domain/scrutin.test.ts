@@ -7,6 +7,7 @@ import {
   determinerResultatDossier,
   estVoteSurAmendement,
   estVoteSurEnsemble,
+  extraireAmendement,
   formaterTitreScrutin,
   genererFicheScrutin,
   type Scrutin,
@@ -502,6 +503,22 @@ describe("genererFicheScrutin", () => {
     expect(fiche.contexte).toBe(
       "Amendement de M. Bernalicis à l'article 5 bis."
     );
+  });
+});
+
+describe("extraireAmendement", () => {
+  it("extrait le numéro, l'auteur et l'article d'un amendement", () => {
+    expect(
+      extraireAmendement(
+        "l'amendement n° 674 de M. Amirshahi à l'article 2 de la proposition de loi visant à sortir la France du piège du narcotrafic (première lecture)."
+      )
+    ).toEqual({ numero: "674", auteur: "M. Amirshahi", article: "2" });
+  });
+
+  it("retourne null pour un titre qui n'est pas un amendement", () => {
+    expect(
+      extraireAmendement("l'ensemble de la proposition de loi (première lecture).")
+    ).toBeNull();
   });
 });
 

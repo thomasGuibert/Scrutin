@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "audit:dossiers": "vitest run --config vitest.audit.config.mts"
+    "audit:dossiers": "vitest run --config vitest.audit.config.mts",
+    "curer:amendements": "node --experimental-transform-types scripts/extraire-amendements.ts"
   },
   "dependencies": {
     "adm-zip": "^0.6.0",
