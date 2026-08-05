@@ -1,4 +1,5 @@
 import type { AmendementRepository } from "@/domain/amendement";
+import type { Dossier } from "@/domain/dossier";
 import {
   extraireAmendement,
   genererFicheScrutin,
@@ -67,17 +68,17 @@ export function createGenererFicheScrutinEnrichie(
 ) {
   return async function genererFicheScrutinEnrichie(
     scrutin: Scrutin,
-    dossierTitre: string | null
+    dossier: Dossier | null
   ): Promise<FicheScrutin | FicheScrutinEffetAttendu> {
     const detail = await amendementRepository.getByScrutin(scrutin);
 
     // Pas de contenu réel trouvé (amendement hors périmètre curé, ou tout
-    // scrutin non-amendement) : repli sur la Fiche dérivée du seul titre,
-    // avec son "Résultat" = issue déjà connue du vote — jamais d'erreur,
-    // jamais de contenu manquant (cf. issue #46). Déjà toujours courte
-    // (une phrase), pas besoin de la borner davantage.
+    // scrutin non-amendement) : repli sur la Fiche dérivée du titre (ou,
+    // pour un vote sur le texte entier, sur la Fiche dossier — cf.
+    // genererFicheScrutin), avec son "Résultat" = issue déjà connue du vote
+    // — jamais d'erreur, jamais de contenu manquant (cf. issue #46).
     if (!detail) {
-      return genererFicheScrutin(scrutin, dossierTitre);
+      return genererFicheScrutin(scrutin, dossier);
     }
 
     const amendement = extraireAmendement(scrutin.titre);

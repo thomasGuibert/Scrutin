@@ -35,10 +35,7 @@ export default async function ScrutinPage({
     ? taxonomyRepository.trouverContexteSousTheme(dossier.sousTheme)
     : null;
   const titreScrutin = formaterTitreScrutin(scrutin.titre);
-  const ficheScrutin = await genererFicheScrutinEnrichie(
-    scrutin,
-    dossier?.titre ?? null
-  );
+  const ficheScrutin = await genererFicheScrutinEnrichie(scrutin, dossier);
 
   const fil: BreadcrumbItem[] = [];
   if (contexte) {
