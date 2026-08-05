@@ -14,6 +14,7 @@
     "curer:amendements": "node --experimental-transform-types scripts/extraire-amendements.ts"
   },
   "dependencies": {
+    "@vercel/analytics": "^2.0.1",
     "adm-zip": "^0.6.0",
     "gray-matter": "^4.0.3",
     "next": "16.2.12",

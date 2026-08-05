@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumb, type BreadcrumbItem } from "@/app/_components/Breadcrumb";
 import { ComparaisonGroupes } from "@/app/_components/ComparaisonGroupes";
+import { DossierViewTracker } from "@/app/_components/DossierViewTracker";
 import { FicheDossier } from "@/app/_components/FicheDossier";
 import { ResultatBadge } from "@/app/_components/ResultatBadge";
 import {
@@ -87,6 +88,7 @@ export default async function DossierPage({
 
   return (
     <main>
+      <DossierViewTracker dossierRef={dossierRef} />
       <Breadcrumb items={fil} />
       <div className="node-header">
         <span className="dossier-tag">Dossier</span>
