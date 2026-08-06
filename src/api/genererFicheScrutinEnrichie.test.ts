@@ -225,11 +225,11 @@ describe("genererFicheScrutinEnrichie", () => {
     );
   });
 
-  it("reprend le Contexte depuis les Explications de vote quand elles sont disponibles, plutôt que la Fiche dossier", async () => {
+  it("reprend le Contexte depuis les Explications de vote quand elles sont disponibles (résumés déjà curés), plutôt que la Fiche dossier", async () => {
     const repository = new FakeAmendementRepository(null);
     const explicationsVoteRepository = new FakeExplicationsVoteRepository([
-      { groupe: "RN", orateur: "M. X", texte: "Nous voterons contre." },
-      { groupe: "SOC", orateur: "Mme Y", texte: "Nous voterons pour." },
+      { groupe: "RN", orateur: "M. X", texte: "…", resume: "Le groupe votera contre." },
+      { groupe: "SOC", orateur: "Mme Y", texte: "…", resume: "Le groupe votera pour." },
     ]);
     const genererFicheScrutinEnrichie = createGenererFicheScrutinEnrichie(
       repository,
@@ -249,14 +249,16 @@ describe("genererFicheScrutinEnrichie", () => {
 
     const fiche = await genererFicheScrutinEnrichie(scrutin, dossier, [scrutin]);
 
-    expect(fiche.contexte).toBe("RN : Nous voterons contre.\nSOC : Nous voterons pour.");
+    expect(fiche.contexte).toBe(
+      "RN : Le groupe votera contre.\n\nSOC : Le groupe votera pour."
+    );
     expect(fiche.action).toBe("Ce que change le texte.");
   });
 
   it("reprend les Explications de vote même pour un dossier à plusieurs lectures (pas soumis à la contrainte de genererFicheScrutin)", async () => {
     const repository = new FakeAmendementRepository(null);
     const explicationsVoteRepository = new FakeExplicationsVoteRepository([
-      { groupe: "RN", orateur: "M. X", texte: "Nous voterons contre en CMP." },
+      { groupe: "RN", orateur: "M. X", texte: "…", resume: "Le groupe votera contre en CMP." },
     ]);
     const genererFicheScrutinEnrichie = createGenererFicheScrutinEnrichie(
       repository,
@@ -281,6 +283,33 @@ describe("genererFicheScrutinEnrichie", () => {
       cmp,
     ]);
 
-    expect(fiche.contexte).toBe("RN : Nous voterons contre en CMP.");
+    expect(fiche.contexte).toBe("RN : Le groupe votera contre en CMP.");
+  });
+
+  it("retombe sur la Fiche dossier quand des Explications de vote existent mais qu'un groupe n'a pas encore de résumé rédigé (curation incomplète, issue #57)", async () => {
+    const repository = new FakeAmendementRepository(null);
+    const explicationsVoteRepository = new FakeExplicationsVoteRepository([
+      { groupe: "RN", orateur: "M. X", texte: "Nous voterons contre." },
+      { groupe: "SOC", orateur: "Mme Y", texte: "…", resume: "Le groupe votera pour." },
+    ]);
+    const genererFicheScrutinEnrichie = createGenererFicheScrutinEnrichie(
+      repository,
+      explicationsVoteRepository
+    );
+
+    const scrutin = creerScrutin({
+      titre: "l'ensemble de la proposition de loi (première lecture).",
+    });
+    const dossier = creerDossier({
+      ficheDossier: {
+        contexte: "Contexte de fond du dossier.",
+        action: "Ce que change le texte.",
+        resultatAttendu: "Non utilisé ici.",
+      },
+    });
+
+    const fiche = await genererFicheScrutinEnrichie(scrutin, dossier, [scrutin]);
+
+    expect(fiche.contexte).toBe("Contexte de fond du dossier.");
   });
 });

@@ -2,57 +2,56 @@ import { describe, expect, it } from "vitest";
 import { resumerExplicationsVote, type ExplicationVote } from "@/domain/compteRendu";
 
 describe("resumerExplicationsVote", () => {
-  it("garde la première phrase de chaque groupe, attribuée par sigle", () => {
+  it("assemble un paragraphe par groupe, à partir du résumé rédigé (pas de texte brut)", () => {
     const explications: ExplicationVote[] = [
-      { groupe: "RN", orateur: "M. X", texte: "Nous voterons contre. Détail supplémentaire ignoré." },
-      { groupe: "SOC", orateur: "Mme Y", texte: "Le groupe SOC soutient ce texte. Suite du propos." },
+      {
+        groupe: "RN",
+        orateur: "M. X",
+        texte: "Nous voterons contre. Détail supplémentaire ignoré.",
+        resume: "Le groupe votera contre, jugeant le texte insuffisant.",
+      },
+      {
+        groupe: "SOC",
+        orateur: "Mme Y",
+        texte: "Le groupe SOC soutient ce texte. Suite du propos.",
+        resume: "Le groupe soutient le texte, saluant une avancée pour les familles concernées.",
+      },
     ];
 
     expect(resumerExplicationsVote(explications)).toBe(
-      "RN : Nous voterons contre.\nSOC : Le groupe SOC soutient ce texte."
+      "RN : Le groupe votera contre, jugeant le texte insuffisant.\n\n" +
+        "SOC : Le groupe soutient le texte, saluant une avancée pour les familles concernées."
     );
   });
 
-  it("tronque un extrait sans point avant la limite, avec des points de suspension", () => {
-    const texteLong = "Une phrase sans point interne qui continue longtemps ".repeat(6).trim();
+  it("retourne null si un seul groupe n'a pas encore de résumé rédigé (curation incomplète, issue #57)", () => {
     const explications: ExplicationVote[] = [
-      { groupe: "RN", orateur: "M. X", texte: texteLong },
+      {
+        groupe: "RN",
+        orateur: "M. X",
+        texte: "Nous voterons contre.",
+        resume: "Le groupe votera contre.",
+      },
+      { groupe: "SOC", orateur: "Mme Y", texte: "Nous voterons pour." },
     ];
 
-    const resultat = resumerExplicationsVote(explications);
-
-    expect(resultat.startsWith("RN : ")).toBe(true);
-    expect(resultat.length).toBeLessThan(texteLong.length);
-    expect(resultat.endsWith("…")).toBe(true);
+    expect(resumerExplicationsVote(explications)).toBeNull();
   });
 
-  it("garde le texte intégral quand il est déjà court et sans point", () => {
+  it("retourne null si aucun groupe n'a de résumé rédigé", () => {
     const explications: ExplicationVote[] = [
-      { groupe: "RN", orateur: "M. X", texte: "Court" },
+      { groupe: "RN", orateur: "M. X", texte: "Nous voterons contre." },
     ];
 
-    expect(resumerExplicationsVote(explications)).toBe("RN : Court");
+    expect(resumerExplicationsVote(explications)).toBeNull();
   });
 
-  it("compte les groupes en trop plutôt que de dépasser le budget global", () => {
-    const phraseLongue = `${"Motif détaillé qui prend beaucoup de place dans le budget global. ".repeat(3).trim()}`;
-    const explications: ExplicationVote[] = Array.from({ length: 20 }, (_, i) => ({
-      groupe: `G${i}`,
-      orateur: `M. ${i}`,
-      texte: phraseLongue,
-    }));
-
-    const resultat = resumerExplicationsVote(explications);
-
-    expect(resultat.length).toBeLessThan(900);
-    expect(resultat).toMatch(/… et \d+ autres? groupes?\.$/);
-  });
-
-  it("ne compte aucun groupe en trop quand tout tient dans le budget", () => {
+  it("garde l'ordre reçu (celui de la prise de parole en séance)", () => {
     const explications: ExplicationVote[] = [
-      { groupe: "RN", orateur: "M. X", texte: "Contre." },
+      { groupe: "SOC", orateur: "Mme Y", texte: "…", resume: "Résumé SOC." },
+      { groupe: "RN", orateur: "M. X", texte: "…", resume: "Résumé RN." },
     ];
 
-    expect(resumerExplicationsVote(explications)).not.toContain("autre");
+    expect(resumerExplicationsVote(explications)).toBe("SOC : Résumé SOC.\n\nRN : Résumé RN.");
   });
 });

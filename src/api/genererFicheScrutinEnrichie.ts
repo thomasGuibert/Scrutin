@@ -93,9 +93,16 @@ export function createGenererFicheScrutinEnrichie(
           dossier.dossierRef,
           scrutin.uid
         );
-        if (explications) {
+        // resumerExplicationsVote renvoie null tant que la curation
+        // manuelle (issue #57) n'a pas encore couvert tous les groupes de
+        // ce scrutin — traité alors comme si aucune Explication n'était
+        // disponible, jamais un Contexte partiel.
+        const contexte = explications
+          ? resumerExplicationsVote(explications)
+          : null;
+        if (contexte) {
           return {
-            contexte: resumerExplicationsVote(explications),
+            contexte,
             action: dossier.ficheDossier.action,
             resultat: formaterResultatScrutin(scrutin),
           };
