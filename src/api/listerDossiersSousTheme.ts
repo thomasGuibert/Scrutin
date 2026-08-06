@@ -1,6 +1,11 @@
 import type { ComparaisonGroupe } from "@/api/comparerGroupes";
 import type { Dossier, DossierRepository } from "@/domain/dossier";
-import { determinerResultatDossier, type ResultatScrutin, type Scrutin } from "@/domain/scrutin";
+import {
+  determinerResultatDossier,
+  scrutinsDecisifs,
+  type ResultatScrutin,
+  type Scrutin,
+} from "@/domain/scrutin";
 
 type DossierAffiche = {
   dossier: Dossier;
@@ -13,7 +18,19 @@ type DossierAffiche = {
 
 export type DossierAvecPosition = DossierAffiche & {
   comparaison: ComparaisonGroupe[];
-  nombreScrutins: number;
+  // Nombre de Scrutins décisifs (cf. domain/scrutin.ts), pas le nombre brut
+  // de scrutins du dossier — celui-ci compte aussi les votes d'amendement et
+  // d'article, potentiellement des centaines sur un texte disputé, sans
+  // rapport avec le nombre de lectures qui ont réellement tranché son sort.
+  nombreLectures: number;
+  // uid du Scrutin décisif unique du dossier quand nombreLectures === 1 —
+  // permet de lier directement dessus depuis la liste de dossiers plutôt que
+  // de repasser par la page Dossier, qui n'apporterait alors aucune
+  // information supplémentaire (même Fiche dossier, même Position par
+  // groupe, un seul scrutin à choisir). null dès qu'il y a plusieurs
+  // lectures à départager (page Dossier nécessaire) ou aucune (dossier
+  // encore en cours d'examen).
+  scrutinDecisifUnique: string | null;
   resultat: ResultatScrutin | null;
 };
 
@@ -51,24 +68,30 @@ export function createListerDossiersSousTheme(
       })),
     ];
 
-    const dossiersAvecPosition = await Promise.all(
+    const dossiersAvecScrutins = await Promise.all(
       entrees.map(async ({ dossier, viaTag }) => {
         const [comparaison, scrutins] = await Promise.all([
           agregerPositionsDossiers([dossier.dossierRef]),
           listerScrutinsDossier(dossier.dossierRef),
         ]);
-        return {
-          dossier,
-          viaTag,
-          comparaison,
-          nombreScrutins: scrutins.length,
-          resultat: determinerResultatDossier(scrutins),
-        };
+        return { dossier, viaTag, comparaison, scrutins };
       })
     );
 
     // Un dossier sans scrutin n'a encore aucun vote décisif à afficher (cf.
     // CONTEXT.md, Dossier législatif) — en v1, il n'apparaît pas sur le site.
-    return dossiersAvecPosition.filter(({ nombreScrutins }) => nombreScrutins > 0);
+    return dossiersAvecScrutins
+      .filter(({ scrutins }) => scrutins.length > 0)
+      .map(({ dossier, viaTag, comparaison, scrutins }) => {
+        const decisifs = scrutinsDecisifs(scrutins);
+        return {
+          dossier,
+          viaTag,
+          comparaison,
+          nombreLectures: decisifs.length,
+          scrutinDecisifUnique: decisifs.length === 1 ? decisifs[0].uid : null,
+          resultat: determinerResultatDossier(scrutins),
+        };
+      });
   };
 }

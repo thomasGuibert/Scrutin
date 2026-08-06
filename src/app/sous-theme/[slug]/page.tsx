@@ -44,22 +44,40 @@ export default async function SousThemePage({
       <h1 className="page-title">{sousTheme.nom}</h1>
 
       <div className="dossier-list">
-        {dossiers.map(({ dossier, comparaison, viaTag, nombreScrutins, resultat }) => (
-          <div className="dossier-row" key={dossier.dossierRef}>
-            <Link className="dossier-header" href={`/dossier/${dossier.dossierRef}`}>
-              <span className="dossier-tags">
-                <span className="dossier-tag">{viaTag ?? "Dossier"}</span>
-                {resultat && <ResultatBadge resultat={resultat} />}
-              </span>
-              <span className="dossier-title">{dossier.titre}</span>
-              <span className="dossier-count">
-                {nombreScrutins} scrutin{nombreScrutins > 1 ? "s" : ""} →
-              </span>
-            </Link>
-            <FicheDossier fiche={dossier.ficheDossier} />
-            <ComparaisonGroupes titre="Position par groupe" comparaison={comparaison} />
-          </div>
-        ))}
+        {dossiers.map(
+          ({ dossier, comparaison, viaTag, nombreLectures, scrutinDecisifUnique, resultat }) => {
+            // Un seul Scrutin décisif : lien direct dessus, la page Dossier
+            // n'apporterait aucune information supplémentaire (même Fiche
+            // dossier, même Position par groupe, déjà affichées ici) — cf.
+            // issue #82. Sinon (plusieurs lectures à départager, ou dossier
+            // encore en cours d'examen sans aucun Scrutin décisif), la page
+            // Dossier reste nécessaire.
+            const href = scrutinDecisifUnique
+              ? `/scrutin/${scrutinDecisifUnique}`
+              : `/dossier/${dossier.dossierRef}`;
+            const libelle =
+              nombreLectures === 0
+                ? "En cours d'examen"
+                : nombreLectures === 1
+                  ? "Voir le vote"
+                  : `${nombreLectures} lectures`;
+
+            return (
+              <div className="dossier-row" key={dossier.dossierRef}>
+                <Link className="dossier-header" href={href}>
+                  <span className="dossier-tags">
+                    <span className="dossier-tag">{viaTag ?? "Dossier"}</span>
+                    {resultat && <ResultatBadge resultat={resultat} />}
+                  </span>
+                  <span className="dossier-title">{dossier.titre}</span>
+                  <span className="dossier-count">{libelle} →</span>
+                </Link>
+                <FicheDossier fiche={dossier.ficheDossier} />
+                <ComparaisonGroupes titre="Position par groupe" comparaison={comparaison} />
+              </div>
+            );
+          }
+        )}
       </div>
 
       <Link className="back-link" href={retourHref}>
