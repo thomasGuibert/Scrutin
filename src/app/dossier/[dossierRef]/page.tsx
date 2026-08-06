@@ -12,6 +12,7 @@ import {
   listerScrutinsDossier,
   taxonomyRepository,
 } from "@/app/_composition";
+import { lienDossierAN } from "@/domain/dossier";
 import { determinerResultatDossier, formaterTitreScrutin } from "@/domain/scrutin";
 import { tousLesSousThemes } from "@/domain/taxonomie";
 
@@ -123,6 +124,15 @@ export default async function DossierPage({
       >
         ← Retour {contexte ? `à ${contexte.sousTheme.nom}` : "à l'accueil"}
       </Link>
+      <br />
+      <a
+        className="source-link"
+        href={lienDossierAN(dossier.dossierRef)}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Voir le dossier sur l&apos;Assemblée nationale ↗
+      </a>
     </main>
   );
 }

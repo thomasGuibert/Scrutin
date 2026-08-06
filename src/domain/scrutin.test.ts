@@ -11,6 +11,7 @@ import {
   extraireAmendement,
   formaterTitreScrutin,
   genererFicheScrutin,
+  lienScrutinAN,
   type Scrutin,
   trouverScrutinDecisif,
 } from "@/domain/scrutin";
@@ -150,6 +151,24 @@ describe("formaterTitreScrutin", () => {
     );
 
     expect(titre).toBe("L'article 26 du projet de loi (première lecture).");
+  });
+});
+
+describe("lienScrutinAN", () => {
+  it("construit l'URL de la fiche officielle à partir du numéro et de la législature encodée dans l'uid", () => {
+    const scrutin = creerScrutin({ uid: "VTANR5L17V7988", numero: 7988 });
+
+    expect(lienScrutinAN(scrutin)).toBe(
+      "https://www.assemblee-nationale.fr/dyn/17/scrutins/7988"
+    );
+  });
+
+  it("s'adapte à une autre législature encodée dans l'uid", () => {
+    const scrutin = creerScrutin({ uid: "VTANR5L16V123", numero: 123 });
+
+    expect(lienScrutinAN(scrutin)).toBe(
+      "https://www.assemblee-nationale.fr/dyn/16/scrutins/123"
+    );
   });
 });
 
