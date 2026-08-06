@@ -45,7 +45,7 @@ describe("audit des Fiches Scrutin sur tous les dossiers classés (#46)", () => 
       for (const scrutin of scrutins) {
         let fiche;
         try {
-          fiche = await genererFiche(scrutin, dossier?.titre ?? null);
+          fiche = await genererFiche(scrutin, dossier, scrutins);
         } catch (e) {
           problemes.push(`${scrutin.uid} (${dossierRef}) : exception ${e}`);
           continue;

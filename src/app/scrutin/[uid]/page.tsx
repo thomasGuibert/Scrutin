@@ -9,6 +9,7 @@ import {
   genererFicheScrutinEnrichie,
   getDossier,
   getScrutin,
+  listerScrutinsDossier,
   taxonomyRepository,
 } from "@/app/_composition";
 import { calculerVotants, formaterTitreScrutin } from "@/domain/scrutin";
@@ -31,13 +32,17 @@ export default async function ScrutinPage({
 
   const comparaison = comparerGroupes(scrutin);
   const dossier = scrutin.dossierRef ? await getDossier(scrutin.dossierRef) : null;
+  const scrutinsDossier = dossier
+    ? await listerScrutinsDossier(dossier.dossierRef)
+    : [];
   const contexte = dossier
     ? taxonomyRepository.trouverContexteSousTheme(dossier.sousTheme)
     : null;
   const titreScrutin = formaterTitreScrutin(scrutin.titre);
   const ficheScrutin = await genererFicheScrutinEnrichie(
     scrutin,
-    dossier?.titre ?? null
+    dossier,
+    scrutinsDossier
   );
 
   const fil: BreadcrumbItem[] = [];

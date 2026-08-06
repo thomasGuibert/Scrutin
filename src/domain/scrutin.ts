@@ -1,3 +1,5 @@
+import type { Dossier } from "@/domain/dossier";
+
 export type DecompteScrutin = {
   pour: number;
   contre: number;
@@ -114,6 +116,18 @@ function estVoteDirectSurLeTexte(titre: string): boolean {
   );
 }
 
+// Les 3 formes de vote qui portent sur le texte dans son entier (par
+// opposition à un article/amendement pris isolément, ou à une motion de
+// procédure) — cf. genererFicheScrutin, qui s'en sert pour savoir quand
+// reprendre le Contexte/Action de la Fiche dossier plutôt que le titre AN.
+function estVoteSurLeTexteEntier(titre: string): boolean {
+  return (
+    estVoteSurEnsemble(titre) ||
+    estVoteSurArticleUnique(titre) ||
+    estVoteDirectSurLeTexte(titre)
+  );
+}
+
 function estMotionDeRejetPrealable(titre: string): boolean {
   return /^la motion de rejet préalable\b/i.test(titre.trim());
 }
@@ -141,9 +155,7 @@ function estMotionDeCensure(titre: string): boolean {
 // article non-unique, un amendement ou un sous-amendement pris isolément.
 function estScrutinDecisif(scrutin: Scrutin): boolean {
   return (
-    estVoteSurEnsemble(scrutin.titre) ||
-    estVoteSurArticleUnique(scrutin.titre) ||
-    estVoteDirectSurLeTexte(scrutin.titre) ||
+    estVoteSurLeTexteEntier(scrutin.titre) ||
     estMotionDeRejetPrealableAdoptee(scrutin) ||
     estMotionDeCensure(scrutin.titre)
   );
@@ -190,10 +202,21 @@ export function determinerResultatDossier(
 // métadonnées déjà disponibles (titre nettoyé, dossier rattaché, décompte),
 // plutôt que rédigée à la main comme la fiche d'un dossier : le volume de
 // scrutins (des milliers) rend une rédaction manuelle par scrutin hors de
-// portée. Le troisième volet ("Résultat") décrit ici une issue déjà connue
-// (adopté/rejeté + décompte), jamais un effet attendu — cf. FicheScrutin
-// EffetAttendu ci-dessous pour le cas où un effet attendu réel est
-// disponible (contenu d'un amendement, issue #46).
+// portée. Exception : un vote sur le texte entier (ensemble/article unique/
+// vote direct) reprend le Contexte/Action déjà rédigés à la main de la Fiche
+// dossier plutôt que de décrire l'état procédural du vote — c'est justement
+// le scrutin le plus consulté (souvent le Scrutin décisif), et son titre AN
+// seul ne dit jamais pourquoi certains groupes votent pour et d'autres
+// contre (cf. discussion du 2026-08-05) — mais seulement quand ce vote est
+// le seul du genre dans son dossier (cf. estSeulVoteSurLeTexteEntierDuDossier)
+// : sur un dossier à plusieurs lectures, répéter la même Fiche dossier à
+// l'identique sur chaque lecture perdrait le pourquoi propre à CE vote-là,
+// donc repli sur la description procédurale (avecStade) en attendant une
+// curation par scrutin (cf. discussion du 2026-08-06). Le troisième volet
+// ("Résultat") décrit toujours une issue déjà connue (adopté/rejeté +
+// décompte), jamais un effet attendu — cf. FicheScrutinEffetAttendu
+// ci-dessous pour le cas où un effet attendu réel est disponible (contenu
+// d'un amendement, issue #46).
 export type FicheScrutin = {
   contexte: string;
   action: string;
@@ -350,14 +373,45 @@ function contextePourTypeDeVote(titre: string): string | null {
   return null;
 }
 
+// Un dossier avec un seul vote sur le texte entier : sa Fiche dossier décrit
+// sans ambiguïté ce vote-là, aucune spécificité perdue à la reprendre. Un
+// dossier avec plusieurs lectures (première lecture, CMP, lecture
+// définitive...) a autant de votes sur le texte entier que de lectures —
+// leur répéter à l'identique la même Fiche dossier perdrait le "pourquoi de
+// CE vote en particulier" (ce qui a changé depuis la lecture précédente,
+// pourquoi celui-ci passe ou pas) : mieux vaut alors le repli procédural
+// (avecStade) qui au moins distingue les lectures, en attendant une
+// curation par scrutin (aucune source de données ne donne aujourd'hui le
+// contenu spécifique à chaque lecture — cf. discussion du 2026-08-06).
+function estSeulVoteSurLeTexteEntierDuDossier(
+  scrutin: Scrutin,
+  scrutinsDossier: Scrutin[]
+): boolean {
+  const votesSurTexteEntier = scrutinsDossier.filter((s) =>
+    estVoteSurLeTexteEntier(s.titre)
+  );
+  return (
+    estVoteSurLeTexteEntier(scrutin.titre) && votesSurTexteEntier.length <= 1
+  );
+}
+
 export function genererFicheScrutin(
   scrutin: Scrutin,
-  dossierTitre: string | null
+  dossier: Dossier | null,
+  scrutinsDossier: Scrutin[]
 ): FicheScrutin {
+  if (dossier && estSeulVoteSurLeTexteEntierDuDossier(scrutin, scrutinsDossier)) {
+    return {
+      contexte: dossier.ficheDossier.contexte,
+      action: dossier.ficheDossier.action,
+      resultat: formaterResultatScrutin(scrutin),
+    };
+  }
+
   const contexte =
     contextePourTypeDeVote(scrutin.titre) ??
-    (dossierTitre
-      ? `Ce scrutin porte sur le dossier « ${dossierTitre} ».`
+    (dossier
+      ? `Ce scrutin porte sur le dossier « ${dossier.titre} ».`
       : "Ce scrutin ne se rattache à aucun dossier législatif recensé.");
 
   return {

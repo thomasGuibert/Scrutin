@@ -560,6 +560,21 @@ p.page-gloss {
     grid-template-columns: 1fr;
   }
 
+  /* La tuile vedette (.a-tile-feature) garde sa mise en page en ligne
+     (nom/gloss côte à côte) même sous 640px si on ne la corrige pas ici —
+     oublié lors du passage au mobile (#43), qui n'avait touché que
+     .a-grid, .node-header/.dossier-header, .cmp-group et .back-link.
+     Repasse en colonne comme une tuile normale (.a-tile). */
+  .a-tile-feature {
+    flex-direction: column;
+    align-items: stretch;
+    min-height: 0;
+  }
+
+  .a-tile-feature .a-tile-gloss {
+    max-width: none;
+  }
+
   .node-header,
   .dossier-header {
     display: flex;
