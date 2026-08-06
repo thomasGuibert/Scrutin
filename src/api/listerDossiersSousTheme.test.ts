@@ -51,7 +51,7 @@ const UN_SCRUTIN_FACTICE = vi
   ]);
 
 describe("listerDossiersSousTheme", () => {
-  it("associe à chaque dossier du sous-thème sa Position agrégée et son nombre de scrutins", async () => {
+  it("associe à chaque dossier du sous-thème sa Position agrégée ; des scrutins d'article seuls ne comptent comme aucune lecture (dossier encore en cours d'examen)", async () => {
     const dossierA = unDossier("DLR5L17A", "cible");
     const dossierB = unDossier("DLR5L17B", "cible");
     const dossierRepository = new FakeDossierRepository([dossierA, dossierB]);
@@ -71,11 +71,12 @@ describe("listerDossiersSousTheme", () => {
     expect(resultat[0].dossier).toEqual(dossierA);
     expect(resultat[0].viaTag).toBeNull();
     expect(resultat[0].comparaison[0].position).toBe("Pour");
-    expect(resultat[0].nombreScrutins).toBe(2);
+    expect(resultat[0].nombreLectures).toBe(0);
+    expect(resultat[0].scrutinDecisifUnique).toBeNull();
     expect(resultat[0].resultat).toBeNull();
   });
 
-  it("expose le résultat (adopté/rejeté) du vote sur l'ensemble du dossier", async () => {
+  it("expose le résultat (adopté/rejeté) et l'uid du Scrutin décisif unique du dossier", async () => {
     const dossierA = unDossier("DLR5L17A", "cible");
     const dossierRepository = new FakeDossierRepository([dossierA]);
     const listerScrutinsDossier = vi.fn().mockResolvedValue([
@@ -94,6 +95,39 @@ describe("listerDossiersSousTheme", () => {
 
     const resultat = await listerDossiersSousTheme("cible");
 
+    expect(resultat[0].resultat).toBe("adopté");
+    expect(resultat[0].nombreLectures).toBe(1);
+    expect(resultat[0].scrutinDecisifUnique).toBe("V1");
+  });
+
+  it("ne propose pas de Scrutin décisif unique quand le dossier a connu plusieurs lectures", async () => {
+    const dossierA = unDossier("DLR5L17A", "cible");
+    const dossierRepository = new FakeDossierRepository([dossierA]);
+    const listerScrutinsDossier = vi.fn().mockResolvedValue([
+      {
+        uid: "V1",
+        titre: "l'ensemble de la proposition de loi (première lecture).",
+        numero: 1,
+        resultat: "rejeté",
+      },
+      {
+        uid: "V2",
+        titre: "l'ensemble de la proposition de loi (nouvelle lecture).",
+        numero: 2,
+        resultat: "adopté",
+      },
+    ]);
+    const listerDossiersSousTheme = createListerDossiersSousTheme(
+      dossierRepository,
+      AGREGATION_FACTICE,
+      listerScrutinsDossier
+    );
+
+    const resultat = await listerDossiersSousTheme("cible");
+
+    expect(resultat[0].nombreLectures).toBe(2);
+    expect(resultat[0].scrutinDecisifUnique).toBeNull();
+    // le résultat définitif reste celui du scrutin décisif le plus récent
     expect(resultat[0].resultat).toBe("adopté");
   });
 

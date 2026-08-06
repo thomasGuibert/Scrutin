@@ -172,6 +172,17 @@ function estScrutinDecisif(scrutin: Scrutin): boolean {
   );
 }
 
+// Tous les Scrutins décisifs d'un dossier (cf. estScrutinDecisif), dans
+// l'ordre reçu — un par lecture qui a réellement tranché (première lecture,
+// nouvelle lecture, lecture définitive...). Sert à compter les lectures
+// d'un dossier (listerDossiersSousTheme) sans compter au passage les
+// scrutins d'amendement/d'article, potentiellement des centaines sur un
+// texte disputé — jamais un indicateur pertinent du nombre de votes à
+// proposer à la lecture.
+export function scrutinsDecisifs(scrutins: Scrutin[]): Scrutin[] {
+  return scrutins.filter(estScrutinDecisif);
+}
+
 // Le scrutin décisif le plus récent (numéro le plus élevé) parmi ceux
 // identifiés par estScrutinDecisif. Un dossier peut connaître plusieurs
 // lectures, donc plusieurs votes décisifs ; seul le dernier reflète l'issue
@@ -179,7 +190,7 @@ function estScrutinDecisif(scrutin: Scrutin): boolean {
 // toujours en cours d'examen, encore seulement des votes d'amendement/
 // d'article/de procédure).
 export function trouverScrutinDecisif(scrutins: Scrutin[]): Scrutin | null {
-  const decisifs = scrutins.filter(estScrutinDecisif);
+  const decisifs = scrutinsDecisifs(scrutins);
   if (decisifs.length === 0) {
     return null;
   }
