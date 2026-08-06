@@ -76,14 +76,25 @@ function nettoyerTexte(xml: string): string {
 // Un fichier compte rendu = une séance entière : plusieurs sujets discutés
 // (chacun un <sommaire1>), et pour chacun, éventuellement un bloc
 // "Explications de vote" immédiatement suivi d'un bloc "Vote sur ..." (cf.
-// domain/compteRendu.ts). Capturé en un seul passage plutôt qu'en
-// naviguant l'arbre XML complet (pas de parseur XML dans ce projet, cf.
-// amendementRepository.ts qui fait le même choix pour du JSON/HTML) : le
-// motif recherché est toujours la même paire de blocs adjacents.
-const MOTIF_PAIRE_EXPLICATIONS_VOTE = new RegExp(
-  '<sommaire2>\\s*<titreStruct[^>]*>\\s*<intitule>Explications de vote[^<]*</intitule>\\s*</titreStruct>\\s*((?:<para\\b[^>]*>[\\s\\S]*?</para>\\s*)*)</sommaire2>\\s*<sommaire2>\\s*<titreStruct[^>]*>\\s*<intitule>([^<]*)</intitule>',
-  "g"
-);
+// domain/compteRendu.ts). Repéré en 2 motifs séparés plutôt qu'un seul motif
+// combiné avec un groupe répété contenant un ".*?" (`(?:<para...>[\s\S]*?
+// </para>\s*)*`) : ce genre de motif est sujet au backtracking
+// catastrophique dès que le contenu réel s'écarte un peu de la forme
+// attendue (vérifié en pratique — plusieurs minutes, voire un blocage,
+// sur un fichier réel de ~700 Ko). Pas de parseur XML dans ce projet (cf.
+// amendementRepository.ts, même choix pour du JSON/HTML), mais un motif
+// combiné n'était pas nécessaire ici : chaque sous-motif ci-dessous ne
+// contient qu'un seul ".*?" isolé, jamais répété — sans risque équivalent.
+const MOTIF_BLOC_EXPLICATIONS_VOTE =
+  /<sommaire2>\s*<titreStruct[^>]*>\s*<intitule>Explications de vote[^<]*<\/intitule>\s*<\/titreStruct>([\s\S]*?)<\/sommaire2>/g;
+
+// Recherché seulement juste après un bloc Explications de vote (cf.
+// trouverCandidats) — une fenêtre de quelques centaines de caractères
+// suffit très largement pour ne pas retomber dans le même écueil sur un
+// balayage plein document.
+const LONGUEUR_FENETRE_SOMMAIRE2_SUIVANT = 500;
+const MOTIF_INTITULE_SOMMAIRE2_SUIVANT =
+  /^\s*<sommaire2>\s*<titreStruct[^>]*>\s*<intitule>([^<]*)<\/intitule>/;
 
 const MOTIF_SOMMAIRE1_INTITULE = /<sommaire1\b[^>]*>\s*<titreStruct[^>]*>\s*<intitule>([\s\S]*?)<\/intitule>/g;
 
@@ -113,8 +124,16 @@ function trouverIntituleSommaire1Precedent(
 function trouverCandidats(xml: string): Candidat[] {
   const candidats: Candidat[] = [];
 
-  for (const match of xml.matchAll(MOTIF_PAIRE_EXPLICATIONS_VOTE)) {
-    const [, blocExplications, intituleVote] = match;
+  for (const match of xml.matchAll(MOTIF_BLOC_EXPLICATIONS_VOTE)) {
+    const blocExplications = match[1];
+    const finBloc = (match.index ?? 0) + match[0].length;
+    const fenetre = xml.slice(finBloc, finBloc + LONGUEUR_FENETRE_SOMMAIRE2_SUIVANT);
+
+    const suite = fenetre.match(MOTIF_INTITULE_SOMMAIRE2_SUIVANT);
+    if (!suite) {
+      continue;
+    }
+    const intituleVote = suite[1];
     if (!INTITULE_VOTE_TEXTE_ENTIER.test(intituleVote.trim())) {
       continue;
     }

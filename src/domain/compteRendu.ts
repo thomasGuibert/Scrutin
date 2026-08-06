@@ -24,3 +24,15 @@ export interface CompteRenduRepository {
     dossierTitre: string
   ): Promise<ExplicationVote[] | null>;
 }
+
+// Lecture de l'archive précalculée (scripts/extraire-explications-vote.ts,
+// issue #54) plutôt que du matching date+titre à la volée
+// (CompteRenduRepository ci-dessus, encore utile pour explorer un nouveau
+// lot de comptes rendus avant qu'il ne soit passé dans le script) — clé
+// directe dossierRef + uid du scrutin, déjà résolue une fois pour toutes.
+export interface ExplicationsVoteRepository {
+  getByScrutin(
+    dossierRef: string,
+    scrutinUid: string
+  ): Promise<ExplicationVote[] | null>;
+}
