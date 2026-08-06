@@ -81,6 +81,23 @@ describe("FilesystemCompteRenduRepository", () => {
     expect(explications).toBeNull();
   });
 
+  it("ne confond pas 2 sujets qui ne partagent que l'article « les » (issue #62)", async () => {
+    const repository = creerRepository();
+
+    // "les" n'a pas de rapport de fond avec "Encadrer les délais de
+    // paiement des entreprises" (le seul candidat réel ce jour-là à part
+    // les 2 dossiers "Réforme du financement..." déjà testés plus haut) —
+    // doit rester à un score de 0, pas 1, sous peine de reproduire le bug
+    // trouvé sur un cas réel (3 dossiers faussement associés aux mêmes
+    // Explications de vote le même jour, "les" manquant de MOTS_VIDES).
+    const explications = await repository.getExplicationsVote(
+      "2025-01-15",
+      "Renforcer les contrôles sanitaires dans les abattoirs"
+    );
+
+    expect(explications).toBeNull();
+  });
+
   it("retourne null quand aucun sujet de la date ne correspond au titre donné", async () => {
     const repository = creerRepository();
 
