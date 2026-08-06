@@ -12,7 +12,7 @@ import {
   listerScrutinsDossier,
   taxonomyRepository,
 } from "@/app/_composition";
-import { calculerVotants, formaterTitreScrutin } from "@/domain/scrutin";
+import { calculerVotants, formaterTitreScrutin, lienScrutinAN } from "@/domain/scrutin";
 
 export function generateStaticParams() {
   return [{ uid: "VTANR5L17V6993" }, { uid: "VTANR5L17V6994" }];
@@ -111,6 +111,15 @@ export default async function ScrutinPage({
           ← Retour à {dossier.titre}
         </Link>
       )}
+      <br />
+      <a
+        className="source-link"
+        href={lienScrutinAN(scrutin)}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Voir le scrutin sur l&apos;Assemblée nationale ↗
+      </a>
     </main>
   );
 }

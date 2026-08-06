@@ -88,6 +88,16 @@ export function formaterTitreScrutin(titre: string): string {
   return majusculeInitiale(retirerDescriptionDossier(titre));
 }
 
+// La fiche officielle du scrutin sur assemblee-nationale.fr est indexée par
+// son simple numéro (pas l'uid complet) — vérifié sur un cas réel
+// (VTANR5L17V7988 → /dyn/17/scrutins/7988). Même logique d'extraction de
+// législature que lienDossierAN (domain/dossier.ts) — dupliquée plutôt que
+// partagée : deux lignes, pas de dépendance croisée à justifier pour si peu.
+export function lienScrutinAN(scrutin: Scrutin): string {
+  const legislature = scrutin.uid.match(/5L(\d+)/)?.[1] ?? "17";
+  return `https://www.assemblee-nationale.fr/dyn/${legislature}/scrutins/${scrutin.numero}`;
+}
+
 // Le vote qui décide du sort définitif d'un dossier n'est jamais un article
 // ou un amendement pris isolément, mais le vote sur "l'ensemble" du texte —
 // seul intitulé de scrutin qui commence ainsi dans l'export AN.
