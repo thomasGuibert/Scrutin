@@ -130,7 +130,7 @@ function estVoteDirectSurLeTexte(titre: string): boolean {
 // opposition à un article/amendement pris isolément, ou à une motion de
 // procédure) — cf. genererFicheScrutin, qui s'en sert pour savoir quand
 // reprendre le Contexte/Action de la Fiche dossier plutôt que le titre AN.
-function estVoteSurLeTexteEntier(titre: string): boolean {
+export function estVoteSurLeTexteEntier(titre: string): boolean {
   return (
     estVoteSurEnsemble(titre) ||
     estVoteSurArticleUnique(titre) ||
