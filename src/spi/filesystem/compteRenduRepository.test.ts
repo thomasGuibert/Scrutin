@@ -115,6 +115,29 @@ describe("FilesystemCompteRenduRepository", () => {
     expect(explications).toBeNull();
   });
 
+  it("retrouve un bloc Explications de vote communes à 2 textes votés le même jour, distingués par un suffixe en italique dans l'intitulé du vote (ex. « Vote sur l'ensemble (accompagnement et soins palliatifs) »)", async () => {
+    const repository = creerRepository();
+
+    // Le suffixe entre parenthèses qui distingue les 2 votes est encodé en
+    // XML avec une balise <italique> juste après "l'ensemble" — sans elle,
+    // le motif qui vérifie qu'un bloc Explications de vote est bien suivi
+    // d'un "Vote sur l'ensemble/l'article unique" échouait (le texte de
+    // l'intitulé n'était capturé que jusqu'à la première balise inline
+    // rencontrée), et le bloc entier passait inaperçu.
+    const explications = await repository.getExplicationsVote(
+      "2025-01-15",
+      "Accompagnement et soins palliatifs"
+    );
+
+    expect(explications).toEqual([
+      {
+        groupe: "Dem",
+        orateur: "M. Marc Rousseau",
+        texte: "Le groupe Dem votera pour ces deux textes sur la fin de vie.",
+      },
+    ]);
+  });
+
   it("retourne null quand aucun sujet de la date ne correspond au titre donné", async () => {
     const repository = creerRepository();
 

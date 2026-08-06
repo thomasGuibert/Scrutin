@@ -102,9 +102,23 @@ const MOTIF_BLOC_EXPLICATIONS_VOTE =
 // trouverCandidats) — une fenêtre de quelques centaines de caractères
 // suffit très largement pour ne pas retomber dans le même écueil sur un
 // balayage plein document.
+//
+// Le groupe capturant va jusqu'à `</intitule>`, pas seulement jusqu'à la
+// première balise (`[^<]*`) : quand 2 textes sont votés le même jour, leurs
+// "Vote sur l'ensemble" respectifs sont distingués par un suffixe entre
+// parenthèses mis en italique juste après "l'ensemble" (ex. "Vote sur
+// l'ensemble<italique> (accompagnement et soins palliatifs)</italique>") —
+// avec `[^<]*`, la capture s'arrêtait net à cette balise et le test
+// INTITULE_VOTE_TEXTE_ENTIER ci-dessous ne voyait jamais que la chaîne vide,
+// faisant disparaître tout le bloc Explications de vote associé (cas réel :
+// le vote sur le texte "Droit à l'aide à mourir" du 25 février 2026, voté le
+// même jour que "Accompagnement et soins palliatifs" avec des Explications
+// de vote communes aux deux textes). Le test ci-dessous n'ancre qu'en début
+// de chaîne (`^Vote sur l'ensemble`), donc peu importe qu'elle contienne
+// aussi la suite balisée du suffixe.
 const LONGUEUR_FENETRE_SOMMAIRE2_SUIVANT = 500;
 const MOTIF_INTITULE_SOMMAIRE2_SUIVANT =
-  /^\s*<sommaire2>\s*<titreStruct[^>]*>\s*<intitule>([^<]*)<\/intitule>/;
+  /^\s*<sommaire2>\s*<titreStruct[^>]*>\s*<intitule>([\s\S]*?)<\/intitule>/;
 
 const MOTIF_SOMMAIRE1_INTITULE = /<sommaire1\b[^>]*>\s*<titreStruct[^>]*>\s*<intitule>([\s\S]*?)<\/intitule>/g;
 

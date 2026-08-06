@@ -43,6 +43,18 @@ function lireTitreDossier(dossierRef: string): string | null {
   return typeof data.titre === "string" ? data.titre : null;
 }
 
+// Exception ponctuelle, à ne pas généraliser sans nouveau cas vérifié à la
+// main : le dossier "Fin de vie" (titre du site) est débattu et voté à
+// l'Assemblée sous l'intitulé de la proposition de loi elle-même, "Droit à
+// l'aide à mourir" — les 2 titres ne partagent aucun mot, donc aucun score
+// de correspondance possible avec compteRenduRepository.getExplicationsVote,
+// qui compare uniquement sur des mots communs. Vérifié à la main sur le
+// compte rendu du 30 juin 2026 (nouvelle lecture) avant d'ajouter cette
+// entrée : 11 orateurs, un par groupe, correctement attribués.
+const ALIAS_TITRE_DOSSIER: Record<string, string> = {
+  DLR5L17N51670: "Droit à l’aide à mourir",
+};
+
 async function main() {
   const dossierRefs = dossierRefsClasses();
   console.log(`${dossierRefs.length} dossiers classés.`);
@@ -70,11 +82,13 @@ async function main() {
 
     const parScrutin: Record<string, unknown> = {};
 
+    const titreRecherche = ALIAS_TITRE_DOSSIER[dossierRef] ?? titreDossier;
+
     for (const scrutin of votesTexteEntier) {
       scrutinsVoteTexteEntier++;
       const explications = await compteRenduRepository.getExplicationsVote(
         scrutin.date,
-        titreDossier
+        titreRecherche
       );
       if (explications) {
         scrutinsAvecExplications++;
