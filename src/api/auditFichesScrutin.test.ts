@@ -1,10 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
+import { createComparerGroupes } from "@/api/comparerGroupes";
 import { createGenererFicheScrutinEnrichie } from "@/api/genererFicheScrutinEnrichie";
 import { FilesystemAmendementRepository } from "@/spi/filesystem/amendementRepository";
 import { FilesystemDossierRepository } from "@/spi/filesystem/dossierRepository";
 import { FilesystemExplicationsVoteRepository } from "@/spi/filesystem/explicationsVoteRepository";
+import { FilesystemGroupeRepository } from "@/spi/filesystem/groupes";
 import { FilesystemScrutinRepository } from "@/spi/filesystem/scrutinRepository";
 import { DeclaredTaxonomyRepository } from "@/spi/filesystem/taxonomie";
 
@@ -20,6 +22,35 @@ import { DeclaredTaxonomyRepository } from "@/spi/filesystem/taxonomie";
 
 const CONTENT_DOSSIERS_DIR = path.join(process.cwd(), "content/dossiers");
 
+// Budget d'un champ texte de la Fiche — inchangé depuis #46. Le tableau des
+// Explications de vote (issue #59) n'est plus une chaîne concaténée par
+// groupe (l'ancien risque qui avait fait relever ce plafond, cf. #57) mais
+// un tableau structuré vérifié séparément ci-dessous : chaque résumé garde
+// donc le même budget qu'un champ classique.
+const LONGUEUR_CHAMP_MAX = 820;
+
+function contientHtmlOuEntites(valeur: string): boolean {
+  return /<[a-z]|&#\d|&#x[0-9a-f]|&nbsp;|&amp;/i.test(valeur);
+}
+
+function verifierTexte(
+  libelle: string,
+  valeur: string,
+  problemes: string[]
+): void {
+  if (!valeur || valeur.trim().length === 0) {
+    problemes.push(`${libelle} vide`);
+  }
+  if (contientHtmlOuEntites(valeur)) {
+    problemes.push(`${libelle} contient du HTML/entités non décodées`);
+  }
+  if (valeur.length > LONGUEUR_CHAMP_MAX) {
+    problemes.push(
+      `${libelle} fait ${valeur.length} caractères (> ${LONGUEUR_CHAMP_MAX})`
+    );
+  }
+}
+
 function dossierRefsClasses(): string[] {
   return fs
     .readdirSync(CONTENT_DOSSIERS_DIR)
@@ -28,17 +59,19 @@ function dossierRefsClasses(): string[] {
 }
 
 describe("audit des Fiches Scrutin sur tous les dossiers classés (#46)", () => {
-  it("génère une Fiche valide pour chaque scrutin : jamais d'exception, jamais vide, jamais de HTML/entités non décodées, jamais > 3200 caractères", async () => {
+  it("génère une Fiche valide pour chaque scrutin : jamais d'exception, jamais vide, jamais de HTML/entités non décodées, jamais > 820 caractères par champ", async () => {
     const scrutinRepository = new FilesystemScrutinRepository();
     const amendementRepository = new FilesystemAmendementRepository();
     const explicationsVoteRepository = new FilesystemExplicationsVoteRepository();
+    const groupeRepository = new FilesystemGroupeRepository();
     const taxonomyRepository = new DeclaredTaxonomyRepository();
     const dossierRepository = new FilesystemDossierRepository({
       taxonomyRepository,
     });
     const genererFiche = createGenererFicheScrutinEnrichie(
       amendementRepository,
-      explicationsVoteRepository
+      explicationsVoteRepository,
+      createComparerGroupes(groupeRepository)
     );
 
     const problemes: string[] = [];
@@ -56,27 +89,27 @@ describe("audit des Fiches Scrutin sur tous les dossiers classés (#46)", () => 
           continue;
         }
 
+        const prefixe = `${scrutin.uid} (${dossierRef})`;
+
+        if ("explicationsParGroupe" in fiche) {
+          verifierTexte(`${prefixe} : contexteIntro`, fiche.contexteIntro, problemes);
+          verifierTexte(`${prefixe} : resultat`, fiche.resultat, problemes);
+
+          if (fiche.explicationsParGroupe.length === 0) {
+            problemes.push(`${prefixe} : explicationsParGroupe vide`);
+          }
+
+          for (const ligne of fiche.explicationsParGroupe) {
+            const libelleLigne = `${prefixe} : explication ${ligne.groupe.abreviation}`;
+            if (ligne.resume !== null) {
+              verifierTexte(libelleLigne, ligne.resume, problemes);
+            }
+          }
+          continue;
+        }
+
         for (const [champ, valeur] of Object.entries(fiche)) {
-          if (!valeur || valeur.trim().length === 0) {
-            problemes.push(`${scrutin.uid} (${dossierRef}) : ${champ} vide`);
-          }
-          if (/<[a-z]|&#\d|&#x[0-9a-f]|&nbsp;|&amp;/i.test(valeur)) {
-            problemes.push(
-              `${scrutin.uid} (${dossierRef}) : ${champ} contient du HTML/entités non décodées`
-            );
-          }
-          // 3200, pas 820 : un Contexte enrichi de résumés rédigés par
-          // groupe (issue #57) peut couvrir jusqu'à une douzaine de
-          // groupes parlementaires, chacun sur 2-3 phrases — bien plus
-          // long que l'ancien extrait mécanique d'une phrase par groupe
-          // (issue #56, plafonné à 820). Reste une borne de sécurité
-          // contre un contenu qui déraperait, pas une contrainte de mise
-          // en page (cf. discussion issue #57).
-          if (valeur.length > 3200) {
-            problemes.push(
-              `${scrutin.uid} (${dossierRef}) : ${champ} fait ${valeur.length} caractères (> 3200)`
-            );
-          }
+          verifierTexte(`${prefixe} : ${champ}`, valeur, problemes);
         }
       }
     }

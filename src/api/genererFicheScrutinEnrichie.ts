@@ -1,6 +1,6 @@
 import type { AmendementRepository } from "@/domain/amendement";
 import {
-  resumerExplicationsVote,
+  explicationsVoteCurees,
   type ExplicationsVoteRepository,
 } from "@/domain/compteRendu";
 import type { Dossier } from "@/domain/dossier";
@@ -11,8 +11,11 @@ import {
   genererFicheScrutin,
   type FicheScrutin,
   type FicheScrutinEffetAttendu,
+  type FicheScrutinExplicationsVote,
+  type LigneExplicationVote,
   type Scrutin,
 } from "@/domain/scrutin";
+import type { ComparaisonGroupe } from "@/api/comparerGroupes";
 
 // L'exposé des motifs enchaîne généralement un ou plusieurs paragraphes de
 // fond (le problème qui motive l'amendement) puis un dernier paragraphe
@@ -69,15 +72,37 @@ function limiterALignes(texte: string, lignesMax: number = LIGNES_MAX): string {
   return `${tronque.trimEnd()}…`;
 }
 
+// Associe à chaque groupe ayant voté sur ce scrutin (comparerGroupes —
+// toujours tous les groupes, pas seulement ceux qui ont pris la parole)
+// son résumé rédigé quand il existe — null pour un groupe qui n'a pas pris
+// la parole en Explications de vote, jamais une ligne omise (cf. issue
+// #59, le tableau de la Fiche Scrutin doit rester exhaustif).
+function construireExplicationsParGroupe(
+  comparaison: ComparaisonGroupe[],
+  explications: readonly { groupe: string; resume?: string }[]
+): LigneExplicationVote[] {
+  const resumeParSigle = new Map(
+    explications.map(({ groupe, resume }) => [groupe, resume as string])
+  );
+
+  return comparaison.map(({ groupe, decompte, position }) => ({
+    groupe,
+    decompte,
+    position,
+    resume: resumeParSigle.get(groupe.abreviation) ?? null,
+  }));
+}
+
 export function createGenererFicheScrutinEnrichie(
   amendementRepository: AmendementRepository,
-  explicationsVoteRepository: ExplicationsVoteRepository
+  explicationsVoteRepository: ExplicationsVoteRepository,
+  comparerGroupes: (scrutin: Scrutin) => ComparaisonGroupe[]
 ) {
   return async function genererFicheScrutinEnrichie(
     scrutin: Scrutin,
     dossier: Dossier | null,
     scrutinsDossier: Scrutin[]
-  ): Promise<FicheScrutin | FicheScrutinEffetAttendu> {
+  ): Promise<FicheScrutin | FicheScrutinEffetAttendu | FicheScrutinExplicationsVote> {
     const detail = await amendementRepository.getByScrutin(scrutin);
 
     if (!detail) {
@@ -93,17 +118,17 @@ export function createGenererFicheScrutinEnrichie(
           dossier.dossierRef,
           scrutin.uid
         );
-        // resumerExplicationsVote renvoie null tant que la curation
-        // manuelle (issue #57) n'a pas encore couvert tous les groupes de
-        // ce scrutin — traité alors comme si aucune Explication n'était
-        // disponible, jamais un Contexte partiel.
-        const contexte = explications
-          ? resumerExplicationsVote(explications)
-          : null;
-        if (contexte) {
+        // Tant que la curation manuelle (issue #57) n'a pas encore couvert
+        // tous les groupes ayant pris la parole sur ce scrutin, traité
+        // comme si aucune Explication n'était disponible — jamais un
+        // tableau à moitié rempli.
+        if (explications && explicationsVoteCurees(explications)) {
           return {
-            contexte,
-            action: dossier.ficheDossier.action,
+            contexteIntro: dossier.ficheDossier.action,
+            explicationsParGroupe: construireExplicationsParGroupe(
+              comparerGroupes(scrutin),
+              explications
+            ),
             resultat: formaterResultatScrutin(scrutin),
           };
         }

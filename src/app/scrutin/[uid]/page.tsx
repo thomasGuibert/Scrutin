@@ -104,7 +104,12 @@ export default async function ScrutinPage({
         </div>
       </div>
 
-      <ComparaisonGroupes titre="Position par groupe" comparaison={comparaison} />
+      {/* Absorbé par le tableau de la Fiche ci-dessus quand des
+          Explications de vote curées sont disponibles (issue #59) — pas
+          d'affichage en double de la même information. */}
+      {!("explicationsParGroupe" in ficheScrutin) && (
+        <ComparaisonGroupes titre="Position par groupe" comparaison={comparaison} />
+      )}
 
       {dossier && (
         <Link className="back-link" href={`/dossier/${dossier.dossierRef}`}>
