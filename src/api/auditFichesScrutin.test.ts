@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import { createGenererFicheScrutinEnrichie } from "@/api/genererFicheScrutinEnrichie";
 import { FilesystemAmendementRepository } from "@/spi/filesystem/amendementRepository";
 import { FilesystemDossierRepository } from "@/spi/filesystem/dossierRepository";
+import { FilesystemExplicationsVoteRepository } from "@/spi/filesystem/explicationsVoteRepository";
 import { FilesystemScrutinRepository } from "@/spi/filesystem/scrutinRepository";
 import { DeclaredTaxonomyRepository } from "@/spi/filesystem/taxonomie";
 
@@ -30,11 +31,15 @@ describe("audit des Fiches Scrutin sur tous les dossiers classés (#46)", () => 
   it("génère une Fiche valide pour chaque scrutin : jamais d'exception, jamais vide, jamais de HTML/entités non décodées, jamais > 820 caractères", async () => {
     const scrutinRepository = new FilesystemScrutinRepository();
     const amendementRepository = new FilesystemAmendementRepository();
+    const explicationsVoteRepository = new FilesystemExplicationsVoteRepository();
     const taxonomyRepository = new DeclaredTaxonomyRepository();
     const dossierRepository = new FilesystemDossierRepository({
       taxonomyRepository,
     });
-    const genererFiche = createGenererFicheScrutinEnrichie(amendementRepository);
+    const genererFiche = createGenererFicheScrutinEnrichie(
+      amendementRepository,
+      explicationsVoteRepository
+    );
 
     const problemes: string[] = [];
 

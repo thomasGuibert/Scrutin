@@ -36,3 +36,61 @@ export interface ExplicationsVoteRepository {
     scrutinUid: string
   ): Promise<ExplicationVote[] | null>;
 }
+
+// Longueur maximale d'un extrait par groupe — évite qu'une seule
+// intervention prolixe épuise tout le budget avant même d'arriver aux
+// groupes suivants (cf. LONGUEUR_MAX ci-dessous, le budget global).
+const LONGUEUR_EXTRAIT_MAX = 220;
+
+// Un extrait mécanique, pas un vrai résumé rédigé (cf. issue #56) : garde
+// la première phrase de l'intervention (le plus souvent la prise de
+// position elle-même, vérifié sur des cas réels), tronquée si elle dépasse
+// LONGUEUR_EXTRAIT_MAX pour ne jamais priver les groupes suivants de place.
+function extrairePremierePhrase(texte: string): string {
+  const finDePhrase = texte.indexOf(". ");
+  if (finDePhrase !== -1 && finDePhrase < LONGUEUR_EXTRAIT_MAX) {
+    return texte.slice(0, finDePhrase + 1);
+  }
+  if (texte.length <= LONGUEUR_EXTRAIT_MAX) {
+    return texte;
+  }
+  return `${texte.slice(0, LONGUEUR_EXTRAIT_MAX).trimEnd()}…`;
+}
+
+// Budget global du Contexte — même ordre de grandeur que les autres champs
+// de Fiche (~10 lignes, cf. limiterALignes dans genererFicheScrutinEnrichie
+// .ts), pas dupliqué ici en constante partagée : cette fonction-ci tronque
+// par ligne entière (une intervention = une ligne), pas par caractère brut
+// au milieu d'une phrase, donc un calcul différent malgré le même ordre de
+// grandeur. Fixé en-dessous de ce budget (pas à 800 pile) pour laisser de
+// la place à la ligne "… et N autres groupes." ajoutée après coup, sans
+// jamais dépasser la limite de 820 caractères vérifiée par
+// auditFichesScrutin.test.ts (#46).
+const LONGUEUR_MAX = 750;
+
+// Une ligne "Groupe : extrait" par intervention, dans l'ordre reçu
+// (cf. ExplicationsVoteRepository — déjà dans l'ordre du compte rendu,
+// donc de prise de parole) — jamais coupée en plein milieu d'une ligne :
+// les groupes en trop une fois le budget atteint sont comptés plutôt
+// qu'ajoutés à moitié.
+export function resumerExplicationsVote(explications: ExplicationVote[]): string {
+  const lignes: string[] = [];
+  let longueur = 0;
+  let omis = 0;
+
+  for (const { groupe, texte } of explications) {
+    const ligne = `${groupe} : ${extrairePremierePhrase(texte)}`;
+    if (lignes.length > 0 && longueur + ligne.length + 1 > LONGUEUR_MAX) {
+      omis++;
+      continue;
+    }
+    lignes.push(ligne);
+    longueur += ligne.length + 1;
+  }
+
+  if (omis > 0) {
+    lignes.push(`… et ${omis} autre${omis > 1 ? "s" : ""} groupe${omis > 1 ? "s" : ""}.`);
+  }
+
+  return lignes.join("\n");
+}
