@@ -18,16 +18,20 @@ type Candidat = {
   blocExplications: string;
 };
 
-// "les" manquait ici (trouvé sur un cas réel, cf. issue #62) : un dossier
-// et le titre d'un tout autre sujet discuté le même jour partagent presque
-// toujours cet article au pluriel, ce qui suffisait à produire un score de
-// 1 — au-dessus du candidat correct resté à 0 — et donc à passer le
-// garde-fou "score strictement supérieur au suivant" avec une correspondance
-// fictive. Mot vide, comme "le"/"la"/"l'" déjà présents.
+// "les" et "personnes" manquaient ici (trouvés sur des cas réels, cf.
+// issue #62) : deux dossiers sans rapport de fond, discutés le même jour,
+// partagent très souvent l'un de ces deux mots ("les" par pure fréquence
+// grammaticale ; "personnes" parce que de nombreux textes de réparation/
+// reconnaissance parlent de "personnes condamnées", quel que soit le
+// motif de la condamnation — vérifié sur un cas réel où un texte sur les
+// réparations liées à l'avortement héritait ainsi du texte d'un tout autre
+// dossier sur les réparations liées à l'homosexualité). Mots vides, comme
+// "le"/"la"/"l'" déjà présents — voir aussi le seuil minimal dans
+// getExplicationsVote, qui complète ce filtrage.
 const MOTS_VIDES = new Set([
   "de", "la", "le", "les", "du", "des", "à", "a", "et", "un", "une", "l", "d",
   "au", "aux", "sur", "en", "pour", "dans", "par", "ce", "cette", "que", "qui",
-  "son", "ses", "leur", "leurs",
+  "son", "ses", "leur", "leurs", "personnes",
 ]);
 
 // Comparaison volontairement simple (comptage de mots significatifs
@@ -280,6 +284,16 @@ export class FilesystemCompteRenduRepository implements CompteRenduRepository {
     // seulement si un candidat se détache nettement des autres (score
     // strictement supérieur), jamais en cas d'égalité : mieux vaut ne rien
     // reprendre que d'attribuer à tort les propos d'un autre dossier.
+    //
+    // Score minimal de 2, pas 1 (cf. issue #62) : un seul mot partagé s'est
+    // avéré systématiquement fortuit sur les cas réels trouvés (aucune
+    // correspondance légitime à score 1 sur l'ensemble du corpus vérifié :
+    // toutes portaient sur des dossiers sans rapport de fond, discutés le
+    // même jour) — un score de 2 reste une heuristique, pas une preuve,
+    // mais aucun faux positif n'y a été trouvé après vérification manuelle
+    // exhaustive de tous les candidats retenus à ce score sur ce corpus.
+    const SCORE_MINIMAL = 2;
+
     const scores = candidats.map((candidat) => ({
       candidat,
       score: scoreCorrespondance(dossierTitre, candidat.intituleSommaire1),
@@ -287,7 +301,7 @@ export class FilesystemCompteRenduRepository implements CompteRenduRepository {
     scores.sort((a, b) => b.score - a.score);
 
     const meilleur = scores[0];
-    if (!meilleur || meilleur.score === 0) {
+    if (!meilleur || meilleur.score < SCORE_MINIMAL) {
       return null;
     }
     if (scores.length > 1 && scores[1].score === meilleur.score) {

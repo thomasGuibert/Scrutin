@@ -98,6 +98,23 @@ describe("FilesystemCompteRenduRepository", () => {
     expect(explications).toBeNull();
   });
 
+  it("ne confond pas 2 sujets qui ne partagent qu'un seul mot de fond, même hors mot vide (issue #62)", async () => {
+    const repository = creerRepository();
+
+    // "gestion" est un mot de fond ordinaire, pas un mot vide — mais un
+    // seul mot partagé, même significatif, s'est avéré systématiquement
+    // fortuit sur les cas réels (ex. un dossier sur les successions
+    // héritant à tort du texte d'un dossier sur les inondations, les deux
+    // ne partageant que "gestion"). D'où le score minimal de 2 dans
+    // getExplicationsVote, qui ne se limite pas à filtrer des mots vides.
+    const explications = await repository.getExplicationsVote(
+      "2025-01-15",
+      "Réviser la gestion des flux migratoires"
+    );
+
+    expect(explications).toBeNull();
+  });
+
   it("retourne null quand aucun sujet de la date ne correspond au titre donné", async () => {
     const repository = creerRepository();
 
