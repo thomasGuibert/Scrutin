@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { ComparaisonGroupe } from "@/api/comparerGroupes";
 import { createGenererFicheScrutinEnrichie } from "@/api/genererFicheScrutinEnrichie";
 import type { AmendementDetail, AmendementRepository } from "@/domain/amendement";
 import type {
@@ -6,6 +7,7 @@ import type {
   ExplicationsVoteRepository,
 } from "@/domain/compteRendu";
 import type { Dossier } from "@/domain/dossier";
+import type { Groupe } from "@/domain/groupes";
 import type { Scrutin } from "@/domain/scrutin";
 
 class FakeAmendementRepository implements AmendementRepository {
@@ -24,6 +26,23 @@ class FakeExplicationsVoteRepository implements ExplicationsVoteRepository {
   async getByScrutin(): Promise<ExplicationVote[] | null> {
     return this.explications;
   }
+}
+
+// [] par défaut, transparent pour les tests qui ne concernent pas le
+// tableau des Explications de vote (issue #59) — comparerGroupes n'est
+// consulté que sur ce chemin-là dans genererFicheScrutinEnrichie.
+function comparerGroupesFixe(comparaison: ComparaisonGroupe[] = []) {
+  return () => comparaison;
+}
+
+function creerGroupe(abreviation: string, overrides: Partial<Groupe> = {}): Groupe {
+  return {
+    organeRef: `PO-${abreviation}`,
+    nom: abreviation,
+    abreviation,
+    ordreHemicycle: 0,
+    ...overrides,
+  };
 }
 
 function creerScrutin(overrides: Partial<Scrutin>): Scrutin {
@@ -62,8 +81,11 @@ describe("genererFicheScrutinEnrichie", () => {
       dispositif: "Insérer l'alinéa suivant : « ... ».",
       exposeSommaire: "Cet amendement vise à garantir une prise en charge adaptée.",
     });
-    const genererFicheScrutinEnrichie =
-      createGenererFicheScrutinEnrichie(repository, new FakeExplicationsVoteRepository());
+    const genererFicheScrutinEnrichie = createGenererFicheScrutinEnrichie(
+      repository,
+      new FakeExplicationsVoteRepository(),
+      comparerGroupesFixe()
+    );
 
     const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null, []);
 
@@ -80,8 +102,11 @@ describe("genererFicheScrutinEnrichie", () => {
       exposeSommaire:
         "Premier paragraphe de fond.\n\nDeuxième paragraphe de fond.\n\nCet amendement propose ainsi l'effet visé.",
     });
-    const genererFicheScrutinEnrichie =
-      createGenererFicheScrutinEnrichie(repository, new FakeExplicationsVoteRepository());
+    const genererFicheScrutinEnrichie = createGenererFicheScrutinEnrichie(
+      repository,
+      new FakeExplicationsVoteRepository(),
+      comparerGroupesFixe()
+    );
 
     const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null, []);
 
@@ -102,8 +127,11 @@ describe("genererFicheScrutinEnrichie", () => {
       dispositif: phraseLongue,
       exposeSommaire: phraseLongue,
     });
-    const genererFicheScrutinEnrichie =
-      createGenererFicheScrutinEnrichie(repository, new FakeExplicationsVoteRepository());
+    const genererFicheScrutinEnrichie = createGenererFicheScrutinEnrichie(
+      repository,
+      new FakeExplicationsVoteRepository(),
+      comparerGroupesFixe()
+    );
 
     const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null, []);
 
@@ -119,8 +147,11 @@ describe("genererFicheScrutinEnrichie", () => {
       dispositif: "Dispositif court.",
       exposeSommaire: `${fondLong}\n\nCet amendement propose l'effet visé.`,
     });
-    const genererFicheScrutinEnrichie =
-      createGenererFicheScrutinEnrichie(repository, new FakeExplicationsVoteRepository());
+    const genererFicheScrutinEnrichie = createGenererFicheScrutinEnrichie(
+      repository,
+      new FakeExplicationsVoteRepository(),
+      comparerGroupesFixe()
+    );
 
     const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null, []);
 
@@ -134,8 +165,11 @@ describe("genererFicheScrutinEnrichie", () => {
       dispositif: "Dispositif court.",
       exposeSommaire: "Cet amendement propose l'effet visé.",
     });
-    const genererFicheScrutinEnrichie =
-      createGenererFicheScrutinEnrichie(repository, new FakeExplicationsVoteRepository());
+    const genererFicheScrutinEnrichie = createGenererFicheScrutinEnrichie(
+      repository,
+      new FakeExplicationsVoteRepository(),
+      comparerGroupesFixe()
+    );
 
     const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null, []);
 
@@ -145,8 +179,11 @@ describe("genererFicheScrutinEnrichie", () => {
 
   it("retombe sur la Fiche dérivée du titre quand le repository ne trouve rien", async () => {
     const repository = new FakeAmendementRepository(null);
-    const genererFicheScrutinEnrichie =
-      createGenererFicheScrutinEnrichie(repository, new FakeExplicationsVoteRepository());
+    const genererFicheScrutinEnrichie = createGenererFicheScrutinEnrichie(
+      repository,
+      new FakeExplicationsVoteRepository(),
+      comparerGroupesFixe()
+    );
 
     const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null, []);
 
@@ -155,8 +192,11 @@ describe("genererFicheScrutinEnrichie", () => {
 
   it("retombe aussi proprement sur un scrutin non-amendement quand le repository ne trouve rien", async () => {
     const repository = new FakeAmendementRepository(null);
-    const genererFicheScrutinEnrichie =
-      createGenererFicheScrutinEnrichie(repository, new FakeExplicationsVoteRepository());
+    const genererFicheScrutinEnrichie = createGenererFicheScrutinEnrichie(
+      repository,
+      new FakeExplicationsVoteRepository(),
+      comparerGroupesFixe()
+    );
 
     const scrutin = creerScrutin({
       titre: "l'ensemble de la proposition de loi (première lecture).",
@@ -171,8 +211,11 @@ describe("genererFicheScrutinEnrichie", () => {
 
   it("reprend le Contexte/Action de la Fiche dossier pour un vote sur l'ensemble, même quand le repository d'amendements ne trouve rien", async () => {
     const repository = new FakeAmendementRepository(null);
-    const genererFicheScrutinEnrichie =
-      createGenererFicheScrutinEnrichie(repository, new FakeExplicationsVoteRepository());
+    const genererFicheScrutinEnrichie = createGenererFicheScrutinEnrichie(
+      repository,
+      new FakeExplicationsVoteRepository(),
+      comparerGroupesFixe()
+    );
 
     const scrutin = creerScrutin({
       titre: "l'ensemble de la proposition de loi (première lecture).",
@@ -193,8 +236,11 @@ describe("genererFicheScrutinEnrichie", () => {
 
   it("ne reprend pas la Fiche dossier quand le dossier a plusieurs votes sur le texte entier (plusieurs lectures)", async () => {
     const repository = new FakeAmendementRepository(null);
-    const genererFicheScrutinEnrichie =
-      createGenererFicheScrutinEnrichie(repository, new FakeExplicationsVoteRepository());
+    const genererFicheScrutinEnrichie = createGenererFicheScrutinEnrichie(
+      repository,
+      new FakeExplicationsVoteRepository(),
+      comparerGroupesFixe()
+    );
 
     const premiereLecture = creerScrutin({
       uid: "V1",
@@ -225,19 +271,29 @@ describe("genererFicheScrutinEnrichie", () => {
     );
   });
 
-  it("reprend le Contexte depuis les Explications de vote quand elles sont disponibles (résumés déjà curés), plutôt que la Fiche dossier", async () => {
+  it("construit le tableau des Explications de vote (résumés déjà curés) plutôt que la Fiche dossier — issue #59", async () => {
     const repository = new FakeAmendementRepository(null);
     const explicationsVoteRepository = new FakeExplicationsVoteRepository([
       { groupe: "RN", orateur: "M. X", texte: "…", resume: "Le groupe votera contre." },
       { groupe: "SOC", orateur: "Mme Y", texte: "…", resume: "Le groupe votera pour." },
     ]);
+    const groupeRN = creerGroupe("RN", { ordreHemicycle: 10 });
+    const groupeSOC = creerGroupe("SOC", { ordreHemicycle: 3 });
+    const decompteRN = { pour: 0, contre: 5, abstentions: 0 };
+    const decompteSOC = { pour: 8, contre: 0, abstentions: 0 };
     const genererFicheScrutinEnrichie = createGenererFicheScrutinEnrichie(
       repository,
-      explicationsVoteRepository
+      explicationsVoteRepository,
+      comparerGroupesFixe([
+        { groupe: groupeRN, decompte: decompteRN, position: "Contre" },
+        { groupe: groupeSOC, decompte: decompteSOC, position: "Pour" },
+      ])
     );
 
     const scrutin = creerScrutin({
       titre: "l'ensemble de la proposition de loi (première lecture).",
+      decompte: { pour: 184, contre: 92, abstentions: 1 },
+      resultat: "adopté",
     });
     const dossier = creerDossier({
       ficheDossier: {
@@ -249,10 +305,46 @@ describe("genererFicheScrutinEnrichie", () => {
 
     const fiche = await genererFicheScrutinEnrichie(scrutin, dossier, [scrutin]);
 
-    expect(fiche.contexte).toBe(
-      "RN : Le groupe votera contre.\n\nSOC : Le groupe votera pour."
+    expect(fiche).toEqual({
+      contexteIntro: "Ce que change le texte.",
+      explicationsParGroupe: [
+        { groupe: groupeRN, decompte: decompteRN, position: "Contre", resume: "Le groupe votera contre." },
+        { groupe: groupeSOC, decompte: decompteSOC, position: "Pour", resume: "Le groupe votera pour." },
+      ],
+      resultat: "Ce scrutin a été adopté (184 pour, 92 contre, 1 abstention).",
+    });
+  });
+
+  it("inclut aussi les groupes qui ont voté sans prendre la parole en Explications de vote, avec resume à null", async () => {
+    const repository = new FakeAmendementRepository(null);
+    const explicationsVoteRepository = new FakeExplicationsVoteRepository([
+      { groupe: "RN", orateur: "M. X", texte: "…", resume: "Le groupe votera contre." },
+    ]);
+    const groupeRN = creerGroupe("RN", { ordreHemicycle: 10 });
+    const groupeGDR = creerGroupe("GDR", { ordreHemicycle: 1 });
+    const genererFicheScrutinEnrichie = createGenererFicheScrutinEnrichie(
+      repository,
+      explicationsVoteRepository,
+      comparerGroupesFixe([
+        { groupe: groupeRN, decompte: { pour: 0, contre: 5, abstentions: 0 }, position: "Contre" },
+        { groupe: groupeGDR, decompte: { pour: 2, contre: 0, abstentions: 0 }, position: "Pour" },
+      ])
     );
-    expect(fiche.action).toBe("Ce que change le texte.");
+
+    const scrutin = creerScrutin({
+      titre: "l'ensemble de la proposition de loi (première lecture).",
+    });
+    const dossier = creerDossier({});
+
+    const fiche = await genererFicheScrutinEnrichie(scrutin, dossier, [scrutin]);
+
+    expect("explicationsParGroupe" in fiche).toBe(true);
+    if ("explicationsParGroupe" in fiche) {
+      const ligneGDR = fiche.explicationsParGroupe.find(
+        (ligne) => ligne.groupe.abreviation === "GDR"
+      );
+      expect(ligneGDR?.resume).toBeNull();
+    }
   });
 
   it("reprend les Explications de vote même pour un dossier à plusieurs lectures (pas soumis à la contrainte de genererFicheScrutin)", async () => {
@@ -260,9 +352,13 @@ describe("genererFicheScrutinEnrichie", () => {
     const explicationsVoteRepository = new FakeExplicationsVoteRepository([
       { groupe: "RN", orateur: "M. X", texte: "…", resume: "Le groupe votera contre en CMP." },
     ]);
+    const groupeRN = creerGroupe("RN", { ordreHemicycle: 10 });
     const genererFicheScrutinEnrichie = createGenererFicheScrutinEnrichie(
       repository,
-      explicationsVoteRepository
+      explicationsVoteRepository,
+      comparerGroupesFixe([
+        { groupe: groupeRN, decompte: { pour: 0, contre: 5, abstentions: 0 }, position: "Contre" },
+      ])
     );
 
     const premiereLecture = creerScrutin({
@@ -283,7 +379,17 @@ describe("genererFicheScrutinEnrichie", () => {
       cmp,
     ]);
 
-    expect(fiche.contexte).toBe("RN : Le groupe votera contre en CMP.");
+    expect("explicationsParGroupe" in fiche).toBe(true);
+    if ("explicationsParGroupe" in fiche) {
+      expect(fiche.explicationsParGroupe).toEqual([
+        {
+          groupe: groupeRN,
+          decompte: { pour: 0, contre: 5, abstentions: 0 },
+          position: "Contre",
+          resume: "Le groupe votera contre en CMP.",
+        },
+      ]);
+    }
   });
 
   it("retombe sur la Fiche dossier quand des Explications de vote existent mais qu'un groupe n'a pas encore de résumé rédigé (curation incomplète, issue #57)", async () => {
@@ -294,7 +400,11 @@ describe("genererFicheScrutinEnrichie", () => {
     ]);
     const genererFicheScrutinEnrichie = createGenererFicheScrutinEnrichie(
       repository,
-      explicationsVoteRepository
+      explicationsVoteRepository,
+      comparerGroupesFixe([
+        { groupe: creerGroupe("RN"), decompte: { pour: 0, contre: 5, abstentions: 0 }, position: "Contre" },
+        { groupe: creerGroupe("SOC"), decompte: { pour: 8, contre: 0, abstentions: 0 }, position: "Pour" },
+      ])
     );
 
     const scrutin = creerScrutin({

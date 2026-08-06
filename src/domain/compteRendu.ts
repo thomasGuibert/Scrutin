@@ -43,29 +43,14 @@ export interface ExplicationsVoteRepository {
   ): Promise<ExplicationVote[] | null>;
 }
 
-// Un résumé rédigé à la main par groupe (curation manuelle, issue #57) —
-// remplace l'ancien extrait mécanique de la première phrase (issue #56),
-// jugé trop pauvre par rapport à l'intention initiale : un vrai résumé des
-// points abordés par chaque groupe, pas une troncature de son
-// intervention. La curation avance dossier par dossier sur l'ensemble des
-// 95 scrutins couverts (cf. issue #57) : tant qu'un seul groupe d'un
-// scrutin donné n'a pas encore de `resume`, ce scrutin est traité comme
-// non couvert (retourne null, cf. genererFicheScrutinEnrichie.ts qui
-// retombe alors sur son repli habituel) — jamais un Contexte partiel où
-// certains groupes manqueraient sans explication.
-//
-// Un paragraphe "Groupe : résumé" par intervention, séparé par une ligne
-// vide (rendue par `white-space: pre-line` en CSS, cf. .dossier-brief) —
-// nettement plus long que l'ancien extrait mécanique, d'où le budget
-// relevé en conséquence dans auditFichesScrutin.test.ts (#46).
-export function resumerExplicationsVote(
-  explications: ExplicationVote[]
-): string | null {
-  if (explications.some(({ resume }) => !resume)) {
-    return null;
-  }
-
-  return explications
-    .map(({ groupe, resume }) => `${groupe} : ${resume}`)
-    .join("\n\n");
+// La curation manuelle (issue #57) avance dossier par dossier sur
+// l'ensemble des 95 scrutins couverts : tant qu'un seul groupe ayant pris
+// la parole sur ce scrutin n'a pas encore de `resume` rédigé, la curation
+// n'est pas terminée pour lui. genererFicheScrutinEnrichie.ts s'en sert
+// pour retomber sur son repli habituel dans ce cas — jamais un tableau de
+// Fiche Scrutin où certaines interventions manqueraient de résumé sans
+// explication (cf. issue #59 pour la mise en page qui consomme ce
+// résultat : un tableau Groupe/Position/Explication, pas un extrait).
+export function explicationsVoteCurees(explications: ExplicationVote[]): boolean {
+  return explications.every(({ resume }) => Boolean(resume));
 }

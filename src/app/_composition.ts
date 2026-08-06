@@ -27,12 +27,13 @@ export const dossierRepository = new FilesystemDossierRepository({
 });
 
 export const getScrutin = createGetScrutin(scrutinRepository);
+export const comparerGroupes = createComparerGroupes(groupeRepository);
 export const genererFicheScrutinEnrichie = createGenererFicheScrutinEnrichie(
   amendementRepository,
-  explicationsVoteRepository
+  explicationsVoteRepository,
+  comparerGroupes
 );
 export const getDossier = createGetDossier(dossierRepository);
-export const comparerGroupes = createComparerGroupes(groupeRepository);
 export const listerScrutinsDossier =
   createListerScrutinsDossier(scrutinRepository);
 export const agregerPositionsDossiers = createAgregerPositionsDossiers(

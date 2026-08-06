@@ -1,4 +1,5 @@
 import type { Dossier } from "@/domain/dossier";
+import type { Groupe } from "@/domain/groupes";
 
 export type DecompteScrutin = {
   pour: number;
@@ -246,6 +247,32 @@ export type FicheScrutinEffetAttendu = {
   resultatAttendu: string;
 };
 
+// Une ligne du tableau Groupe/Position/Explication de la Fiche Scrutin
+// enrichie par les Explications de vote (issue #59, mise en page revue
+// suite au proto validé le 2026-08-06) — toujours un groupe qui a
+// effectivement voté sur CE scrutin (positionsParGroupe), pas seulement
+// ceux qui ont pris la parole : `resume` est null quand aucune
+// intervention n'a été retrouvée pour ce groupe, jamais une ligne omise.
+export type LigneExplicationVote = {
+  groupe: Groupe;
+  decompte: DecompteScrutin;
+  position: Position;
+  resume: string | null;
+};
+
+// Variante utilisée quand des Explications de vote entièrement curées
+// (issue #57) sont disponibles pour ce scrutin — remplace le Contexte en
+// paragraphe par une courte phrase de tête (reprise de l'Action du
+// dossier, cf. FicheDossier) suivie du tableau ci-dessus ; pas de champ
+// Action séparé (il ferait doublon avec la phrase de tête), le tableau
+// portant lui-même l'équivalent du bloc "Position par groupe" affiché par
+// ailleurs pour les autres Fiches (cf. ScrutinBrief, page scrutin).
+export type FicheScrutinExplicationsVote = {
+  contexteIntro: string;
+  explicationsParGroupe: LigneExplicationVote[];
+  resultat: string;
+};
+
 function pluraliser(valeur: number, mot: string): string {
   return `${valeur} ${mot}${valeur > 1 ? "s" : ""}`;
 }
@@ -443,6 +470,18 @@ export function formaterResultatScrutin(scrutin: Scrutin): string {
 
 export function calculerVotants(decompte: DecompteScrutin): number {
   return decompte.pour + decompte.contre + decompte.abstentions;
+}
+
+// Décompte court d'un groupe pour le tableau des Explications de vote
+// (issue #59) : un groupe qui vote à l'unanimité (cas le plus fréquent)
+// n'affiche que son seul chiffre ("57 pour"), pas deux zéros à côté sans
+// intérêt ; un groupe Divisé ou Contre affiche chaque part non nulle.
+export function formaterDecompteCourt(decompte: DecompteScrutin): string {
+  const parts: string[] = [];
+  if (decompte.pour > 0) parts.push(`${decompte.pour} pour`);
+  if (decompte.contre > 0) parts.push(`${decompte.contre} contre`);
+  if (decompte.abstentions > 0) parts.push(`${decompte.abstentions} abst.`);
+  return parts.length > 0 ? parts.join(" · ") : "0 pour";
 }
 
 export type Position = "Pour" | "Contre" | "Divisé";
