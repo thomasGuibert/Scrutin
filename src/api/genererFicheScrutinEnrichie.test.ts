@@ -51,7 +51,7 @@ describe("genererFicheScrutinEnrichie", () => {
     const genererFicheScrutinEnrichie =
       createGenererFicheScrutinEnrichie(repository);
 
-    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null);
+    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null, []);
 
     expect(fiche).toEqual({
       contexte: "Amendement de M. Amirshahi à l'article 2.",
@@ -69,7 +69,7 @@ describe("genererFicheScrutinEnrichie", () => {
     const genererFicheScrutinEnrichie =
       createGenererFicheScrutinEnrichie(repository);
 
-    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null);
+    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null, []);
 
     expect(fiche).toEqual({
       contexte:
@@ -91,7 +91,7 @@ describe("genererFicheScrutinEnrichie", () => {
     const genererFicheScrutinEnrichie =
       createGenererFicheScrutinEnrichie(repository);
 
-    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null);
+    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null, []);
 
     expect(fiche.action.length).toBeLessThanOrEqual(801);
     expect(fiche.action.endsWith("…")).toBe(true);
@@ -108,7 +108,7 @@ describe("genererFicheScrutinEnrichie", () => {
     const genererFicheScrutinEnrichie =
       createGenererFicheScrutinEnrichie(repository);
 
-    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null);
+    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null, []);
 
     expect(fiche.contexte.length).toBeLessThanOrEqual(801);
     expect(fiche.contexte.endsWith("…")).toBe(true);
@@ -123,7 +123,7 @@ describe("genererFicheScrutinEnrichie", () => {
     const genererFicheScrutinEnrichie =
       createGenererFicheScrutinEnrichie(repository);
 
-    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null);
+    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null, []);
 
     expect(fiche.action).toBe("Dispositif court.");
     expect(fiche.resultatAttendu).toBe("Cet amendement propose l'effet visé.");
@@ -134,7 +134,7 @@ describe("genererFicheScrutinEnrichie", () => {
     const genererFicheScrutinEnrichie =
       createGenererFicheScrutinEnrichie(repository);
 
-    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null);
+    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null, []);
 
     expect(fiche.contexte).toBe("Amendement de M. Amirshahi à l'article 2.");
   });
@@ -148,7 +148,7 @@ describe("genererFicheScrutinEnrichie", () => {
       titre: "l'ensemble de la proposition de loi (première lecture).",
     });
 
-    const fiche = await genererFicheScrutinEnrichie(scrutin, null);
+    const fiche = await genererFicheScrutinEnrichie(scrutin, null, [scrutin]);
 
     expect(fiche.contexte).toBe(
       "Vote sur l'ensemble du texte, à l'issue de sa première lecture."
@@ -171,9 +171,43 @@ describe("genererFicheScrutinEnrichie", () => {
       },
     });
 
-    const fiche = await genererFicheScrutinEnrichie(scrutin, dossier);
+    const fiche = await genererFicheScrutinEnrichie(scrutin, dossier, [scrutin]);
 
     expect(fiche.contexte).toBe("Contexte de fond du dossier.");
     expect(fiche.action).toBe("Ce que change le texte.");
+  });
+
+  it("ne reprend pas la Fiche dossier quand le dossier a plusieurs votes sur le texte entier (plusieurs lectures)", async () => {
+    const repository = new FakeAmendementRepository(null);
+    const genererFicheScrutinEnrichie =
+      createGenererFicheScrutinEnrichie(repository);
+
+    const premiereLecture = creerScrutin({
+      uid: "V1",
+      numero: 1,
+      titre: "l'ensemble de la proposition de loi (première lecture).",
+    });
+    const cmp = creerScrutin({
+      uid: "V2",
+      numero: 2,
+      titre:
+        "l'ensemble de la proposition de loi (texte de la commission mixte paritaire).",
+    });
+    const dossier = creerDossier({
+      ficheDossier: {
+        contexte: "Contexte de fond du dossier.",
+        action: "Ce que change le texte.",
+        resultatAttendu: "Non utilisé ici.",
+      },
+    });
+
+    const fiche = await genererFicheScrutinEnrichie(cmp, dossier, [
+      premiereLecture,
+      cmp,
+    ]);
+
+    expect(fiche.contexte).toBe(
+      "Vote sur l'ensemble du texte, à l'issue de l'examen du texte issu de la commission mixte paritaire."
+    );
   });
 });

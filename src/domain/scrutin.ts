@@ -207,10 +207,16 @@ export function determinerResultatDossier(
 // dossier plutôt que de décrire l'état procédural du vote — c'est justement
 // le scrutin le plus consulté (souvent le Scrutin décisif), et son titre AN
 // seul ne dit jamais pourquoi certains groupes votent pour et d'autres
-// contre (cf. discussion du 2026-08-05). Le troisième volet ("Résultat")
-// décrit toujours une issue déjà connue (adopté/rejeté + décompte), jamais
-// un effet attendu — cf. FicheScrutinEffetAttendu ci-dessous pour le cas où
-// un effet attendu réel est disponible (contenu d'un amendement, issue #46).
+// contre (cf. discussion du 2026-08-05) — mais seulement quand ce vote est
+// le seul du genre dans son dossier (cf. estSeulVoteSurLeTexteEntierDuDossier)
+// : sur un dossier à plusieurs lectures, répéter la même Fiche dossier à
+// l'identique sur chaque lecture perdrait le pourquoi propre à CE vote-là,
+// donc repli sur la description procédurale (avecStade) en attendant une
+// curation par scrutin (cf. discussion du 2026-08-06). Le troisième volet
+// ("Résultat") décrit toujours une issue déjà connue (adopté/rejeté +
+// décompte), jamais un effet attendu — cf. FicheScrutinEffetAttendu
+// ci-dessous pour le cas où un effet attendu réel est disponible (contenu
+// d'un amendement, issue #46).
 export type FicheScrutin = {
   contexte: string;
   action: string;
@@ -367,16 +373,34 @@ function contextePourTypeDeVote(titre: string): string | null {
   return null;
 }
 
+// Un dossier avec un seul vote sur le texte entier : sa Fiche dossier décrit
+// sans ambiguïté ce vote-là, aucune spécificité perdue à la reprendre. Un
+// dossier avec plusieurs lectures (première lecture, CMP, lecture
+// définitive...) a autant de votes sur le texte entier que de lectures —
+// leur répéter à l'identique la même Fiche dossier perdrait le "pourquoi de
+// CE vote en particulier" (ce qui a changé depuis la lecture précédente,
+// pourquoi celui-ci passe ou pas) : mieux vaut alors le repli procédural
+// (avecStade) qui au moins distingue les lectures, en attendant une
+// curation par scrutin (aucune source de données ne donne aujourd'hui le
+// contenu spécifique à chaque lecture — cf. discussion du 2026-08-06).
+function estSeulVoteSurLeTexteEntierDuDossier(
+  scrutin: Scrutin,
+  scrutinsDossier: Scrutin[]
+): boolean {
+  const votesSurTexteEntier = scrutinsDossier.filter((s) =>
+    estVoteSurLeTexteEntier(s.titre)
+  );
+  return (
+    estVoteSurLeTexteEntier(scrutin.titre) && votesSurTexteEntier.length <= 1
+  );
+}
+
 export function genererFicheScrutin(
   scrutin: Scrutin,
-  dossier: Dossier | null
+  dossier: Dossier | null,
+  scrutinsDossier: Scrutin[]
 ): FicheScrutin {
-  // Un vote sur le texte entier n'a par lui-même rien à raconter au-delà de
-  // son type procédural (le titre AN ne dit jamais pourquoi certains
-  // groupes votent pour et d'autres contre) — quand un dossier est
-  // rattaché, on reprend son Contexte/Action déjà rédigés à la main plutôt
-  // que de se limiter à décrire l'état du vote.
-  if (estVoteSurLeTexteEntier(scrutin.titre) && dossier) {
+  if (dossier && estSeulVoteSurLeTexteEntierDuDossier(scrutin, scrutinsDossier)) {
     return {
       contexte: dossier.ficheDossier.contexte,
       action: dossier.ficheDossier.action,
