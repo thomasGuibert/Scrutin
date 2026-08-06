@@ -18,9 +18,15 @@ type Candidat = {
   blocExplications: string;
 };
 
+// "les" manquait ici (trouvé sur un cas réel, cf. issue #62) : un dossier
+// et le titre d'un tout autre sujet discuté le même jour partagent presque
+// toujours cet article au pluriel, ce qui suffisait à produire un score de
+// 1 — au-dessus du candidat correct resté à 0 — et donc à passer le
+// garde-fou "score strictement supérieur au suivant" avec une correspondance
+// fictive. Mot vide, comme "le"/"la"/"l'" déjà présents.
 const MOTS_VIDES = new Set([
-  "de", "la", "le", "du", "des", "à", "a", "et", "un", "une", "l", "d", "au",
-  "aux", "sur", "en", "pour", "dans", "par", "ce", "cette", "que", "qui",
+  "de", "la", "le", "les", "du", "des", "à", "a", "et", "un", "une", "l", "d",
+  "au", "aux", "sur", "en", "pour", "dans", "par", "ce", "cette", "que", "qui",
   "son", "ses", "leur", "leurs",
 ]);
 
