@@ -1,7 +1,13 @@
 import type { AmendementRepository } from "@/domain/amendement";
+import {
+  resumerExplicationsVote,
+  type ExplicationsVoteRepository,
+} from "@/domain/compteRendu";
 import type { Dossier } from "@/domain/dossier";
 import {
+  estVoteSurLeTexteEntier,
   extraireAmendement,
+  formaterResultatScrutin,
   genererFicheScrutin,
   type FicheScrutin,
   type FicheScrutinEffetAttendu,
@@ -64,7 +70,8 @@ function limiterALignes(texte: string, lignesMax: number = LIGNES_MAX): string {
 }
 
 export function createGenererFicheScrutinEnrichie(
-  amendementRepository: AmendementRepository
+  amendementRepository: AmendementRepository,
+  explicationsVoteRepository: ExplicationsVoteRepository
 ) {
   return async function genererFicheScrutinEnrichie(
     scrutin: Scrutin,
@@ -73,13 +80,42 @@ export function createGenererFicheScrutinEnrichie(
   ): Promise<FicheScrutin | FicheScrutinEffetAttendu> {
     const detail = await amendementRepository.getByScrutin(scrutin);
 
-    // Pas de contenu réel trouvé (amendement hors périmètre curé, ou tout
-    // scrutin non-amendement) : repli sur la Fiche dérivée du titre (ou,
-    // pour l'unique vote sur le texte entier d'un dossier, sur sa Fiche
-    // dossier — cf. genererFicheScrutin), avec son "Résultat" = issue déjà
-    // connue du vote — jamais d'erreur, jamais de contenu manquant (cf.
-    // issue #46).
     if (!detail) {
+      // Un vote sur le texte entier avec de vraies Explications de vote
+      // disponibles (issue #52/#54) prime sur le repli de genererFicheScrutin
+      // (Fiche dossier ou description procédurale) : contrairement à la
+      // Fiche dossier, ces interventions sont spécifiques à CE scrutin —
+      // la contrainte "seul vote du dossier" de genererFicheScrutin ne
+      // s'applique donc pas ici, un dossier à plusieurs lectures peut avoir
+      // ses deux votes enrichis séparément (cf. issue #56).
+      if (dossier && estVoteSurLeTexteEntier(scrutin.titre)) {
+        const explications = await explicationsVoteRepository.getByScrutin(
+          dossier.dossierRef,
+          scrutin.uid
+        );
+        // resumerExplicationsVote renvoie null tant que la curation
+        // manuelle (issue #57) n'a pas encore couvert tous les groupes de
+        // ce scrutin — traité alors comme si aucune Explication n'était
+        // disponible, jamais un Contexte partiel.
+        const contexte = explications
+          ? resumerExplicationsVote(explications)
+          : null;
+        if (contexte) {
+          return {
+            contexte,
+            action: dossier.ficheDossier.action,
+            resultat: formaterResultatScrutin(scrutin),
+          };
+        }
+      }
+
+      // Pas de contenu réel trouvé (amendement hors périmètre curé, ou tout
+      // scrutin non-amendement, ou vote sur le texte entier sans
+      // Explications de vote disponibles) : repli sur la Fiche dérivée du
+      // titre (ou, pour l'unique vote sur le texte entier d'un dossier, sur
+      // sa Fiche dossier — cf. genererFicheScrutin), avec son "Résultat" =
+      // issue déjà connue du vote — jamais d'erreur, jamais de contenu
+      // manquant (cf. issue #46).
       return genererFicheScrutin(scrutin, dossier, scrutinsDossier);
     }
 
