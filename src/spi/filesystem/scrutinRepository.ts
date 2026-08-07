@@ -648,6 +648,198 @@ const DOSSIER_REF_OVERRIDE: Record<string, string> = {
   // directement à l'Assemblée (1ère assemblée saisie) plutôt qu'au Sénat,
   // ce qui ne correspond pas à la navette de ce scrutin)
   VTANR5L17V2208: "DLR5L17N51702",
+
+  // Reprise de #33 (audit:dossiers, méthode inchangée — title-matching par
+  // recouvrement de tokens contre Dossiers_Legislatifs.json.zip, avec score
+  // de Jaccard plutôt que rapporté au plus petit ensemble : ce dernier
+  // produisait de faux scores de 1.00 dès qu'un titre de dossier court et
+  // générique se retrouvait entièrement inclus dans un titre de scrutin
+  // plus long sur un sujet différent).
+  // "l'ensemble de la première partie du projet de loi de finances de fin
+  // de gestion pour 2024" (1re lecture, rejeté — même dossier que le vote
+  // sur l'ensemble du texte)
+  VTANR5L17V445: "DLR5L17N50838",
+  // "l'ensemble de la proposition de loi visant à modifier la définition
+  // pénale du viol et des agressions sexuelles" (1re lecture, adopté)
+  VTANR5L17V1202: "DLR5L17N51349",
+  // "l'ensemble de la proposition de loi visant à moderniser la gestion du
+  // patrimoine immobilier de l'État" (1re lecture, adopté)
+  VTANR5L17V5240: "DLR5L17N52746",
+  // "l'ensemble du projet de loi de financement de la sécurité sociale pour
+  // 2026" (nouvelle lecture, adopté)
+  VTANR5L17V4696: "DLR5L17N52922",
+  // "l'ensemble du projet de loi de finances de fin de gestion pour 2025"
+  // (1re lecture, rejeté)
+  VTANR5L17V3936: "DLR5L17N53135",
+  // "l'article unique de la proposition de loi organique... portant statut
+  // d'autonomie de la Polynésie française" (1re lecture, adopté)
+  VTANR5L17V4704: "DLR5L17N51173",
+  // "l'article unique de la proposition de loi instaurant un impôt plancher
+  // de 2 % sur le patrimoine des ultra riches" (1re lecture, adopté)
+  VTANR5L17V878: "DLR5L17N51215",
+  // "l'ensemble de la proposition de loi visant à réformer le mode
+  // d'élection des membres du Conseil de Paris et des conseils municipaux
+  // de Lyon et Marseille" (1re lecture, adopté)
+  VTANR5L17V1330: "DLR5L17N50692",
+  // même dossier que ci-dessus (nouvelle lecture, adopté)
+  VTANR5L17V2954: "DLR5L17N50692",
+  // "l'ensemble de la proposition de loi visant à améliorer l'accès au
+  // logement des travailleurs des services publics" (1re lecture, adopté)
+  VTANR5L17V4962: "DLR5L17N51968",
+  // "l'ensemble de la proposition de loi relative à la lutte contre
+  // l'antisémitisme, le racisme, les discriminations, les violences et la
+  // haine dans l'enseignement supérieur" (1re lecture, adopté — titre élargi
+  // par rapport à celui, plus court, du dossier)
+  VTANR5L17V1601: "DLR5L17N50724",
+  // "l'article unique de la proposition de loi visant à renforcer les
+  // conditions d'accès à la nationalité française à Mayotte" (1re lecture,
+  // adopté)
+  VTANR5L17V710: "DLR5L17N51039",
+  // même dossier, vote sur l'ensemble plutôt que l'article unique (1re
+  // lecture, adopté)
+  VTANR5L17V738: "DLR5L17N51039",
+  // "l'ensemble de la proposition de loi visant à garantir l'égal accès de
+  // tous à l'accompagnement et aux soins palliatifs" (1re lecture, adopté —
+  // même dossier que la 2e lecture, cf. issue #81/alias "Droit à l'aide à
+  // mourir" pour le dossier "Fin de vie" distinct)
+  VTANR5L17V2106: "DLR5L17N51672",
+  // "l'ensemble de la proposition de loi facilitant l'exercice en France
+  // des médecins diplômés au Royaume-Uni avant le Brexit" (1re lecture,
+  // adopté)
+  VTANR5L17V5415: "DLR5L17N53192",
+  // "l'ensemble du projet de loi de programmation pour la refondation de
+  // Mayotte" (1re lecture, adopté)
+  VTANR5L17V2874: "DLR5L17N51985",
+  // "l'ensemble de la proposition de loi relative à l'intérêt des enfants"
+  // (1re lecture, adopté)
+  VTANR5L17V5283: "DLR5L17N51655",
+  // "l'ensemble de la proposition de loi sur la profession d'infirmier"
+  // (1re lecture, adopté)
+  VTANR5L17V944: "DLR5L17N51002",
+  // "l'ensemble de la proposition de loi visant à renforcer la stabilité
+  // économique et la compétitivité du secteur agroalimentaire" (1re
+  // lecture, adopté)
+  VTANR5L17V1038: "DLR5L17N51504",
+  // "l'article unique du projet de loi autorisant la ratification de la
+  // résolution LP.3(4) portant amendement de l'article 6 du Protocole de
+  // Londres... à la Convention... sur la prévention de la pollution des
+  // mers..." (1re lecture, rejeté)
+  VTANR5L17V1333: "DLR5L17N51362",
+  // "l'ensemble de la proposition de loi organique fixant le statut du
+  // procureur de la République anti-criminalité organisée" (1re lecture,
+  // adopté — le dossier a changé de nom en cours de navette, d'abord
+  // "procureur national anti-stupéfiants", seul un dossier "procureur"
+  // existe dans Dossiers_Legislatifs.json.zip)
+  VTANR5L17V1195: "DLR5L17N51078",
+  // "l'ensemble de la proposition de loi de simplification du droit de
+  // l'urbanisme et du logement" (1re lecture, adopté)
+  VTANR5L17V1717: "DLR5L17N51852",
+  // "l'ensemble du projet de loi d'urgence pour Mayotte" (1re lecture,
+  // adopté)
+  VTANR5L17V580: "DLR5L17N51222",
+  // "l'ensemble de la proposition de loi visant à restaurer l'autorité de
+  // la justice à l'égard des mineurs délinquants et de leurs parents" (1re
+  // lecture, adopté)
+  VTANR5L17V805: "DLR5L17N50690",
+  // "l'ensemble de la proposition de loi visant à relancer les
+  // investissements dans le secteur de l'hydroélectricité pour contribuer
+  // à la transition énergétique" (1re lecture, adopté)
+  VTANR5L17V5354: "DLR5L17N53530",
+  // "l'ensemble du projet de loi organique relatif au Département-Région de
+  // Mayotte" (1re lecture, adopté)
+  VTANR5L17V2875: "DLR5L17N51984",
+  // "l'ensemble du projet de loi portant transposition des accords
+  // nationaux interprofessionnels en faveur de l'emploi des salariés
+  // expérimentés et relatif à l'évolution du dialogue social" (1re lecture,
+  // adopté)
+  VTANR5L17V2935: "DLR5L17N52040",
+  // "l'ensemble de la proposition de loi visant à optimiser la protection
+  // et l'accompagnement des parents d'enfants atteints de cancers, de
+  // maladies graves et de handicaps" (1re lecture, adopté)
+  VTANR5L17V515: "DLR5L17N50444",
+  // "l'ensemble de la proposition de loi visant à assurer le droit de
+  // chaque enfant à être assisté d'un avocat dans le cadre d'une mesure
+  // d'assistance éducative et de protection de l'enfance" (1re lecture,
+  // adopté)
+  VTANR5L17V4714: "DLR5L17N52781",
+  // "l'ensemble du projet de loi spéciale prévue par l'article 45 de la loi
+  // organique du 1er août 2001 relative aux lois de finances" (1re lecture,
+  // adopté)
+  VTANR5L17V4947: "DLR5L17N51079",
+  // "l'ensemble de la proposition de loi visant à sortir la France du piège
+  // du narcotrafic" (1re lecture, adopté)
+  VTANR5L17V1194: "DLR5L17N50169",
+  // "l'ensemble du projet de loi relative à l'organisation des jeux
+  // Olympiques et Paralympiques de 2030" (1re lecture, adopté)
+  VTANR5L17V4963: "DLR5L17N52100",
+  // "l'ensemble de la proposition de loi visant à protéger les mineurs des
+  // risques auxquels les expose l'utilisation des réseaux sociaux" (1re
+  // lecture, adopté)
+  VTANR5L17V5192: "DLR5L17N53187",
+  // "la motion de rejet préalable... de la proposition de loi visant à
+  // lever les contraintes à l'exercice du métier d'agriculteur" (1re
+  // lecture, adoptée)
+  VTANR5L17V2105: "DLR5L17N50819",
+
+  // Ces 3 cas n'ont pas de correspondance dans Dossiers_Legislatifs.json.zip
+  // (archive incomplète pour ces dossiers), identifiés par comparaison
+  // directe avec les Fiches dossier déjà classées.
+  // "l'ensemble de la proposition de loi relative à la sûreté dans les
+  // transports" (1re lecture, adopté — même dossier que la lecture CMP déjà
+  // couverte ci-dessus, VTANR5L17V1041)
+  VTANR5L17V788: "DLR5L16N49176",
+  // "l'ensemble de la proposition de loi relative au droit à l'aide à
+  // mourir" (1re lecture, adopté — dossier "Fin de vie", cf. issue #81)
+  VTANR5L17V2107: "DLR5L17N51670",
+  // même dossier (2e lecture, adopté)
+  VTANR5L17V5729: "DLR5L17N51670",
+
+  // Retrouvés par recherche directe dans content/dossiers/ (titre du
+  // dossier déjà connu de mémoire, hors méthode de #33).
+  // "l'ensemble de la proposition de loi visant à renforcer le parcours
+  // inclusif des enfants à besoins éducatifs particuliers" (1re lecture,
+  // adopté)
+  VTANR5L17V1550: "DLR5L17N50686",
+  // "l'ensemble de la proposition de loi relative à l'organisation et aux
+  // missions des professionnels de santé, vétérinaires, psychothérapeutes
+  // et psychologues... des services d'incendie et de secours" (1re lecture,
+  // adopté)
+  VTANR5L17V912: "DLR5L17N51346",
+  // "l'article unique de la proposition de loi visant à endiguer la
+  // prolifération du frelon asiatique et à préserver la filière apicole"
+  // (1re lecture, adopté)
+  VTANR5L17V913: "DLR5L16N49472",
+  // "l'ensemble du projet de loi de simplification de la vie économique"
+  // (1re lecture, adopté)
+  VTANR5L17V2458: "DLR5L16N49868",
+  // "l'article unique de la proposition de loi visant à permettre
+  // l'élection du maire d'une commune nouvelle en cas de conseil municipal
+  // incomplet" (1re lecture, adopté)
+  VTANR5L17V741: "DLR5L16N49843",
+
+  // 4 dossiers nouvellement classés (content/dossiers/ créé dans le cadre
+  // de cette reprise de #33) — absents des 187 dossiers déjà classés par
+  // #34-#42, retrouvés par title-matching contre
+  // Dossiers_Legislatifs.json.zip.
+  // "l'article unique de la proposition de loi... relative à l'instauration
+  // d'un nombre minimum de soignants par patient hospitalisé" (1re lecture,
+  // adopté)
+  VTANR5L17V599: "DLR5L17N50435",
+  // "l'article unique de la proposition de loi visant à améliorer la
+  // protection des commerçants grâce à l'usage d'outils numériques" (1re
+  // lecture, adopté)
+  VTANR5L17V5424: "DLR5L17N53158",
+  // "l'ensemble de la proposition de loi visant à simplifier la sortie de
+  // l'indivison successorale" (1re lecture, adopté — "indivison" est un
+  // coquille du titre AN pour "indivision")
+  VTANR5L17V921: "DLR5L17N52436",
+  // "l'article unique de la proposition de loi simplifiant l'ouverture des
+  // débits de boissons en zone rurale" (1re lecture, adopté)
+  VTANR5L17V930: "DLR5L17N51453",
+  // même dossier, vote sur l'ensemble plutôt que l'article unique (1re
+  // lecture, adopté — confirmé par le voteRef de Dossiers_Legislatifs.json.zip
+  // pour ce dossier, qui ne référence que ce scrutin)
+  VTANR5L17V931: "DLR5L17N51453",
 };
 
 // Exportée pour être réutilisée par le script d'audit de complétude
