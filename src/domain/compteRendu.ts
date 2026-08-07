@@ -54,3 +54,30 @@ export interface ExplicationsVoteRepository {
 export function explicationsVoteCurees(explications: ExplicationVote[]): boolean {
   return explications.every(({ resume }) => Boolean(resume));
 }
+
+// Une intervention en Discussion générale — source complémentaire aux
+// Explications de vote pour un scrutin décisif qui n'en a aucune (issue
+// #87, ADR-0003) : contrairement à ExplicationVote, `groupe` n'est pas lu
+// tel quel dans le texte (pas de sigle entre parenthèses) mais résolu via
+// ActeurGroupeRepository ; et plusieurs interventions par Groupe sont la
+// norme (discussion de fond, pas un roll-call d'un·e orateur·ice par
+// groupe comme Explications de vote) — à trier/résumer manuellement,
+// jamais utilisées telles quelles.
+export type InterventionDiscussionGenerale = {
+  groupe: string; // sigle du Groupe parlementaire, ex. "RN"
+  orateur: string;
+  texte: string;
+};
+
+export interface DiscussionGeneraleRepository {
+  // Retrouve les interventions de Discussion générale attribuables à un
+  // Groupe parlementaire, pour le dossier dont le titre est fourni, à la
+  // séance de la date indiquée — null si la date n'est pas couverte par
+  // les comptes rendus disponibles, ou si aucune section ne correspond au
+  // dossier à cette date. Jamais une liste vide pour la même raison
+  // qu'ExplicationVote ci-dessus.
+  getInterventions(
+    dateSeance: string,
+    dossierTitre: string
+  ): Promise<InterventionDiscussionGenerale[] | null>;
+}

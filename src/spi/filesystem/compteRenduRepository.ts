@@ -3,8 +3,8 @@ import { readdirSync } from "node:fs";
 import path from "node:path";
 import type { CompteRenduRepository, ExplicationVote } from "@/domain/compteRendu";
 
-const DOSSIER_DONNEES_PAR_DEFAUT = path.join(process.cwd(), "data/raw/an/17");
-const MOTIF_FICHIER_PAR_DEFAUT = /^compteRendu.*\.zip$/;
+export const DOSSIER_DONNEES_PAR_DEFAUT = path.join(process.cwd(), "data/raw/an/17");
+export const MOTIF_FICHIER_PAR_DEFAUT = /^compteRendu.*\.zip$/;
 
 // Les 3 formes de titre de bloc "Vote sur ..." observées dans les comptes
 // rendus, une par forme de vote sur le texte entier (cf.
@@ -38,8 +38,10 @@ const MOTS_VIDES = new Set([
 // partagés, sans lemmatisation) — suffisant pour départager quelques
 // dossiers discutés le même jour, pas un moteur de recherche. Voir
 // getExplicationsVote pour le seuil qui écarte les correspondances trop
-// faibles ou ambiguës.
-function motsSignificatifs(texte: string): Set<string> {
+// faibles ou ambiguës. Exportée : réutilisée telle quelle par
+// discussionGeneraleRepository.ts (même heuristique de correspondance
+// titre dossier / intitulé sommaire1, cf. issue #87).
+export function motsSignificatifs(texte: string): Set<string> {
   return new Set(
     texte
       .toLowerCase()
@@ -51,7 +53,7 @@ function motsSignificatifs(texte: string): Set<string> {
   );
 }
 
-function scoreCorrespondance(titreDossier: string, titreSommaire1: string): number {
+export function scoreCorrespondance(titreDossier: string, titreSommaire1: string): number {
   const motsDossier = motsSignificatifs(titreDossier);
   const motsSommaire = motsSignificatifs(titreSommaire1);
   let communs = 0;
@@ -69,7 +71,7 @@ function scoreCorrespondance(titreDossier: string, titreSommaire1: string): numb
 // format : pas d'entités numériques doublement échappées ici (le XML source
 // est déjà en UTF-8 littéral), juste les entités XML standard à décoder par
 // prudence.
-function nettoyerTexte(xml: string): string {
+export function nettoyerTexte(xml: string): string {
   return xml
     .replace(/<br\s*\/?>/gi, "\n")
     .replace(/<[^>]+>/g, "")
@@ -120,7 +122,7 @@ const LONGUEUR_FENETRE_SOMMAIRE2_SUIVANT = 500;
 const MOTIF_INTITULE_SOMMAIRE2_SUIVANT =
   /^\s*<sommaire2>\s*<titreStruct[^>]*>\s*<intitule>([\s\S]*?)<\/intitule>/;
 
-const MOTIF_SOMMAIRE1_INTITULE = /<sommaire1\b[^>]*>\s*<titreStruct[^>]*>\s*<intitule>([\s\S]*?)<\/intitule>/g;
+export const MOTIF_SOMMAIRE1_INTITULE = /<sommaire1\b[^>]*>\s*<titreStruct[^>]*>\s*<intitule>([\s\S]*?)<\/intitule>/g;
 
 function extraireTexteIntitule(fragmentXml: string): string {
   // Un intitule peut contenir des balises inline (ex. <exposant>e</exposant>
@@ -130,8 +132,10 @@ function extraireTexteIntitule(fragmentXml: string): string {
 
 // Le titre du sujet discuté (<sommaire1>) le plus proche AVANT la position
 // donnée dans le document — sert à savoir de quel dossier parle une paire
-// Explications de vote/Vote trouvée plus loin dans le fichier.
-function trouverIntituleSommaire1Precedent(
+// Explications de vote/Vote (ou, dans discussionGeneraleRepository.ts, une
+// section Discussion générale) trouvée plus loin dans le fichier. Exportée
+// pour la même raison que scoreCorrespondance ci-dessus (issue #87).
+export function trouverIntituleSommaire1Precedent(
   xml: string,
   position: number
 ): string | null {
@@ -221,13 +225,50 @@ function trouverTexteParagraphe(xml: string, idSyceron: string): string | null {
   return texte.length > 0 ? texte : null;
 }
 
-function dateSeanceVersISO(xml: string): string | null {
+export function dateSeanceVersISO(xml: string): string | null {
   const match = xml.match(/<dateSeance>(\d{8})/);
   if (!match) {
     return null;
   }
   const [, brut] = match;
   return `${brut.slice(0, 4)}-${brut.slice(4, 6)}-${brut.slice(6, 8)}`;
+}
+
+// Les archives (data/raw/an/17/compteRendu*.zip — plusieurs lots au fil du
+// temps, cf. issue #52) indexées par date de séance — exportée pour être
+// réutilisée par discussionGeneraleRepository.ts (issue #87), qui a besoin
+// du même index sans dupliquer la lecture des .zip.
+export function indexerComptesRendusParDate(
+  dossierDonnees: string,
+  motifFichier: RegExp
+): Map<string, string[]> {
+  const index = new Map<string, string[]>();
+
+  let fichiers: string[] = [];
+  try {
+    fichiers = readdirSync(dossierDonnees).filter((f) => motifFichier.test(f));
+  } catch {
+    fichiers = [];
+  }
+
+  for (const fichier of fichiers) {
+    const zip = new AdmZip(path.join(dossierDonnees, fichier));
+    for (const entry of zip.getEntries()) {
+      if (entry.isDirectory || !entry.entryName.endsWith(".xml")) {
+        continue;
+      }
+      const xml = entry.getData().toString("utf-8");
+      const date = dateSeanceVersISO(xml);
+      if (!date) {
+        continue;
+      }
+      const liste = index.get(date) ?? [];
+      liste.push(xml);
+      index.set(date, liste);
+    }
+  }
+
+  return index;
 }
 
 export class FilesystemCompteRenduRepository implements CompteRenduRepository {
@@ -238,40 +279,14 @@ export class FilesystemCompteRenduRepository implements CompteRenduRepository {
     private readonly motifFichier: RegExp = MOTIF_FICHIER_PAR_DEFAUT
   ) {}
 
-  // Les archives (data/raw/an/17/compteRendu*.zip — plusieurs lots au fil du
-  // temps, cf. issue #52) sont indexées par date de séance une seule fois,
-  // pas rescannées à chaque recherche.
+  // Indexées une seule fois par instance, pas rescannées à chaque
+  // recherche (cf. indexerComptesRendusParDate).
   private getIndexParDate(): Map<string, string[]> {
     if (!this.indexParDate) {
-      const index = new Map<string, string[]>();
-
-      let fichiers: string[] = [];
-      try {
-        fichiers = readdirSync(this.dossierDonnees).filter((f) =>
-          this.motifFichier.test(f)
-        );
-      } catch {
-        fichiers = [];
-      }
-
-      for (const fichier of fichiers) {
-        const zip = new AdmZip(path.join(this.dossierDonnees, fichier));
-        for (const entry of zip.getEntries()) {
-          if (entry.isDirectory || !entry.entryName.endsWith(".xml")) {
-            continue;
-          }
-          const xml = entry.getData().toString("utf-8");
-          const date = dateSeanceVersISO(xml);
-          if (!date) {
-            continue;
-          }
-          const liste = index.get(date) ?? [];
-          liste.push(xml);
-          index.set(date, liste);
-        }
-      }
-
-      this.indexParDate = index;
+      this.indexParDate = indexerComptesRendusParDate(
+        this.dossierDonnees,
+        this.motifFichier
+      );
     }
 
     return this.indexParDate;
