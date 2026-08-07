@@ -297,16 +297,18 @@ describe("genererFicheScrutinEnrichie", () => {
     });
     const dossier = creerDossier({
       ficheDossier: {
-        contexte: "Contexte de fond du dossier — pas celui-ci attendu ici.",
+        contexte: "Contexte de fond du dossier.",
         action: "Ce que change le texte.",
-        resultatAttendu: "Non utilisé ici.",
+        resultatAttendu: "L'effet attendu du texte.",
       },
     });
 
     const fiche = await genererFicheScrutinEnrichie(scrutin, dossier, [scrutin]);
 
     expect(fiche).toEqual({
-      contexteIntro: "Ce que change le texte.",
+      contexte: "Contexte de fond du dossier.",
+      action: "Ce que change le texte.",
+      resultatAttendu: "L'effet attendu du texte.",
       explicationsParGroupe: [
         { groupe: groupeRN, decompte: decompteRN, position: "Contre", resume: "Le groupe votera contre." },
         { groupe: groupeSOC, decompte: decompteSOC, position: "Pour", resume: "Le groupe votera pour." },

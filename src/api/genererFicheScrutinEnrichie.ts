@@ -124,7 +124,9 @@ export function createGenererFicheScrutinEnrichie(
         // tableau à moitié rempli.
         if (explications && explicationsVoteCurees(explications)) {
           return {
-            contexteIntro: dossier.ficheDossier.action,
+            contexte: dossier.ficheDossier.contexte,
+            action: dossier.ficheDossier.action,
+            resultatAttendu: dossier.ficheDossier.resultatAttendu,
             explicationsParGroupe: construireExplicationsParGroupe(
               comparerGroupes(scrutin),
               explications

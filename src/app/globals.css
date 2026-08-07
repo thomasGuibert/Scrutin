@@ -297,20 +297,12 @@ p.page-gloss {
   margin-right: 0.4rem;
 }
 
-/* Fiche Scrutin enrichie par les Explications de vote (issue #59) : phrase
-   de tête (contexteIntro) suivie du tableau Groupe/Position/Explication —
-   remplace le Contexte en paragraphes de .dossier-brief pour ce cas. */
+/* Fiche Scrutin enrichie par les Explications de vote (issue #59, revu en
+   #85/ADR-0003) : Contexte/Action/Résultat attendu de la Fiche dossier,
+   puis le tableau Groupe/Position/Explication, puis le Résultat réel du
+   scrutin — s'ajoute à .dossier-brief pour ce cas, ne le remplace plus. */
 .brief-block {
   margin-bottom: 1.3rem;
-}
-
-.brief-lead {
-  font-family: var(--serif);
-  font-size: 1rem;
-  color: var(--ink);
-  line-height: 1.5;
-  margin: 0.35rem 0 0.9rem;
-  max-width: 38rem;
 }
 
 .brief-resultat {
