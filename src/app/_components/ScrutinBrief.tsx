@@ -6,14 +6,15 @@ import type {
 } from "@/domain/scrutin";
 
 // Fiche Contexte / Action / Résultat propre à un scrutin (cf. FicheDossier)
-// — trois formes possibles, jamais combinées : le champ présent sur `fiche`
-// détermine laquelle afficher.
+// — trois formes possibles :
 // - "Résultat" + Contexte/Action en texte : cas générique.
-// - "Résultat attendu" : effet visé par le contenu réel d'un amendement
-//   (genererFicheScrutinEnrichie, issue #46).
-// - "explicationsParGroupe" : Explications de vote curées (issue #57),
-//   affichées en tableau plutôt qu'en texte (issue #59) — pas de champ
-//   Action séparé, la phrase de tête (contexteIntro) en tient lieu.
+// - "Résultat attendu" (seul, sans tableau) : effet visé par le contenu
+//   réel d'un amendement (genererFicheScrutinEnrichie, issue #46).
+// - "explicationsParGroupe" : Explications de vote curées (issue #57) —
+//   Contexte/Action/Résultat attendu de la Fiche dossier, PLUS le tableau
+//   des positions inséré juste après (issue #85, ADR-0003 : les deux
+//   variantes se combinent, elles ne s'excluent plus), puis le Résultat
+//   réel du scrutin en dernier.
 export function ScrutinBrief({
   fiche,
 }: {
@@ -21,11 +22,21 @@ export function ScrutinBrief({
 }) {
   if ("explicationsParGroupe" in fiche) {
     return (
-      <div className="brief-block">
-        <span className="brief-label">Contexte</span>
-        <p className="brief-lead">{fiche.contexteIntro}</p>
+      <div className="dossier-brief brief-block">
+        <div>
+          <span className="brief-label">Contexte</span>
+          {fiche.contexte}
+        </div>
+        <div>
+          <span className="brief-label">Action</span>
+          {fiche.action}
+        </div>
+        <div>
+          <span className="brief-label">Résultat attendu</span>
+          {fiche.resultatAttendu}
+        </div>
         <ExplicationsVoteTable explicationsParGroupe={fiche.explicationsParGroupe} />
-        <div className="dossier-brief brief-resultat">
+        <div className="brief-resultat">
           <span className="brief-label">Résultat</span>
           {fiche.resultat}
         </div>

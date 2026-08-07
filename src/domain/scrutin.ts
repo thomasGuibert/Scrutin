@@ -272,14 +272,17 @@ export type LigneExplicationVote = {
 };
 
 // Variante utilisée quand des Explications de vote entièrement curées
-// (issue #57) sont disponibles pour ce scrutin — remplace le Contexte en
-// paragraphe par une courte phrase de tête (reprise de l'Action du
-// dossier, cf. FicheDossier) suivie du tableau ci-dessus ; pas de champ
-// Action séparé (il ferait doublon avec la phrase de tête), le tableau
-// portant lui-même l'équivalent du bloc "Position par groupe" affiché par
-// ailleurs pour les autres Fiches (cf. ScrutinBrief, page scrutin).
+// (issue #57) sont disponibles pour ce scrutin — reprend les 3 champs de
+// la Fiche dossier (Contexte/Action/Résultat attendu, cf. FicheDossier),
+// PLUS le tableau des positions ci-dessus, plutôt que l'un remplaçant
+// l'autre (issue #85, ADR-0003 : les deux variantes utiles identifiées en
+// #84 se combinent, elles ne s'excluent plus). Ordre d'affichage voulu :
+// Contexte, Action, Résultat attendu, puis le tableau, puis Résultat (cf.
+// ScrutinBrief).
 export type FicheScrutinExplicationsVote = {
-  contexteIntro: string;
+  contexte: string;
+  action: string;
+  resultatAttendu: string;
   explicationsParGroupe: LigneExplicationVote[];
   resultat: string;
 };

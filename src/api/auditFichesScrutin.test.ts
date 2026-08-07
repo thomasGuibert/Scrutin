@@ -92,7 +92,9 @@ describe("audit des Fiches Scrutin sur tous les dossiers classés (#46)", () => 
         const prefixe = `${scrutin.uid} (${dossierRef})`;
 
         if ("explicationsParGroupe" in fiche) {
-          verifierTexte(`${prefixe} : contexteIntro`, fiche.contexteIntro, problemes);
+          verifierTexte(`${prefixe} : contexte`, fiche.contexte, problemes);
+          verifierTexte(`${prefixe} : action`, fiche.action, problemes);
+          verifierTexte(`${prefixe} : resultatAttendu`, fiche.resultatAttendu, problemes);
           verifierTexte(`${prefixe} : resultat`, fiche.resultat, problemes);
 
           if (fiche.explicationsParGroupe.length === 0) {
