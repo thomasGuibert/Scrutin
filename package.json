@@ -12,7 +12,8 @@
     "audit:fiches": "vitest run --config vitest.audit.config.mts src/api/auditFichesScrutin.test.ts",
     "audit:rattachements": "vitest run --config vitest.audit.config.mts src/spi/filesystem/auditRattachementsScrutins.test.ts",
     "curer:amendements": "node --experimental-transform-types scripts/extraire-amendements.ts",
-    "curer:explications-vote": "node --experimental-transform-types scripts/extraire-explications-vote.ts"
+    "curer:explications-vote": "node --experimental-transform-types scripts/extraire-explications-vote.ts",
+    "curer:discussion-generale": "node --experimental-transform-types scripts/extraire-discussion-generale.ts"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
