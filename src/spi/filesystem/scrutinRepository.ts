@@ -840,6 +840,108 @@ const DOSSIER_REF_OVERRIDE: Record<string, string> = {
   // lecture, adopté — confirmé par le voteRef de Dossiers_Legislatifs.json.zip
   // pour ce dossier, qui ne référence que ce scrutin)
   VTANR5L17V931: "DLR5L17N51453",
+
+  // Décision #40 : les propositions de résolution comptent comme Dossier
+  // législatif (cf. CONTEXT.md). 20 dossiers classés sur les 24 scrutins de
+  // résolution sans dossierRef résolu identifiés par #33 — title-matching
+  // contre Dossiers_Legislatifs.json.zip, avec vérification manuelle des
+  // cas où 2 dossiers quasi identiques existent (plusieurs groupes déposent
+  // souvent des résolutions séparées sur le même sujet ; seule celle allée
+  // au bout de la navette porte le voteRef ou les actes de séance publique,
+  // cf. commentaires ci-dessous). 1 scrutin reste sans correspondance
+  // fiable ("réseaux sociaux face aux ingérences étrangères",
+  // VTANR5L17V2283), ajouté à #41.
+  // "l'article unique de la proposition de résolution européenne visant à
+  // soutenir le Danemark et le Groenland..." (adopté)
+  VTANR5L17V5300: "DLR5L17N51777",
+  // "l'article unique de la proposition de résolution visant à étendre les
+  // compétences du Parquet européen aux infractions à l'environnement"
+  // (adopté)
+  VTANR5L17V2282: "DLR5L17N51051",
+  // "l'article unique de la proposition de résolution européenne appelant à
+  // la préservation des principes démocratiques... en Turquie" (adopté)
+  VTANR5L17V5307: "DLR5L17N51866",
+  // "l'article unique de la proposition de résolution tendant à la création
+  // d'une commission d'enquête sur le traitement judiciaire des violences
+  // sexuelles incestueuses parentales..." (adopté)
+  VTANR5L17V5225: "DLR5L17N53705",
+  // même dossier, vote sur l'ensemble plutôt que l'article unique (adopté)
+  VTANR5L17V5226: "DLR5L17N53705",
+  // "l'article unique de la proposition de résolution européenne visant à
+  // inscrire la mouvance des frères musulmans sur la liste européenne des
+  // organisations terroristes" (adopté)
+  VTANR5L17V5106: "DLR5L17N52132",
+  // "l'article unique de la proposition de résolution européenne visant à
+  // réaffirmer l'ambition climatique de la France au niveau européen"
+  // (adopté)
+  VTANR5L17V5316: "DLR5L17N53014",
+  // "l'article unique de la proposition de résolution européenne visant à
+  // rejeter le projet d'accord sur les droits de douane et le commerce du
+  // 27 juillet 2025 entre l'Union européenne et les États-Unis" (adopté)
+  VTANR5L17V5313: "DLR5L17N52598",
+  // "l'ensemble de la proposition de résolution pour une stratégie
+  // nationale de prévention sur le chemsex (article 34-1 de la
+  // Constitution)" (adopté)
+  VTANR5L17V1192: "DLR5L17N50589",
+  // "l'article unique de la proposition de résolution européenne visant à
+  // sauvegarder et renforcer le financement en faveur de la lutte contre le
+  // virus de l'immunodéficience humaine" (adopté)
+  VTANR5L17V5298: "DLR5L17N51679",
+  // "l'article unique de la proposition de résolution européenne relative à
+  // la mise en oeuvre du Protocole de l'OMS pour lutter contre le commerce
+  // illicite de tabac" (adopté — à distinguer de DLR5L17N51520, un dossier
+  // quasi identique déposé séparément mais qui n'est allé jusqu'à aucun
+  // acte de séance publique, contrairement à celui-ci dont le voteRef
+  // référence directement ce scrutin)
+  VTANR5L17V4243: "DLR5L17N51615",
+  // "l'ensemble de la proposition de résolution tendant à la création d'une
+  // commission d'enquête sur les effets psychologiques de TikTok sur les
+  // mineurs" (adopté)
+  VTANR5L17V1018: "DLR5L17N52405",
+  // même dossier, vote sur l'article unique (adopté)
+  VTANR5L17V1017: "DLR5L17N52405",
+  // "l'article unique de la proposition de résolution tendant à la création
+  // d'une commission d'enquête sur les manquements des politiques publiques
+  // de protection de l'enfance" (adopté)
+  VTANR5L17V3: "DLR5L17N50595",
+  // "l'article unique de la proposition de résolution européenne visant à
+  // refuser la ratification de l'accord commercial entre l'Union
+  // européenne et le Mercosur" (adopté — à distinguer de DLR5L17N50581, un
+  // dossier au titre identique déposé séparément par un autre auteur, resté
+  // au milieu du dépôt sans aucun acte de séance publique contrairement à
+  // celui-ci)
+  VTANR5L17V691: "DLR5L17N50939",
+  // "l'article unique de la proposition de résolution modifiant le
+  // Règlement de l'Assemblée nationale afin de supprimer le vote par assis
+  // et levé" (adopté)
+  VTANR5L17V960: "DLR5L17N51481",
+  // "l'article unique de la proposition de résolution européenne appelant à
+  // la libération immédiate et inconditionnelle de Boualem Sansal" (adopté)
+  VTANR5L17V1570: "DLR5L17N51375",
+  // "l'ensemble de la proposition de résolution relative à la publicisation
+  // des doléances du grand débat national (art. 34-1 de la Constitution)"
+  // (adopté)
+  VTANR5L17V947: "DLR5L17N50452",
+  // "l'ensemble de la proposition de résolution européenne relative à
+  // l'adoption et à la mise en œuvre d'exigences à l'importation..."
+  // (adopté)
+  VTANR5L17V685: "DLR5L17N50476",
+  // même dossier, vote sur l'article unique (adopté)
+  VTANR5L17V684: "DLR5L17N50476",
+  // "l'article unique de la proposition de résolution visant à condamner
+  // l'oppression et la terreur imposées aux femmes iraniennes... (art. 34-1
+  // de la Constitution)" (adopté — à distinguer de DLR5L17N50195, un
+  // dossier au titre quasi identique déposé séparément mais resté au stade
+  // du dépôt, sans discussion en séance contrairement à celui-ci)
+  VTANR5L17V683: "DLR5L17N50590",
+  // "l'article unique de la proposition de résolution européenne appelant
+  // au renforcement du soutien à l'Ukraine" (adopté)
+  VTANR5L17V988: "DLR5L17N51467",
+  // "l'article unique de la proposition de résolution tendant à la création
+  // d'une commission d'enquête relative aux violences commises dans les
+  // secteurs du cinéma, de l'audiovisuel, du spectacle vivant, de la mode
+  // et de la publicité" (adopté)
+  VTANR5L17V2: "DLR5L17N50275",
 };
 
 // Exportée pour être réutilisée par le script d'audit de complétude

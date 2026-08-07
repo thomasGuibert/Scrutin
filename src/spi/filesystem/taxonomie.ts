@@ -34,6 +34,16 @@ const TAXONOMIE: ThemeRacine[] = [
         nom: "Soutien diplomatique aux partenaires européens",
         type: "consensuel",
       },
+      {
+        slug: "positions-diplomatiques-internationales",
+        nom: "Positions diplomatiques sur des enjeux internationaux",
+        type: "consensuel",
+      },
+      {
+        slug: "commerce-international",
+        nom: "Commerce international : libre-échange vs protection des filières",
+        type: "clivant",
+      },
     ],
   },
   {
