@@ -224,21 +224,17 @@ export function determinerResultatDossier(
 // métadonnées déjà disponibles (titre nettoyé, dossier rattaché, décompte),
 // plutôt que rédigée à la main comme la fiche d'un dossier : le volume de
 // scrutins (des milliers) rend une rédaction manuelle par scrutin hors de
-// portée. Exception : un vote sur le texte entier (ensemble/article unique/
-// vote direct) reprend le Contexte/Action déjà rédigés à la main de la Fiche
-// dossier plutôt que de décrire l'état procédural du vote — c'est justement
-// le scrutin le plus consulté (souvent le Scrutin décisif), et son titre AN
-// seul ne dit jamais pourquoi certains groupes votent pour et d'autres
-// contre (cf. discussion du 2026-08-05) — mais seulement quand ce vote est
-// le seul du genre dans son dossier (cf. estSeulVoteSurLeTexteEntierDuDossier)
-// : sur un dossier à plusieurs lectures, répéter la même Fiche dossier à
-// l'identique sur chaque lecture perdrait le pourquoi propre à CE vote-là,
-// donc repli sur la description procédurale (avecStade) en attendant une
-// curation par scrutin (cf. discussion du 2026-08-06). Le troisième volet
-// ("Résultat") décrit toujours une issue déjà connue (adopté/rejeté +
-// décompte), jamais un effet attendu — cf. FicheScrutinEffetAttendu
-// ci-dessous pour le cas où un effet attendu réel est disponible (contenu
-// d'un amendement, issue #46).
+// portée. Décrit l'état procédural du vote (avecStade — "Vote sur l'ensemble
+// du texte, à l'issue de..."), jamais recopié d'ailleurs : le titre AN seul
+// ne dit certes jamais pourquoi certains groupes votent pour et d'autres
+// contre, mais recopier mot pour mot la Fiche dossier ne donnait pas non
+// plus cette information (juste l'impression trompeuse d'un contenu propre
+// au scrutin) — cf. FicheScrutinPasDeDonnees ci-dessous, qui a remplacé
+// cette copie pour le seul cas où elle s'appliquait (issue #84). Le
+// troisième volet ("Résultat") décrit toujours une issue déjà connue
+// (adopté/rejeté + décompte), jamais un effet attendu — cf.
+// FicheScrutinEffetAttendu ci-dessous pour le cas où un effet attendu réel
+// est disponible (contenu d'un amendement, issue #46).
 export type FicheScrutin = {
   contexte: string;
   action: string;
@@ -284,6 +280,24 @@ export type FicheScrutinExplicationsVote = {
   action: string;
   resultatAttendu: string;
   explicationsParGroupe: LigneExplicationVote[];
+  resultat: string;
+};
+
+// Remplace l'ancien repli "copie de la Fiche dossier" (issue #84) : recopier
+// mot pour mot le Contexte/Action d'un dossier dont ce scrutin est l'unique
+// vote sur le texte entier n'apportait aucune information propre à CE
+// scrutin — juste l'impression trompeuse d'un contenu spécifique alors
+// qu'il s'agissait d'une copie exacte de ce qui est déjà visible sur la
+// page Dossier. À la place, un état explicite signalant l'absence de
+// donnée propre au scrutin, avec un lien vers la Fiche dossier plutôt
+// qu'une duplication de son contenu — le Résultat, lui, n'est jamais une
+// copie mais un fait propre à ce scrutin, donc conservé. Le repli
+// procédural (avecStade, cf. contextePourTypeDeVote) n'est pas concerné :
+// il décrit honnêtement le type de vote, ce n'est pas une copie.
+export type FicheScrutinPasDeDonnees = {
+  message: string;
+  dossierRef: string;
+  dossierTitre: string;
   resultat: string;
 };
 
@@ -424,16 +438,18 @@ function contextePourTypeDeVote(titre: string): string | null {
   return null;
 }
 
-// Un dossier avec un seul vote sur le texte entier : sa Fiche dossier décrit
-// sans ambiguïté ce vote-là, aucune spécificité perdue à la reprendre. Un
-// dossier avec plusieurs lectures (première lecture, CMP, lecture
-// définitive...) a autant de votes sur le texte entier que de lectures —
-// leur répéter à l'identique la même Fiche dossier perdrait le "pourquoi de
-// CE vote en particulier" (ce qui a changé depuis la lecture précédente,
-// pourquoi celui-ci passe ou pas) : mieux vaut alors le repli procédural
-// (avecStade) qui au moins distingue les lectures, en attendant une
-// curation par scrutin (aucune source de données ne donne aujourd'hui le
-// contenu spécifique à chaque lecture — cf. discussion du 2026-08-06).
+// Un dossier avec un seul vote sur le texte entier : ce vote-là désigne sans
+// ambiguïté le Scrutin décisif du dossier, d'où l'état "pas de données"
+// pointant vers sa Fiche dossier (issue #84) plutôt que la description
+// procédurale générique. Un dossier avec plusieurs lectures (première
+// lecture, CMP, lecture définitive...) a autant de votes sur le texte
+// entier que de lectures — pointer les deux vers la même Fiche dossier sans
+// distinction perdrait le "pourquoi de CE vote en particulier" (ce qui a
+// changé depuis la lecture précédente, pourquoi celui-ci passe ou pas) :
+// mieux vaut alors le repli procédural (avecStade) qui au moins distingue
+// les lectures, en attendant une curation par scrutin (aucune source de
+// données ne donne aujourd'hui le contenu spécifique à chaque lecture — cf.
+// discussion du 2026-08-06).
 function estSeulVoteSurLeTexteEntierDuDossier(
   scrutin: Scrutin,
   scrutinsDossier: Scrutin[]
@@ -450,11 +466,12 @@ export function genererFicheScrutin(
   scrutin: Scrutin,
   dossier: Dossier | null,
   scrutinsDossier: Scrutin[]
-): FicheScrutin {
+): FicheScrutin | FicheScrutinPasDeDonnees {
   if (dossier && estSeulVoteSurLeTexteEntierDuDossier(scrutin, scrutinsDossier)) {
     return {
-      contexte: dossier.ficheDossier.contexte,
-      action: dossier.ficheDossier.action,
+      message: "Nous n'avons pas encore de contexte détaillé propre à ce scrutin.",
+      dossierRef: dossier.dossierRef,
+      dossierTitre: dossier.titre,
       resultat: formaterResultatScrutin(scrutin),
     };
   }

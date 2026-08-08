@@ -12,6 +12,7 @@ import {
   type FicheScrutin,
   type FicheScrutinEffetAttendu,
   type FicheScrutinExplicationsVote,
+  type FicheScrutinPasDeDonnees,
   type LigneExplicationVote,
   type Scrutin,
 } from "@/domain/scrutin";
@@ -102,17 +103,23 @@ export function createGenererFicheScrutinEnrichie(
     scrutin: Scrutin,
     dossier: Dossier | null,
     scrutinsDossier: Scrutin[]
-  ): Promise<FicheScrutin | FicheScrutinEffetAttendu | FicheScrutinExplicationsVote> {
+  ): Promise<
+    | FicheScrutin
+    | FicheScrutinPasDeDonnees
+    | FicheScrutinEffetAttendu
+    | FicheScrutinExplicationsVote
+  > {
     const detail = await amendementRepository.getByScrutin(scrutin);
 
     if (!detail) {
       // Un vote sur le texte entier avec de vraies Explications de vote
       // disponibles (issue #52/#54) prime sur le repli de genererFicheScrutin
-      // (Fiche dossier ou description procédurale) : contrairement à la
-      // Fiche dossier, ces interventions sont spécifiques à CE scrutin —
-      // la contrainte "seul vote du dossier" de genererFicheScrutin ne
-      // s'applique donc pas ici, un dossier à plusieurs lectures peut avoir
-      // ses deux votes enrichis séparément (cf. issue #56).
+      // (état "pas de données" ou description procédurale) : contrairement à
+      // la Fiche dossier recopiée par ce repli, ces interventions sont
+      // spécifiques à CE scrutin — la contrainte "seul vote du dossier" de
+      // genererFicheScrutin ne s'applique donc pas ici, un dossier à
+      // plusieurs lectures peut avoir ses deux votes enrichis séparément
+      // (cf. issue #56).
       if (dossier && estVoteSurLeTexteEntier(scrutin.titre)) {
         const explications = await explicationsVoteRepository.getByScrutin(
           dossier.dossierRef,
@@ -140,9 +147,10 @@ export function createGenererFicheScrutinEnrichie(
       // scrutin non-amendement, ou vote sur le texte entier sans
       // Explications de vote disponibles) : repli sur la Fiche dérivée du
       // titre (ou, pour l'unique vote sur le texte entier d'un dossier, sur
-      // sa Fiche dossier — cf. genererFicheScrutin), avec son "Résultat" =
-      // issue déjà connue du vote — jamais d'erreur, jamais de contenu
-      // manquant (cf. issue #46).
+      // un état explicite "pas de données" pointant vers sa Fiche dossier —
+      // cf. genererFicheScrutin, issue #84), avec le "Résultat" toujours
+      // présent = issue déjà connue du vote — jamais d'erreur, jamais de
+      // contenu manquant (cf. issue #46).
       return genererFicheScrutin(scrutin, dossier, scrutinsDossier);
     }
 

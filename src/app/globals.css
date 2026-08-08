@@ -273,6 +273,16 @@ p.page-gloss {
   border-bottom: 1px solid var(--line);
 }
 
+/* État "pas de données propres à ce scrutin" (issue #84) — reprend le style
+   .branch-placeholder (état vide muté/italique) mais son lien vers la Fiche
+   dossier doit rester visiblement cliquable : `a { color: inherit }` global
+   le rendrait sinon indiscernable du texte muet qui l'entoure. */
+.brief-pas-de-donnees a {
+  color: var(--accent);
+  font-style: normal;
+  text-decoration: underline;
+}
+
 .dossier-brief {
   display: flex;
   flex-direction: column;
