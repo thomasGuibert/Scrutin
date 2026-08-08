@@ -209,7 +209,7 @@ describe("genererFicheScrutinEnrichie", () => {
     );
   });
 
-  it("reprend le Contexte/Action de la Fiche dossier pour un vote sur l'ensemble, même quand le repository d'amendements ne trouve rien", async () => {
+  it("renvoie l'état 'pas de données' pointant vers le dossier pour un vote sur l'ensemble, même quand le repository d'amendements ne trouve rien — jamais une copie du Contexte/Action du dossier (issue #84)", async () => {
     const repository = new FakeAmendementRepository(null);
     const genererFicheScrutinEnrichie = createGenererFicheScrutinEnrichie(
       repository,
@@ -230,8 +230,12 @@ describe("genererFicheScrutinEnrichie", () => {
 
     const fiche = await genererFicheScrutinEnrichie(scrutin, dossier, [scrutin]);
 
-    expect(fiche.contexte).toBe("Contexte de fond du dossier.");
-    expect(fiche.action).toBe("Ce que change le texte.");
+    expect(fiche).not.toHaveProperty("contexte");
+    expect(fiche).not.toHaveProperty("action");
+    expect(fiche).toMatchObject({
+      dossierRef: dossier.dossierRef,
+      dossierTitre: dossier.titre,
+    });
   });
 
   it("ne reprend pas la Fiche dossier quand le dossier a plusieurs votes sur le texte entier (plusieurs lectures)", async () => {
@@ -394,7 +398,7 @@ describe("genererFicheScrutinEnrichie", () => {
     }
   });
 
-  it("retombe sur la Fiche dossier quand des Explications de vote existent mais qu'un groupe n'a pas encore de résumé rédigé (curation incomplète, issue #57)", async () => {
+  it("retombe sur l'état 'pas de données' quand des Explications de vote existent mais qu'un groupe n'a pas encore de résumé rédigé (curation incomplète, issue #57)", async () => {
     const repository = new FakeAmendementRepository(null);
     const explicationsVoteRepository = new FakeExplicationsVoteRepository([
       { groupe: "RN", orateur: "M. X", texte: "Nous voterons contre." },
@@ -422,6 +426,10 @@ describe("genererFicheScrutinEnrichie", () => {
 
     const fiche = await genererFicheScrutinEnrichie(scrutin, dossier, [scrutin]);
 
-    expect(fiche.contexte).toBe("Contexte de fond du dossier.");
+    expect(fiche).not.toHaveProperty("explicationsParGroupe");
+    expect(fiche).toMatchObject({
+      dossierRef: dossier.dossierRef,
+      dossierTitre: dossier.titre,
+    });
   });
 });

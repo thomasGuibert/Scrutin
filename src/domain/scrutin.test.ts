@@ -480,7 +480,7 @@ describe("genererFicheScrutin", () => {
     );
   });
 
-  it("reprend le Contexte/Action de la Fiche dossier pour un vote sur l'ensemble qui est le seul de son dossier, plutôt que la description procédurale", () => {
+  it("renvoie un état explicite 'pas de données' pointant vers le dossier pour un vote sur l'ensemble qui est le seul de son dossier, plutôt que la description procédurale ou une copie de la Fiche dossier", () => {
     const scrutin = creerScrutin({
       titre:
         "l'ensemble de la proposition de loi visant à sortir la France du piège du narcotrafic (texte de la commission mixte paritaire).",
@@ -488,6 +488,7 @@ describe("genererFicheScrutin", () => {
       resultat: "adopté",
     });
     const dossier = creerDossier({
+      dossierRef: "DLR5L17N53980",
       titre: "Sortir la France du piège du narcotrafic",
       ficheDossier: {
         contexte: "Le narcotrafic gangrène des pans entiers du territoire.",
@@ -499,14 +500,17 @@ describe("genererFicheScrutin", () => {
     const fiche = genererFicheScrutin(scrutin, dossier, [scrutin]);
 
     expect(fiche).toEqual({
-      contexte: "Le narcotrafic gangrène des pans entiers du territoire.",
-      action: "Le texte crée un parquet national anti-criminalité organisée.",
+      message: "Nous n'avons pas encore de contexte détaillé propre à ce scrutin.",
+      dossierRef: "DLR5L17N53980",
+      dossierTitre: "Sortir la France du piège du narcotrafic",
       resultat: "Ce scrutin a été adopté (65 pour, 41 contre, 52 abstentions).",
     });
   });
 
-  it("reprend aussi la Fiche dossier pour un vote sur l'article unique et un vote direct sur le texte, chacun seul de son dossier", () => {
+  it("renvoie aussi cet état pour un vote sur l'article unique et un vote direct sur le texte, chacun seul de son dossier — jamais le Contexte/Action du dossier recopiés", () => {
     const dossier = creerDossier({
+      dossierRef: "DLR5L17N1",
+      titre: "Un dossier",
       ficheDossier: {
         contexte: "Contexte de fond du dossier.",
         action: "Ce que change le texte.",
@@ -521,8 +525,12 @@ describe("genererFicheScrutin", () => {
     const articleUnique = genererFicheScrutin(scrutinArticleUnique, dossier, [
       scrutinArticleUnique,
     ]);
-    expect(articleUnique.contexte).toBe("Contexte de fond du dossier.");
-    expect(articleUnique.action).toBe("Ce que change le texte.");
+    expect(articleUnique).not.toHaveProperty("contexte");
+    expect(articleUnique).not.toHaveProperty("action");
+    expect(articleUnique).toMatchObject({
+      dossierRef: "DLR5L17N1",
+      dossierTitre: "Un dossier",
+    });
 
     const scrutinVoteDirect = creerScrutin({
       titre:
@@ -531,8 +539,12 @@ describe("genererFicheScrutin", () => {
     const voteDirect = genererFicheScrutin(scrutinVoteDirect, dossier, [
       scrutinVoteDirect,
     ]);
-    expect(voteDirect.contexte).toBe("Contexte de fond du dossier.");
-    expect(voteDirect.action).toBe("Ce que change le texte.");
+    expect(voteDirect).not.toHaveProperty("contexte");
+    expect(voteDirect).not.toHaveProperty("action");
+    expect(voteDirect).toMatchObject({
+      dossierRef: "DLR5L17N1",
+      dossierTitre: "Un dossier",
+    });
   });
 
   it("retombe sur la description procédurale quand le dossier a plusieurs votes sur le texte entier (plusieurs lectures)", () => {
