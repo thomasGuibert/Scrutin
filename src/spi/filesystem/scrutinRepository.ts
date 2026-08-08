@@ -942,6 +942,36 @@ const DOSSIER_REF_OVERRIDE: Record<string, string> = {
   // secteurs du cinéma, de l'audiovisuel, du spectacle vivant, de la mode
   // et de la publicité" (adopté)
   VTANR5L17V2: "DLR5L17N50275",
+  // Suite à #33/#41 : 4 des 9 votes-résolutions laissés en périmètre à
+  // trancher, retrouvés par recoupement direct des dates d'actes législatifs
+  // (Discussion en séance publique + Décision) dans Dossiers_Legislatifs.json.zip
+  // contre la date du scrutin — nécessaire ici car plusieurs résolutions
+  // quasi identiques déposées par des groupes différents existent pour les
+  // mêmes deux sujets (accords franco-algériens de 1968, prisonniers
+  // arméniens), la plupart jamais mises en discussion.
+  // "l'ensemble de la proposition de loi visant à renforcer les outils de
+  // régulation des meublés de tourisme à l'échelle locale" (texte CMP,
+  // adopté puis promulgué le 2024-11-19 — dossier déposé sous la 16e
+  // législature, DLR5L16, poursuivi sous la 17e après dissolution)
+  VTANR5L17V289: "DLR5L16N47722",
+  // "la proposition de résolution visant à dénoncer les accords
+  // franco-algériens du 27 décembre 1968" (art. 34-1, adopté le 2025-10-30 —
+  // à distinguer de DLR5L17N51288 et DLR5L17N51727, deux résolutions au
+  // titre quasi identique déposées séparément mais jamais discutées/retirées)
+  VTANR5L17V3260: "DLR5L17N52719",
+  // "la proposition de résolution visant à abroger la loi n° 2023-270 du
+  // 14 avril 2023 de financement rectificative de la sécurité sociale pour
+  // 2023 dite réforme des retraites" (art. 34-1, adopté)
+  VTANR5L17V2257: "DLR5L17N51999",
+  // "la proposition de résolution demandant la libération des prisonniers
+  // arméniens détenus par l'Azerbaïdjan" (art. 34-1, adopté le 2026-02-03 —
+  // à distinguer de DLR5L17N51580, résolution au titre identique déposée
+  // séparément mais retirée le 2025-12-18 sans avoir été discutée)
+  VTANR5L17V5297: "DLR5L17N53378",
+  // "la proposition de résolution tendant à la création d'une commission
+  // d'enquête sur les dysfonctionnements obstruant l'accès à une justice
+  // adaptée aux besoins des justiciables ultramarins" (adopté)
+  VTANR5L17V2273: "DLR5L17N52245",
 };
 
 // Exportée pour être réutilisée par le script d'audit de complétude
