@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createListerThemesTries } from "@/api/listerThemesTries";
 import type {
   Branche,
+  ContexteSousTheme,
   SousTheme,
   TaxonomyRepository,
   ThemeRacine,
@@ -20,6 +21,10 @@ class FakeTaxonomyRepository implements TaxonomyRepository {
   }
 
   trouverBranche(): { theme: ThemeRacine; branche: Branche } | undefined {
+    throw new Error("not used in this test");
+  }
+
+  trouverContexteSousTheme(): ContexteSousTheme | undefined {
     throw new Error("not used in this test");
   }
 

@@ -12,9 +12,27 @@ import {
   formaterTitreScrutin,
   genererFicheScrutin,
   lienScrutinAN,
+  type FicheScrutin,
+  type FicheScrutinPasDeDonnees,
   type Scrutin,
   trouverScrutinDecisif,
 } from "@/domain/scrutin";
+
+// genererFicheScrutin retourne FicheScrutin | FicheScrutinPasDeDonnees (cf.
+// ScrutinBrief.tsx pour le même narrowing en production) — cette poignée de
+// tests portent spécifiquement sur le contenu textuel de la variante
+// "avec données", donc affirment l'absence de la variante "pas de données"
+// plutôt que de la gérer.
+function ficheAvecDonnees(
+  fiche: FicheScrutin | FicheScrutinPasDeDonnees
+): FicheScrutin {
+  if (!("contexte" in fiche)) {
+    throw new Error(
+      "Fiche 'pas de données' inattendue : ce test porte sur le Contexte/Action."
+    );
+  }
+  return fiche;
+}
 
 describe("calculerVotants", () => {
   it("somme pour, contre et abstentions", () => {
@@ -397,7 +415,7 @@ describe("genererFicheScrutin", () => {
 
     const fiche = genererFicheScrutin(scrutin, null, [scrutin]);
 
-    expect(fiche.contexte).toBe(
+    expect(ficheAvecDonnees(fiche).contexte).toBe(
       "Ce scrutin ne se rattache à aucun dossier législatif recensé."
     );
   });
@@ -413,7 +431,7 @@ describe("genererFicheScrutin", () => {
       [scrutin]
     );
 
-    expect(fiche.contexte).toBe(
+    expect(ficheAvecDonnees(fiche).contexte).toBe(
       "Ce scrutin porte sur le dossier « Un dossier quelconque »."
     );
   });
@@ -436,7 +454,7 @@ describe("genererFicheScrutin", () => {
 
     const fiche = genererFicheScrutin(scrutin, null, [scrutin]);
 
-    expect(fiche.contexte).toBe(
+    expect(ficheAvecDonnees(fiche).contexte).toBe(
       "Vote sur l'ensemble du texte, à l'issue de sa première lecture."
     );
   });
@@ -449,7 +467,7 @@ describe("genererFicheScrutin", () => {
 
     const fiche = genererFicheScrutin(scrutin, null, [scrutin]);
 
-    expect(fiche.contexte).toBe(
+    expect(ficheAvecDonnees(fiche).contexte).toBe(
       "Vote sur l'ensemble du texte, à l'issue de l'examen du texte issu de la commission mixte paritaire."
     );
   });
@@ -462,7 +480,7 @@ describe("genererFicheScrutin", () => {
 
     const fiche = genererFicheScrutin(scrutin, null, [scrutin]);
 
-    expect(fiche.contexte).toBe(
+    expect(ficheAvecDonnees(fiche).contexte).toBe(
       "Vote sur l'article unique du texte, à l'issue de sa première lecture."
     );
   });
@@ -475,7 +493,7 @@ describe("genererFicheScrutin", () => {
 
     const fiche = genererFicheScrutin(scrutin, null, [scrutin]);
 
-    expect(fiche.contexte).toBe(
+    expect(ficheAvecDonnees(fiche).contexte).toBe(
       "Vote sur le texte lui-même, à l'issue de sa première lecture."
     );
   });
@@ -577,10 +595,10 @@ describe("genererFicheScrutin", () => {
     // deux perdrait le pourquoi propre à chacun (cf. discussion du
     // 2026-08-06) — repli sur la description procédurale en attendant une
     // curation par scrutin.
-    expect(ficheCmp.contexte).toBe(
+    expect(ficheAvecDonnees(ficheCmp).contexte).toBe(
       "Vote sur l'ensemble du texte, à l'issue de l'examen du texte issu de la commission mixte paritaire."
     );
-    expect(ficheCmp.action).not.toBe("Ce que change le texte.");
+    expect(ficheAvecDonnees(ficheCmp).action).not.toBe("Ce que change le texte.");
   });
 
   it("nomme l'auteur·ice d'une motion de rejet préalable", () => {
@@ -591,7 +609,7 @@ describe("genererFicheScrutin", () => {
 
     const fiche = genererFicheScrutin(scrutin, null, [scrutin]);
 
-    expect(fiche.contexte).toBe(
+    expect(ficheAvecDonnees(fiche).contexte).toBe(
       "Mme Mathilde Panot dépose une motion de rejet préalable visant à écarter le texte avant tout débat sur son contenu."
     );
   });
@@ -604,7 +622,7 @@ describe("genererFicheScrutin", () => {
 
     const fiche = genererFicheScrutin(scrutin, null, [scrutin]);
 
-    expect(fiche.contexte).toBe(
+    expect(ficheAvecDonnees(fiche).contexte).toBe(
       "Motion de censure déposée par M. Boris Vallaud."
     );
   });
@@ -617,7 +635,7 @@ describe("genererFicheScrutin", () => {
 
     const fiche = genererFicheScrutin(scrutin, null, [scrutin]);
 
-    expect(fiche.contexte).toBe("Amendement de M. Amirshahi à l'article 2.");
+    expect(ficheAvecDonnees(fiche).contexte).toBe("Amendement de M. Amirshahi à l'article 2.");
   });
 
   it("distingue un sous-amendement d'un amendement", () => {
@@ -628,7 +646,7 @@ describe("genererFicheScrutin", () => {
 
     const fiche = genererFicheScrutin(scrutin, null, [scrutin]);
 
-    expect(fiche.contexte).toBe("Sous-amendement de M. Caure à l'article 2.");
+    expect(ficheAvecDonnees(fiche).contexte).toBe("Sous-amendement de M. Caure à l'article 2.");
   });
 
   it("retrouve l'auteur et l'article d'un amendement de suppression", () => {
@@ -639,7 +657,7 @@ describe("genererFicheScrutin", () => {
 
     const fiche = genererFicheScrutin(scrutin, null, [scrutin]);
 
-    expect(fiche.contexte).toBe(
+    expect(ficheAvecDonnees(fiche).contexte).toBe(
       "Amendement de M. Bernalicis à l'article 5 bis."
     );
   });
