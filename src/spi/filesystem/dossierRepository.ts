@@ -11,6 +11,8 @@ import { DeclaredTaxonomyRepository } from "@/spi/filesystem/taxonomie";
 
 const CONTENT_DIR = path.join(process.cwd(), "content/dossiers");
 
+const DOSSIER_REF_VALIDE = /^[A-Za-z0-9]+$/;
+
 type RawDossierFrontmatter = {
   dossierRef: string;
   titre: string;
@@ -66,6 +68,18 @@ export class FilesystemDossierRepository implements DossierRepository {
   }
 
   async getByRef(dossierRef: string): Promise<Dossier | null> {
+    // dossierRef vient directement du segment d'URL /dossier/[dossierRef]
+    // (params non couverts par generateStaticParams tombent quand même ici,
+    // Next ne les rejette pas avant l'appel). Sans ce garde-fou, un
+    // dossierRef du type "../../CLAUDE" traverserait content/dossiers/ pour
+    // lire n'importe quel *.md accessible par chemin relatif. Tous les
+    // dossierRef réels sont alphanumériques (ex. DLR5L17N50882) — un dossier
+    // absent ou malformé est traité identiquement (404), sans distinguer les
+    // deux cas pour ne rien révéler côté page.
+    if (!DOSSIER_REF_VALIDE.test(dossierRef)) {
+      return null;
+    }
+
     const filePath = path.join(this.contentDir, `${dossierRef}.md`);
 
     let raw: string;

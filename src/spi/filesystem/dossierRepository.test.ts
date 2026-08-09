@@ -89,6 +89,21 @@ describe("FilesystemDossierRepository", () => {
     expect(dossier).toBeNull();
   });
 
+  it("rejette un dossierRef contenant un séparateur de chemin plutôt que de lire hors de content/dossiers (path traversal)", async () => {
+    const repository = new FilesystemDossierRepository({
+      contentDir: FIXTURE_CONTENT_DIR,
+      taxonomyRepository: TAXONOMIE_DE_TEST,
+    });
+
+    // Ce fichier existe bel et bien, juste dans un répertoire voisin — sans
+    // le garde-fou de validation, ce dossierRef le lirait avec succès.
+    const dossier = await repository.getByRef(
+      "../content-dossiers-sous-theme/DLR5L17A"
+    );
+
+    expect(dossier).toBeNull();
+  });
+
   it("throws when the Fiche dossier is missing a required section", async () => {
     const repository = new FilesystemDossierRepository({
       contentDir: FIXTURE_CONTENT_DIR,
