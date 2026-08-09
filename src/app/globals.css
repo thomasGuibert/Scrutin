@@ -128,28 +128,6 @@ a {
   text-align: right;
 }
 
-/* Regroupe la légiature/institution (.masthead-meta) et le lien "À propos"
-   (issue #86) sur le même bloc à droite du bandeau, sans casser la mise en
-   page à 2 colonnes de .masthead-row. */
-.masthead-nav {
-  display: flex;
-  align-items: baseline;
-  gap: 1rem;
-}
-
-.masthead-link {
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  color: var(--accent);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  text-decoration: none;
-}
-
-.masthead-link:hover {
-  text-decoration: underline;
-}
-
 /* Pied de page discret (issue #86) — seul point d'accès permanent à "À
    propos" en dehors du bandeau. */
 .site-footer {

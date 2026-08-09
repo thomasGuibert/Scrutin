@@ -24,14 +24,9 @@ export default function RootLayout({
               <Link className="wordmark" href="/">
                 Scrutins <span className="rule">·</span> Au-delà du discours
               </Link>
-              <div className="masthead-nav">
-                <p className="masthead-meta">
-                  17e législature — Assemblée nationale
-                </p>
-                <Link className="masthead-link" href="/a-propos">
-                  À propos
-                </Link>
-              </div>
+              <p className="masthead-meta">
+                17e législature — Assemblée nationale
+              </p>
             </div>
           </div>
         </header>
