@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import Link from "next/link";
+import { Footer } from "@/app/_components/Footer";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -23,13 +24,19 @@ export default function RootLayout({
               <Link className="wordmark" href="/">
                 Scrutins <span className="rule">·</span> Au-delà du discours
               </Link>
-              <p className="masthead-meta">
-                17e législature — Assemblée nationale
-              </p>
+              <div className="masthead-nav">
+                <p className="masthead-meta">
+                  17e législature — Assemblée nationale
+                </p>
+                <Link className="masthead-link" href="/a-propos">
+                  À propos
+                </Link>
+              </div>
             </div>
           </div>
         </header>
         <div className="measure">{children}</div>
+        <Footer />
         <Analytics />
       </body>
     </html>

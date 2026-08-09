@@ -128,6 +128,80 @@ a {
   text-align: right;
 }
 
+/* Regroupe la légiature/institution (.masthead-meta) et le lien "À propos"
+   (issue #86) sur le même bloc à droite du bandeau, sans casser la mise en
+   page à 2 colonnes de .masthead-row. */
+.masthead-nav {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.masthead-link {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.masthead-link:hover {
+  text-decoration: underline;
+}
+
+/* Pied de page discret (issue #86) — seul point d'accès permanent à "À
+   propos" en dehors du bandeau. */
+.site-footer {
+  border-top: 1px solid var(--line);
+  margin-top: 3rem;
+  padding: 1.25rem 0;
+}
+
+.site-footer-row {
+  display: flex;
+  gap: 1.25rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.site-footer-row a {
+  color: var(--ink-muted);
+  text-decoration: none;
+}
+
+.site-footer-row a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* Page "À propos" (issue #86) — prose simple, pas de composant dédié
+   ailleurs sur le site à réutiliser (les autres pages sont des listes/
+   fiches structurées, pas du texte suivi). */
+.about-section {
+  max-width: 38rem;
+  margin: 0 0 2rem;
+}
+
+.about-heading {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  margin: 0 0 0.6rem;
+}
+
+.about-section p {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.about-section a {
+  color: var(--accent);
+}
+
 .breadcrumb {
   font-family: var(--mono);
   font-size: 0.78rem;

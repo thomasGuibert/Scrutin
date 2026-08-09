@@ -9,7 +9,8 @@ export default async function Home() {
       <h1 className="page-title">Scrutins</h1>
       <p className="page-gloss">
         Consultez les votes réels de l&apos;Assemblée nationale, classés par
-        thème.
+        thème : comparez ce que les groupes parlementaires ont concrètement
+        voté, dossier par dossier, au-delà de leur communication.
       </p>
 
       <div className="a-grid">
