@@ -40,21 +40,37 @@ const MOTIF_PARAGRAPHE_ORATEUR =
 // Le meilleur score de correspondance entre dossierTitre et n'importe quel
 // intitulé de <sommaire1> du fichier — pas la position, seulement une
 // mesure de pertinence du fichier dans son ensemble pour ce dossier.
-function meilleurScoreFichier(xml: string, dossierTitre: string): number {
+// L'intitulé gagnant est gardé en plus du score (cf. son usage dans
+// getInterventions, issue #96) : deux fichiers à égalité de score ne sont
+// pas forcément deux sujets différents.
+function meilleureCorrespondanceFichier(
+  xml: string,
+  dossierTitre: string
+): { score: number; intitule: string | null } {
   let meilleur = 0;
+  let intitule: string | null = null;
   for (const match of xml.matchAll(MOTIF_SOMMAIRE1_INTITULE)) {
-    const score = scoreCorrespondance(dossierTitre, nettoyerTexte(match[1]));
+    const texte = nettoyerTexte(match[1]);
+    const score = scoreCorrespondance(dossierTitre, texte);
     if (score > meilleur) {
       meilleur = score;
+      intitule = texte;
     }
   }
-  return meilleur;
+  return { score: meilleur, intitule };
 }
 
-// Même heuristique de désambiguïsation que
-// FilesystemCompteRenduRepository.getExplicationsVote (score minimal 2,
-// jamais d'égalité retenue) — appliquée par FICHIER (un fichier = une
-// séance ou portion de séance), pas par section interne.
+// Même seuil que FilesystemCompteRenduRepository.getExplicationsVote (score
+// minimal 2) — appliqué par FICHIER (un fichier = une séance ou portion de
+// séance), pas par section interne. Contrairement à getExplicationsVote,
+// une égalité entre fichiers n'est PAS automatiquement rejetée : une
+// discussion générale qui se poursuit sur une séance suivante
+// ("Discussion générale (suite)") reprend le même intitulé de <sommaire1>,
+// donc mécaniquement le même score — rejeter systématiquement sur égalité
+// écartait à tort la quasi-totalité des discussions générales étalées sur
+// plusieurs séances (vérifié sur 3 cas réels, issue #96). Seule une égalité
+// entre intitulés DIFFÉRENTS reste rejetée (deux dossiers sans rapport,
+// discutés le même jour, qui partagent par coïncidence le même score).
 const SCORE_MINIMAL = 2;
 
 // Extrait les interventions nommées attribuables à un Groupe parlementaire
@@ -94,7 +110,7 @@ export class FilesystemDiscussionGeneraleRepository
 
     const scores = fichiersDuJour.map((xml) => ({
       xml,
-      score: meilleurScoreFichier(xml, dossierTitre),
+      ...meilleureCorrespondanceFichier(xml, dossierTitre),
     }));
     scores.sort((a, b) => b.score - a.score);
 
@@ -102,31 +118,35 @@ export class FilesystemDiscussionGeneraleRepository
     if (!meilleur || meilleur.score < SCORE_MINIMAL) {
       return null;
     }
-    if (scores.length > 1 && scores[1].score === meilleur.score) {
+
+    const exAequo = scores.filter((s) => s.score === meilleur.score);
+    if (exAequo.some((s) => s.intitule !== meilleur.intitule)) {
       return null;
     }
 
     const interventions: InterventionDiscussionGenerale[] = [];
-    for (const match of meilleur.xml.matchAll(MOTIF_PARAGRAPHE_ORATEUR)) {
-      const [, nom, idActeur, texteBrut] = match;
-      // Orateur sans id numérique (ex. "Un député du groupe LFI-NFP",
-      // anonymisé côté SYCERON) : pas rattachable à un groupe via
-      // ActeurGroupeRepository, écarté plutôt que mal attribué.
-      if (!idActeur) {
-        continue;
+    for (const { xml } of exAequo) {
+      for (const match of xml.matchAll(MOTIF_PARAGRAPHE_ORATEUR)) {
+        const [, nom, idActeur, texteBrut] = match;
+        // Orateur sans id numérique (ex. "Un député du groupe LFI-NFP",
+        // anonymisé côté SYCERON) : pas rattachable à un groupe via
+        // ActeurGroupeRepository, écarté plutôt que mal attribué.
+        if (!idActeur) {
+          continue;
+        }
+        const groupe = this.acteurGroupeRepository.groupeAuMoment(
+          idActeur,
+          dateSeance
+        );
+        if (!groupe) {
+          continue;
+        }
+        const texte = nettoyerTexte(texteBrut);
+        if (texte.length === 0) {
+          continue;
+        }
+        interventions.push({ groupe, orateur: nom.trim(), texte });
       }
-      const groupe = this.acteurGroupeRepository.groupeAuMoment(
-        idActeur,
-        dateSeance
-      );
-      if (!groupe) {
-        continue;
-      }
-      const texte = nettoyerTexte(texteBrut);
-      if (texte.length === 0) {
-        continue;
-      }
-      interventions.push({ groupe, orateur: nom.trim(), texte });
     }
 
     return interventions.length > 0 ? interventions : null;
