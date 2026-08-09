@@ -103,4 +103,37 @@ describe("FilesystemDiscussionGeneraleRepository", () => {
 
     expect(interventions).toBeNull();
   });
+
+  it("fusionne les interventions de 2 séances à égalité de score quand elles partagent le même intitulé de sommaire1 (discussion générale « suite », issue #96)", async () => {
+    const repository = creerRepository();
+
+    const interventions = await repository.getInterventions(
+      "2025-01-17",
+      "Réforme du permis de conduire pour les jeunes conducteurs"
+    );
+
+    expect(interventions).toEqual([
+      {
+        groupe: "RN",
+        orateur: "M. Karim Diallo",
+        texte: "Ce texte réforme le permis de conduire pour les jeunes, notre groupe y est favorable.",
+      },
+      {
+        groupe: "SOC",
+        orateur: "Mme Nadia Ferrand",
+        texte: "Nous poursuivons ce débat entamé lors de la précédente séance, toujours favorables au texte.",
+      },
+    ]);
+  });
+
+  it("retourne null quand 2 séances à égalité de score correspondent à 2 intitulés différents (deux dossiers sans rapport, même score par coïncidence)", async () => {
+    const repository = creerRepository();
+
+    const interventions = await repository.getInterventions(
+      "2025-01-18",
+      "Réforme du permis de conduire pour les jeunes conducteurs"
+    );
+
+    expect(interventions).toBeNull();
+  });
 });
