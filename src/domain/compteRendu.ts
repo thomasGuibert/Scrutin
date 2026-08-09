@@ -1,3 +1,5 @@
+import type { Scrutin } from "@/domain/scrutin";
+
 // Une intervention en "Explications de vote", juste avant un vote sur le
 // texte entier (cf. Scrutin décisif, CONTEXT.md) — un·e orateur·ice par
 // Groupe parlementaire vient y justifier sa position, ce qui manque au
@@ -80,4 +82,25 @@ export interface DiscussionGeneraleRepository {
     dateSeance: string,
     dossierTitre: string
   ): Promise<InterventionDiscussionGenerale[] | null>;
+}
+
+// Le discours par lequel l'auteur·ice défend EN SÉANCE un amendement précis
+// (issue #94) — source de dernier recours pour compléter le Contexte d'un
+// vote sur amendement dont l'exposé des motifs écrit ne fait qu'un seul
+// paragraphe (juste la ligne d'attribution, cf. scinderExposeSommaire,
+// api/genererFicheScrutinEnrichie.ts). Volontairement spécifique à CET
+// amendement, jamais un repli sur le contexte du dossier en général : le
+// compte rendu SYCERON tague chaque `<paragraphe>` avec le numéro
+// d'amendement et l'article concernés au moment précis où il est défendu
+// (cf. spi/filesystem/discoursAmendementRepository.ts pour le détail des
+// attributs et la désambiguïsation par numéro de document officiel du
+// dossier — un simple rapprochement numéro + article s'est avéré
+// insuffisant, deux textes sans rapport pouvant réutiliser la même paire).
+export interface DiscoursAmendementRepository {
+  // null quand aucune intervention n'a pu être rattachée avec certitude à
+  // CET amendement précis (scrutin non-amendement, dossier non résolu,
+  // amendement non discuté individuellement — ex. discussion commune où
+  // seul le premier amendement du groupe est tagué — ou séance hors des
+  // archives disponibles) : jamais un contexte approximatif ou générique.
+  getByScrutin(scrutin: Scrutin): Promise<string | null>;
 }

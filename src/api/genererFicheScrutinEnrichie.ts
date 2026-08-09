@@ -1,6 +1,7 @@
 import type { AmendementRepository } from "@/domain/amendement";
 import {
   explicationsVoteCurees,
+  type DiscoursAmendementRepository,
   type ExplicationsVoteRepository,
 } from "@/domain/compteRendu";
 import type { Dossier } from "@/domain/dossier";
@@ -97,7 +98,8 @@ function construireExplicationsParGroupe(
 export function createGenererFicheScrutinEnrichie(
   amendementRepository: AmendementRepository,
   explicationsVoteRepository: ExplicationsVoteRepository,
-  comparerGroupes: (scrutin: Scrutin) => ComparaisonGroupe[]
+  comparerGroupes: (scrutin: Scrutin) => ComparaisonGroupe[],
+  discoursAmendementRepository: DiscoursAmendementRepository
 ) {
   return async function genererFicheScrutinEnrichie(
     scrutin: Scrutin,
@@ -163,8 +165,20 @@ export function createGenererFicheScrutinEnrichie(
 
     const { fond, effetAttendu } = scinderExposeSommaire(detail.exposeSommaire);
 
+    // Quand l'exposé des motifs ne fait qu'un seul paragraphe (juste la
+    // ligne d'attribution, cf. scinderExposeSommaire), va chercher en
+    // dernier recours le discours par lequel l'auteur·ice a défendu CET
+    // amendement en séance (issue #94) — jamais un repli sur le contexte
+    // du dossier en général (rejeté explicitement, cf. discussion #94) :
+    // soit un contexte spécifique à ce scrutin précis, soit rien de plus
+    // que l'attribution déjà affichée.
+    const complement = fond ? null : await discoursAmendementRepository.getByScrutin(scrutin);
+    const corpsContexte = fond ?? complement;
+
     return {
-      contexte: limiterALignes(fond ? `${attribution}\n\n${fond}` : attribution),
+      contexte: limiterALignes(
+        corpsContexte ? `${attribution}\n\n${corpsContexte}` : attribution
+      ),
       action: limiterALignes(detail.dispositif),
       resultatAttendu: limiterALignes(effetAttendu),
     };
