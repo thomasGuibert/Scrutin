@@ -9,7 +9,13 @@ import type {
 } from "@/domain/compteRendu";
 import type { Dossier } from "@/domain/dossier";
 import type { Groupe } from "@/domain/groupes";
-import type { Scrutin } from "@/domain/scrutin";
+import type {
+  FicheScrutin,
+  FicheScrutinEffetAttendu,
+  FicheScrutinExplicationsVote,
+  FicheScrutinPasDeDonnees,
+  Scrutin,
+} from "@/domain/scrutin";
 
 class FakeAmendementRepository implements AmendementRepository {
   constructor(private readonly detail: AmendementDetail | null) {}
@@ -87,6 +93,40 @@ function creerDossier(overrides: Partial<Dossier> = {}): Dossier {
   };
 }
 
+type FicheEnrichie =
+  | FicheScrutin
+  | FicheScrutinEffetAttendu
+  | FicheScrutinExplicationsVote
+  | FicheScrutinPasDeDonnees;
+
+// genererFicheScrutinEnrichie retourne l'une de 4 variantes (cf.
+// ScrutinBrief.tsx pour le même narrowing en production). Ces tests portent
+// spécifiquement sur le contenu réel d'un amendement (Contexte/Action,
+// partagés par les 3 variantes "avec données" ; Résultat attendu, propre à
+// FicheScrutinEffetAttendu et FicheScrutinExplicationsVote), donc affirment
+// l'absence des variantes hors de propos plutôt que de les gérer.
+function avecContexteEtAction(
+  fiche: FicheEnrichie
+): FicheScrutin | FicheScrutinEffetAttendu | FicheScrutinExplicationsVote {
+  if (!("contexte" in fiche)) {
+    throw new Error(
+      "Fiche 'pas de données' inattendue : ce test porte sur le Contexte/Action."
+    );
+  }
+  return fiche;
+}
+
+function avecResultatAttendu(
+  fiche: FicheEnrichie
+): FicheScrutinEffetAttendu | FicheScrutinExplicationsVote {
+  if (!("resultatAttendu" in fiche)) {
+    throw new Error(
+      "Fiche sans Résultat attendu inattendue : ce test porte sur le contenu réel de l'amendement."
+    );
+  }
+  return fiche;
+}
+
 describe("genererFicheScrutinEnrichie", () => {
   it("construit la Fiche depuis le contenu réel de l'amendement quand le repository en a un", async () => {
     const repository = new FakeAmendementRepository({
@@ -148,7 +188,7 @@ describe("genererFicheScrutinEnrichie", () => {
 
     const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null, []);
 
-    expect(fiche.contexte).toBe(
+    expect(avecContexteEtAction(fiche).contexte).toBe(
       "Amendement de M. Amirshahi à l'article 2.\n\nPremier paragraphe de fond."
     );
   });
@@ -194,10 +234,12 @@ describe("genererFicheScrutinEnrichie", () => {
 
     const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null, []);
 
-    expect(fiche.action.length).toBeLessThanOrEqual(801);
-    expect(fiche.action.endsWith("…")).toBe(true);
-    expect(fiche.resultatAttendu.length).toBeLessThanOrEqual(801);
-    expect(fiche.resultatAttendu.endsWith("…")).toBe(true);
+    expect(avecContexteEtAction(fiche).action.length).toBeLessThanOrEqual(801);
+    expect(avecContexteEtAction(fiche).action.endsWith("…")).toBe(true);
+    expect(avecResultatAttendu(fiche).resultatAttendu.length).toBeLessThanOrEqual(
+      801
+    );
+    expect(avecResultatAttendu(fiche).resultatAttendu.endsWith("…")).toBe(true);
   });
 
   it("borne le Contexte à ~10 lignes quand les paragraphes de fond sont longs", async () => {
@@ -215,9 +257,9 @@ describe("genererFicheScrutinEnrichie", () => {
 
     const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null, []);
 
-    expect(fiche.contexte.length).toBeLessThanOrEqual(801);
-    expect(fiche.contexte.endsWith("…")).toBe(true);
-    expect(fiche.resultatAttendu).toBe("Cet amendement propose l'effet visé.");
+    expect(avecContexteEtAction(fiche).contexte.length).toBeLessThanOrEqual(801);
+    expect(avecContexteEtAction(fiche).contexte.endsWith("…")).toBe(true);
+    expect(avecResultatAttendu(fiche).resultatAttendu).toBe("Cet amendement propose l'effet visé.");
   });
 
   it("ne tronque pas un contenu déjà court", async () => {
@@ -234,8 +276,8 @@ describe("genererFicheScrutinEnrichie", () => {
 
     const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null, []);
 
-    expect(fiche.action).toBe("Dispositif court.");
-    expect(fiche.resultatAttendu).toBe("Cet amendement propose l'effet visé.");
+    expect(avecContexteEtAction(fiche).action).toBe("Dispositif court.");
+    expect(avecResultatAttendu(fiche).resultatAttendu).toBe("Cet amendement propose l'effet visé.");
   });
 
   it("retombe sur la Fiche dérivée du titre quand le repository ne trouve rien", async () => {
@@ -249,7 +291,7 @@ describe("genererFicheScrutinEnrichie", () => {
 
     const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null, []);
 
-    expect(fiche.contexte).toBe("Amendement de M. Amirshahi à l'article 2.");
+    expect(avecContexteEtAction(fiche).contexte).toBe("Amendement de M. Amirshahi à l'article 2.");
   });
 
   it("retombe aussi proprement sur un scrutin non-amendement quand le repository ne trouve rien", async () => {
@@ -267,7 +309,7 @@ describe("genererFicheScrutinEnrichie", () => {
 
     const fiche = await genererFicheScrutinEnrichie(scrutin, null, [scrutin]);
 
-    expect(fiche.contexte).toBe(
+    expect(avecContexteEtAction(fiche).contexte).toBe(
       "Vote sur l'ensemble du texte, à l'issue de sa première lecture."
     );
   });
@@ -335,7 +377,7 @@ describe("genererFicheScrutinEnrichie", () => {
       cmp,
     ]);
 
-    expect(fiche.contexte).toBe(
+    expect(avecContexteEtAction(fiche).contexte).toBe(
       "Vote sur l'ensemble du texte, à l'issue de l'examen du texte issu de la commission mixte paritaire."
     );
   });
