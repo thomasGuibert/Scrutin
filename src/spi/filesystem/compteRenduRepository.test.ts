@@ -59,6 +59,40 @@ describe("FilesystemCompteRenduRepository", () => {
     ]);
   });
 
+  it("reconnaît aussi le bloc au singulier « Explication de vote » (issue #96)", async () => {
+    const repository = creerRepository();
+
+    const explications = await repository.getExplicationsVote(
+      "2025-01-15",
+      "Restreindre la vente de protoxyde d’azote"
+    );
+
+    expect(explications).toEqual([
+      {
+        groupe: "LIOT",
+        orateur: "M. Karim Nasser",
+        texte: "Le groupe LIOT votera pour ce texte de santé publique.",
+      },
+    ]);
+  });
+
+  it("reconnaît aussi « Vote sur la proposition de résolution » (formulation alternative pour une résolution, issue #96)", async () => {
+    const repository = creerRepository();
+
+    const explications = await repository.getExplicationsVote(
+      "2025-01-15",
+      "Condamner l’ingérence étrangère dans les processus électoraux"
+    );
+
+    expect(explications).toEqual([
+      {
+        groupe: "GDR",
+        orateur: "M. Farid Aziz",
+        texte: "Le groupe GDR votera pour cette résolution de fermeté diplomatique.",
+      },
+    ]);
+  });
+
   it("retourne null quand la date n'est couverte par aucun compte rendu disponible", async () => {
     const repository = creerRepository();
 
