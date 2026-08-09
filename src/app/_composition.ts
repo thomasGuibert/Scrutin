@@ -11,6 +11,7 @@ import { createListerScrutinsDossier } from "@/api/listerScrutinsDossier";
 import { createListerSousThemesAvecPosition } from "@/api/listerSousThemesAvecPosition";
 import { createListerThemesTries } from "@/api/listerThemesTries";
 import { FilesystemAmendementRepository } from "@/spi/filesystem/amendementRepository";
+import { FilesystemDiscoursAmendementRepository } from "@/spi/filesystem/discoursAmendementRepository";
 import { FilesystemDossierRepository } from "@/spi/filesystem/dossierRepository";
 import { FilesystemExplicationsVoteRepository } from "@/spi/filesystem/explicationsVoteRepository";
 import { FilesystemGroupeRepository } from "@/spi/filesystem/groupes";
@@ -22,6 +23,7 @@ export const scrutinRepository = new FilesystemScrutinRepository();
 export const groupeRepository = new FilesystemGroupeRepository();
 export const amendementRepository = new FilesystemAmendementRepository();
 export const explicationsVoteRepository = new FilesystemExplicationsVoteRepository();
+export const discoursAmendementRepository = new FilesystemDiscoursAmendementRepository();
 export const dossierRepository = new FilesystemDossierRepository({
   taxonomyRepository,
 });
@@ -31,7 +33,8 @@ export const comparerGroupes = createComparerGroupes(groupeRepository);
 export const genererFicheScrutinEnrichie = createGenererFicheScrutinEnrichie(
   amendementRepository,
   explicationsVoteRepository,
-  comparerGroupes
+  comparerGroupes,
+  discoursAmendementRepository
 );
 export const getDossier = createGetDossier(dossierRepository);
 export const listerScrutinsDossier =

@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import { createComparerGroupes } from "@/api/comparerGroupes";
 import { createGenererFicheScrutinEnrichie } from "@/api/genererFicheScrutinEnrichie";
 import { FilesystemAmendementRepository } from "@/spi/filesystem/amendementRepository";
+import { FilesystemDiscoursAmendementRepository } from "@/spi/filesystem/discoursAmendementRepository";
 import { FilesystemDossierRepository } from "@/spi/filesystem/dossierRepository";
 import { FilesystemExplicationsVoteRepository } from "@/spi/filesystem/explicationsVoteRepository";
 import { FilesystemGroupeRepository } from "@/spi/filesystem/groupes";
@@ -63,6 +64,7 @@ describe("audit des Fiches Scrutin sur tous les dossiers classés (#46)", () => 
     const scrutinRepository = new FilesystemScrutinRepository();
     const amendementRepository = new FilesystemAmendementRepository();
     const explicationsVoteRepository = new FilesystemExplicationsVoteRepository();
+    const discoursAmendementRepository = new FilesystemDiscoursAmendementRepository();
     const groupeRepository = new FilesystemGroupeRepository();
     const taxonomyRepository = new DeclaredTaxonomyRepository();
     const dossierRepository = new FilesystemDossierRepository({
@@ -71,7 +73,8 @@ describe("audit des Fiches Scrutin sur tous les dossiers classés (#46)", () => 
     const genererFiche = createGenererFicheScrutinEnrichie(
       amendementRepository,
       explicationsVoteRepository,
-      createComparerGroupes(groupeRepository)
+      createComparerGroupes(groupeRepository),
+      discoursAmendementRepository
     );
 
     const problemes: string[] = [];
