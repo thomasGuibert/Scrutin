@@ -6,12 +6,17 @@ import type { CompteRenduRepository, ExplicationVote } from "@/domain/compteRend
 export const DOSSIER_DONNEES_PAR_DEFAUT = path.join(process.cwd(), "data/raw/an/17");
 export const MOTIF_FICHIER_PAR_DEFAUT = /^compteRendu.*\.zip$/;
 
-// Les 3 formes de titre de bloc "Vote sur ..." observées dans les comptes
-// rendus, une par forme de vote sur le texte entier (cf.
-// estVoteSurLeTexteEntier, domain/scrutin.ts — même liste, vocabulaire
-// différent côté SYCERON).
+// Les formes de titre de bloc "Vote sur ..." observées dans les comptes
+// rendus pour un vote sur le texte entier (cf. estVoteSurLeTexteEntier,
+// domain/scrutin.ts — même liste, vocabulaire différent côté SYCERON). Une
+// proposition de résolution (article unique côté export AN, cf.
+// estVoteSurArticleUnique) porte tantôt "Vote sur l'article unique", tantôt
+// "Vote sur la proposition de résolution" — les deux formulations désignent
+// le même vote décisif, vérifié sur les 14 occurrences de la seconde forme
+// (toutes des propositions de résolution, aucune autre nature de vote,
+// cf. issue #96).
 const INTITULE_VOTE_TEXTE_ENTIER =
-  /^Vote sur l['’](ensemble|article unique)|^Vote sur le texte lui-même/i;
+  /^Vote sur l['’](ensemble|article unique)|^Vote sur le texte lui-même|^Vote sur la proposition de résolution/i;
 
 type Candidat = {
   intituleSommaire1: string;
@@ -97,8 +102,12 @@ export function nettoyerTexte(xml: string): string {
 // amendementRepository.ts, même choix pour du JSON/HTML), mais un motif
 // combiné n'était pas nécessaire ici : chaque sous-motif ci-dessous ne
 // contient qu'un seul ".*?" isolé, jamais répété — sans risque équivalent.
+// "Explications? de vote" — le singulier existe bel et bien côté SYCERON
+// (14 occurrences sur l'ensemble des archives, vérifié le 2026-08-09,
+// cf. issue #96) pour des scrutins avec un nombre restreint d'orateur·ices,
+// sans distinction de sens avec le pluriel habituel.
 const MOTIF_BLOC_EXPLICATIONS_VOTE =
-  /<sommaire2>\s*<titreStruct[^>]*>\s*<intitule>Explications de vote[^<]*<\/intitule>\s*<\/titreStruct>([\s\S]*?)<\/sommaire2>/g;
+  /<sommaire2>\s*<titreStruct[^>]*>\s*<intitule>Explications? de vote[^<]*<\/intitule>\s*<\/titreStruct>([\s\S]*?)<\/sommaire2>/g;
 
 // Recherché seulement juste après un bloc Explications de vote (cf.
 // trouverCandidats) — une fenêtre de quelques centaines de caractères
