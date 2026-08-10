@@ -23,6 +23,19 @@ Conséquences pratiques vérifiées sur le cas réel :
 - Les 12 groupes ayant voté sur ce scrutin ont chacun une position réelle (Pour/Contre/Divisé) ; 11 ont une intervention en discussion générale exploitable, 1 (UDR) n'en a aucune sur ce texte précis — la case reste vide plutôt que remplie arbitrairement, comme pour Explications de vote (cf. issue #59 : jamais une ligne omise, jamais un résumé forcé).
 - Le volume de discussion générale est nettement supérieur à un bloc Explications de vote (plusieurs interventions par orateur, mélangées à des échanges de procédure) — le tri éditorial pour en tirer un résumé fiable par groupe reste manuel, comparable en effort au travail déjà fait sur les lots d'Explications de vote.
 
+## Décision 4 — Ne jamais déduire un Sous-thème clivant de l'agrégat de plusieurs dossiers sans vérifier chaque dossier individuellement
+
+Vérifié en cherchant, parmi les sous-thèmes déclarés `consensuel`, des candidats à repasser `clivant` (format « Label : A vs B ») : la position agrégée par groupe sur l'ensemble des dossiers d'un sous-thème (`agregerPositionsDossiers`) peut masquer une réalité bien plus disparate au niveau de chaque dossier pris individuellement — même erreur de nature que celle déjà écartée par la Décision 2 (déduire une conclusion éditoriale d'une donnée qui ne la porte pas directement), transposée à la classification plutôt qu'au résumé d'un scrutin.
+
+Deux cas concrets observés :
+
+- **« Lutte contre la fraude sociale et fiscale »** (2 dossiers) : l'agrégat affichait un clivage net (bloc de gauche Contre, reste du spectre Pour). En détail, un seul des deux textes porte ce clivage (« Lutte contre les fraudes sociales et fiscales ») ; l'autre (« Contre toutes les fraudes aux aides publiques ») est adopté à l'**unanimité des 12 groupes**.
+- **« Conditions de vie et santé des agriculteurs »** (2 dossiers) : même schéma — « Lever les contraintes à l'exercice du métier d'agriculteur » est clivant, mais « Protéger la santé mentale des agricultrices et des agriculteurs » est lui aussi adopté à l'**unanimité**.
+
+Un troisième candidat (fusionner « Simplification du droit et de la vie économique » et « Protection des consommateurs et des commerçants » en un seul sous-thème clivant, les deux affichant des « Contre » isolés du même bloc de gauche) est tombé pour une raison différente mais apparentée : la lecture des Fiches dossier montre qu'il ne s'agit pas d'un même axe politique cohérent (dérégulation vs protection), mais de textes disparates où les « Contre » isolés semblent tenir à des dispositions spécifiques (ex. l'angle sécuritaire de certains textes de protection des commerçants) plutôt qu'à une ligne de fracture partagée. Une similarité de surface entre intitulés de sous-thèmes, ou une coïncidence de vote entre dossiers sans rapport de fond, n'est pas non plus une base suffisante.
+
+**Conséquence pratique** : avant de reclasser un sous-thème `consensuel` en `clivant`, ou de fusionner plusieurs sous-thèmes en un seul sous-thème clivant, toujours vérifier la position **dossier par dossier** (pas seulement l'agrégat), et lire le contenu réel des Fiches dossier concernées — jamais se fier à un agrégat statistique ou à une similarité d'intitulé seuls.
+
 ## Conséquences
 
 - `FicheScrutinExplicationsVote` passe de `{ contexteIntro, explicationsParGroupe, resultat }` à `{ contexte, action, resultatAttendu, explicationsParGroupe, resultat }`.
