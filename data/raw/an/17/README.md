@@ -1,8 +1,8 @@
 # Données brutes — Assemblée nationale, 17e législature
 
-Téléchargées depuis l'open data officiel de l'AN (https://data.assemblee-nationale.fr/) le 2026-07-30.
+Téléchargées depuis l'open data officiel de l'AN (https://data.assemblee-nationale.fr/), dernier rafraîchissement le 2026-07-31.
 
-**Pas encore commitées** — laissées ici en fichiers non trackés le temps que le ticket "Schéma de données" de la carte wayfinder tranche comment ces données brutes doivent vivre dans le repo (snapshot commité, fetch au build, stockage externe...).
+**Commitées comme snapshot** — la question "snapshot commité vs. fetch au build vs. stockage externe" a été tranchée en faveur du snapshot commité (cf. ADR-0001), maintenu à jour par le pipeline quotidien autonome (issue #126, `docs/agents/pipeline-quotidien-an.md`) plutôt que manuellement.
 
 ## Contenu
 
