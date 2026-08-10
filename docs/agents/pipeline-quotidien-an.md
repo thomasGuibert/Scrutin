@@ -19,6 +19,18 @@ réellement rien à curer ce jour-là.
 
 ## Étape 1 — Se situer
 
+- **En tout premier**, si l'outil `add_repo` (Claude Code Remote) est
+  disponible dans cette session : l'appeler avec
+  `owner: thomasGuibert`, `repo: Scrutin`, `access: "push"`, **avant toute
+  autre opération git**. Une session fraîche démarrée par la Routine ne part
+  avec aucun dépôt attaché par défaut (ni lecture ni écriture) — sans cet
+  appel, `git push`/l'API GitHub échouent avec un refus du type "not in
+  this session's authorized repository set" quand bien même le clone
+  initial fonctionne (constaté sur le run du 2026-08-10 : accès lecture
+  seule, écriture refusée faute d'avoir fait cet appel). Si l'outil renvoie
+  une erreur d'autorisation malgré l'appel (dépôt non activé pour cet
+  environnement), c'est alors un échec complet de run (Étape 6), pas
+  quelque chose à contourner.
 - `git fetch origin main && git checkout main && git pull` pour partir d'un
   état à jour.
 - Créer une branche de travail dédiée à ce run : `automation/an-YYYY-MM-DD`
