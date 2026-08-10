@@ -11,6 +11,12 @@ processus à la main (cf. `data/raw/an/17/README.md` pour l'état des données
 brutes). Législature 17 uniquement — pas de détection de changement de
 législature.
 
+**Aucun run ne se termine sans laisser de trace consultable sur GitHub**,
+quelle que soit son issue (rien à faire, merge, PR de doute, échec) — cf.
+Étape 8. Un run silencieux (aucun commentaire, aucun commit, aucune PR) est
+un run qui n'a pas suivi ce runbook jusqu'au bout, même s'il n'y avait
+réellement rien à curer ce jour-là.
+
 ## Étape 1 — Se situer
 
 - `git fetch origin main && git checkout main && git pull` pour partir d'un
@@ -71,8 +77,11 @@ l'étape 7 : `dossierRef-absent`, `plf-plfss`, `vote-de-conscience`. Le 4e
 classification thématique (Étape 4).
 
 Si aucun scrutin/dossier nouveau ou modifié n'est rapporté, et qu'`an:recuperer`
-n'a rien changé : **rien à faire, arrêter le run ici** (pas de commit, pas de
-PR — cf. issue #126 point 2, pas de commit no-op quotidien).
+n'a rien changé : **rien à curer** (pas de commit, pas de PR — cf. issue #126
+point 2, pas de commit no-op quotidien) — mais **passer quand même à
+l'Étape 8** pour journaliser ce constat. Ne jamais s'arrêter ici sans
+journaliser : c'est le cas qui, en pratique, se confond le plus facilement
+avec un run qui n'a pas eu lieu ou qui a échoué en silence.
 
 ## Étape 4 — Curer chaque nouveauté
 
@@ -145,7 +154,9 @@ la curation (ex. source AN inaccessible, archive corrompue) :
    corps = message d'erreur complet + étape atteinte, label
    `ready-for-human` (cf. `docs/agents/triage-labels.md` — nécessite une
    intervention humaine, ex. URL de jeu de données déplacée).
-4. Arrêter le run ici (ne pas ouvrir de PR partielle).
+4. Ce commentaire/cette issue **fait office de journalisation** pour ce run
+   (Étape 8) — ne pas dupliquer sur #126 en plus. Arrêter le run ici (ne pas
+   ouvrir de PR partielle).
 
 ## Étape 7 — Publier
 
@@ -179,6 +190,39 @@ couvert ci-dessus ; ou, sur les nouveautés détectées : `dossierRef-absent`,
   au-delà de la notification GitHub standard (nouvelle PR sur un dépôt dont
   le propriétaire est notifié par défaut).
 - Ne pas committer directement sur `main` dans ce cas, même partiellement.
+
+Dans les deux cas (merge auto ou PR de doute), passer ensuite à l'Étape 8.
+
+## Étape 8 — Journaliser le résultat du run
+
+Objectif : qu'on puisse savoir ce qu'un run a fait **sans avoir à ouvrir son
+transcript de session** — en lisant simplement l'issue #126 sur GitHub.
+Cette étape s'applique à **tous** les cas qui n'ont pas déjà journalisé par
+eux-mêmes (le commentaire/l'issue de l'Étape 6 en tient déjà lieu pour un
+échec complet — ne pas doubler).
+
+Poster un commentaire sur
+[l'issue #126](https://github.com/thomasGuibert/Scrutin/issues/126)
+résumant le run du jour, avec toujours au minimum :
+
+- la date et l'heure du run ;
+- `an:recuperer` : modifié/inchangé, par fichier ;
+- `an:detecter-nouveautes` : nombre de scrutins/dossiers nouveaux/modifiés,
+  et leurs `raisonsDeDoute` le cas échéant ;
+- le résultat de l'Étape 5 (vert, ou première étape en échec) ;
+- l'issue du run : `rien à curer`, `mergé sur main (<sha>)`, ou
+  `PR de doute ouverte (<lien>)`.
+
+Exemple minimal pour un run "rien à curer" :
+
+```
+Run du 2026-08-11 05:03 UTC — rien à curer.
+an:recuperer : Scrutins inchangé, Dossiers législatifs inchangé, AMO10 inchangé.
+an:detecter-nouveautes : 0 scrutin nouveau/modifié, 0 dossier nouveau/modifié.
+```
+
+Un commentaire par run, jamais regroupé ni omis — c'est le seul historique
+fiable de l'activité quotidienne du pipeline.
 
 ## Hors périmètre de ce runbook
 
