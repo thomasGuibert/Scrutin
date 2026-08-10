@@ -7,7 +7,9 @@ import type {
   FicheDossier,
 } from "@/domain/dossier";
 import type { TaxonomyRepository } from "@/domain/taxonomie";
-import { DeclaredTaxonomyRepository } from "@/spi/filesystem/taxonomie";
+// Import relatif, pas "@/..." : même contrainte que scrutinRepository.ts —
+// ce module peut être exécuté directement via node par un script.
+import { DeclaredTaxonomyRepository } from "./taxonomie.ts";
 
 const CONTENT_DIR = path.join(process.cwd(), "content/dossiers");
 

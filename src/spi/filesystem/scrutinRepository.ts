@@ -5,7 +5,11 @@ import type {
   Scrutin,
   ScrutinRepository,
 } from "@/domain/scrutin";
-import { DOSSIER_REF_OVERRIDE } from "@/spi/filesystem/dossierRefOverride";
+// Import relatif, pas "@/..." : ce module est aussi exécuté directement via
+// node par scripts/extraire-*.ts (les 3 s'appuient sur
+// FilesystemScrutinRepository), qui ne résout pas l'alias "@/" — même
+// contrainte documentée dans discussionGeneraleRepository.ts.
+import { DOSSIER_REF_OVERRIDE } from "./dossierRefOverride.ts";
 
 const ZIP_PATH = path.join(
   process.cwd(),
