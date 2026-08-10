@@ -52,15 +52,21 @@ export default async function SousThemePage({
             // issue #82. Sinon (plusieurs lectures à départager, ou dossier
             // encore en cours d'examen sans aucun Scrutin décisif), la page
             // Dossier reste nécessaire.
+            //
+            // Vocabulaire aligné sur l'étiquette "Scrutin" déjà utilisée sur
+            // la page Dossier (jamais "lecture" comme libellé d'interface,
+            // seulement dans le texte brut des titres de scrutin) — les 3
+            // formes commencent par "scrutin(s)" pour rester lisibles en
+            // balayant la liste.
             const href = scrutinDecisifUnique
               ? `/scrutin/${scrutinDecisifUnique}`
               : `/dossier/${dossier.dossierRef}`;
             const libelle =
               nombreLectures === 0
-                ? "En cours d'examen"
+                ? "Scrutins en cours"
                 : nombreLectures === 1
-                  ? "Voir le vote"
-                  : `${nombreLectures} lectures`;
+                  ? "1 scrutin"
+                  : `${nombreLectures} scrutins`;
 
             return (
               <div className="dossier-row" key={dossier.dossierRef}>
