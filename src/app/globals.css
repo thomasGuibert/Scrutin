@@ -237,6 +237,15 @@ p.page-gloss {
   margin: 0;
 }
 
+/* Date du scrutin (ou du Scrutin décisif pour une page Dossier) — juste
+   l'information, discrète, pas un élément de mise en avant. */
+.node-date {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+  margin: 0 0 1.2rem;
+}
+
 .decompte-row {
   display: flex;
   flex-wrap: wrap;

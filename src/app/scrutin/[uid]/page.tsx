@@ -12,7 +12,12 @@ import {
   listerScrutinsDossier,
   taxonomyRepository,
 } from "@/app/_composition";
-import { calculerVotants, formaterTitreScrutin, lienScrutinAN } from "@/domain/scrutin";
+import {
+  calculerVotants,
+  formaterDateScrutin,
+  formaterTitreScrutin,
+  lienScrutinAN,
+} from "@/domain/scrutin";
 
 export function generateStaticParams() {
   return [{ uid: "VTANR5L17V6993" }, { uid: "VTANR5L17V6994" }];
@@ -71,6 +76,7 @@ export default async function ScrutinPage({
         <span className="dossier-tag">Scrutin</span>
         <h1 className="page-title">{titreScrutin}</h1>
       </div>
+      <p className="node-date">{formaterDateScrutin(scrutin.date)}</p>
 
       <ScrutinBrief fiche={ficheScrutin} />
 

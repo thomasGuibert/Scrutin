@@ -13,7 +13,12 @@ import {
   taxonomyRepository,
 } from "@/app/_composition";
 import { lienDossierAN } from "@/domain/dossier";
-import { determinerResultatDossier, formaterTitreScrutin } from "@/domain/scrutin";
+import {
+  determinerResultatDossier,
+  formaterDateScrutin,
+  formaterTitreScrutin,
+  trouverScrutinDecisif,
+} from "@/domain/scrutin";
 import { tousLesSousThemes } from "@/domain/taxonomie";
 
 export async function generateStaticParams() {
@@ -70,6 +75,11 @@ export default async function DossierPage({
     dossier.sousTheme
   );
   const resultatDossier = determinerResultatDossier(scrutins);
+  // Le dossier lui-même n'a pas de date propre (il peut s'étaler sur
+  // plusieurs lectures) — celle du Scrutin décisif, quand il y en a un,
+  // est la date qui a le plus de sens à afficher : celle où le dossier a
+  // réellement été tranché.
+  const scrutinDecisif = trouverScrutinDecisif(scrutins);
 
   const fil: BreadcrumbItem[] = [];
   if (contexte) {
@@ -96,6 +106,9 @@ export default async function DossierPage({
         <h1 className="page-title">{dossier.titre}</h1>
         {resultatDossier && <ResultatBadge resultat={resultatDossier} />}
       </div>
+      {scrutinDecisif && (
+        <p className="node-date">{formaterDateScrutin(scrutinDecisif.date)}</p>
+      )}
 
       <FicheDossier fiche={dossier.ficheDossier} />
 
