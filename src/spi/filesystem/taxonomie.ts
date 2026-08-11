@@ -540,41 +540,55 @@ const TAXONOMIE: ThemeRacine[] = [
             nom: "Souveraineté alimentaire et renouvellement des générations agricoles",
             type: "consensuel",
           },
+          // Nommé "Agriculture : ..." mais rattaché directement au thème
+          // jusqu'ici plutôt qu'à cette branche du même nom — oubli de
+          // classement corrigé.
+          {
+            slug: "agriculture-pesticides",
+            nom: "Agriculture : pesticides et compétitivité vs écologie/santé publique",
+            type: "clivant",
+          },
+        ],
+      },
+      {
+        slug: "energie-climat",
+        nom: "Énergie & climat",
+        sousThemes: [
+          {
+            slug: "souverainete-energetique",
+            nom: "Souveraineté énergétique : nucléaire/hydrocarbures vs sobriété",
+            type: "clivant",
+          },
+          {
+            slug: "adaptation-changement-climatique-gestion-risques",
+            nom: "Adaptation au changement climatique et gestion des risques",
+            type: "consensuel",
+          },
+          {
+            slug: "decarbonation-transport-maritime",
+            nom: "Décarbonation du transport maritime",
+            type: "consensuel",
+          },
+        ],
+      },
+      {
+        slug: "amenagement-ressources",
+        nom: "Aménagement & ressources",
+        sousThemes: [
+          {
+            slug: "economie-circulaire",
+            nom: "Déchets et économie circulaire",
+            type: "consensuel",
+          },
+          {
+            slug: "grands-projets-infrastructure-vs-environnement",
+            nom: "Grands projets d'infrastructure : intérêt public majeur vs protection environnementale",
+            type: "clivant",
+          },
         ],
       },
     ],
-    sousThemes: [
-      {
-        slug: "souverainete-energetique",
-        nom: "Souveraineté énergétique : nucléaire/hydrocarbures vs sobriété",
-        type: "clivant",
-      },
-      {
-        slug: "agriculture-pesticides",
-        nom: "Agriculture : pesticides et compétitivité vs écologie/santé publique",
-        type: "clivant",
-      },
-      {
-        slug: "economie-circulaire",
-        nom: "Déchets et économie circulaire",
-        type: "consensuel",
-      },
-      {
-        slug: "adaptation-changement-climatique-gestion-risques",
-        nom: "Adaptation au changement climatique et gestion des risques",
-        type: "consensuel",
-      },
-      {
-        slug: "decarbonation-transport-maritime",
-        nom: "Décarbonation du transport maritime",
-        type: "consensuel",
-      },
-      {
-        slug: "grands-projets-infrastructure-vs-environnement",
-        nom: "Grands projets d'infrastructure : intérêt public majeur vs protection environnementale",
-        type: "clivant",
-      },
-    ],
+    sousThemes: [],
   },
 ];
 
