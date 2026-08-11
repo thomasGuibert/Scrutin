@@ -425,49 +425,66 @@ const TAXONOMIE: ThemeRacine[] = [
           },
         ],
       },
+      {
+        slug: "sante",
+        nom: "Santé",
+        sousThemes: [
+          {
+            slug: "fin-de-vie",
+            nom: "Fin de vie : légaliser l'aide à mourir vs renforcer les soins palliatifs",
+            type: "clivant",
+          },
+          {
+            slug: "acces-soins",
+            nom: "Accès aux soins sur le territoire",
+            type: "consensuel",
+          },
+          {
+            slug: "sante-publique-risque",
+            nom: "Santé publique : réguler les produits à risque vs liberté de consommation",
+            type: "clivant",
+          },
+          {
+            slug: "prise-en-charge-cancers-maladies-rares-enfant",
+            nom: "Prise en charge des cancers et maladies rares de l'enfant",
+            type: "consensuel",
+          },
+          {
+            slug: "prise-en-charge-maladies-graves",
+            nom: "Prise en charge des maladies graves",
+            type: "consensuel",
+          },
+          {
+            slug: "prevention-sanitaire-contaminations",
+            nom: "Prévention sanitaire et lutte contre les contaminations",
+            type: "consensuel",
+          },
+        ],
+      },
+      // Branche générique (cf. Sous-thème "Housekeeping/technique" dans
+      // CONTEXT.md pour le même principe côté sous-thème) : ces 2 sous-thèmes
+      // ne se rattachent nettement ni à Logement ni à Santé (Protection de
+      // l'enfance touche plutôt à la famille ; Financement de la sécurité
+      // sociale est transversal — santé, retraites, famille), et ne pèsent
+      // pas assez pour justifier chacun sa propre branche.
+      {
+        slug: "autre",
+        nom: "Autre",
+        sousThemes: [
+          {
+            slug: "protection-enfance",
+            nom: "Protection de l'enfance",
+            type: "consensuel",
+          },
+          {
+            slug: "financement-securite-sociale",
+            nom: "Financement et équilibre de la sécurité sociale",
+            type: "consensuel",
+          },
+        ],
+      },
     ],
-    sousThemes: [
-      {
-        slug: "fin-de-vie",
-        nom: "Fin de vie : légaliser l'aide à mourir vs renforcer les soins palliatifs",
-        type: "clivant",
-      },
-      {
-        slug: "acces-soins",
-        nom: "Accès aux soins sur le territoire",
-        type: "consensuel",
-      },
-      {
-        slug: "protection-enfance",
-        nom: "Protection de l'enfance",
-        type: "consensuel",
-      },
-      {
-        slug: "sante-publique-risque",
-        nom: "Santé publique : réguler les produits à risque vs liberté de consommation",
-        type: "clivant",
-      },
-      {
-        slug: "prise-en-charge-cancers-maladies-rares-enfant",
-        nom: "Prise en charge des cancers et maladies rares de l'enfant",
-        type: "consensuel",
-      },
-      {
-        slug: "prise-en-charge-maladies-graves",
-        nom: "Prise en charge des maladies graves",
-        type: "consensuel",
-      },
-      {
-        slug: "prevention-sanitaire-contaminations",
-        nom: "Prévention sanitaire et lutte contre les contaminations",
-        type: "consensuel",
-      },
-      {
-        slug: "financement-securite-sociale",
-        nom: "Financement et équilibre de la sécurité sociale",
-        type: "consensuel",
-      },
-    ],
+    sousThemes: [],
   },
   {
     slug: "environnement",
