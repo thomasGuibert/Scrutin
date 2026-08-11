@@ -9,6 +9,7 @@ import {
   estVoteSurAmendement,
   estVoteSurEnsemble,
   extraireAmendement,
+  formaterDateScrutin,
   formaterTitreScrutin,
   genererFicheScrutin,
   lienScrutinAN,
@@ -169,6 +170,16 @@ describe("formaterTitreScrutin", () => {
     );
 
     expect(titre).toBe("L'article 26 du projet de loi (première lecture).");
+  });
+});
+
+describe("formaterDateScrutin", () => {
+  it("affiche la date en toutes lettres, en français", () => {
+    expect(formaterDateScrutin("2025-03-18")).toBe("18 mars 2025");
+  });
+
+  it("ne glisse pas d'un jour selon le fuseau d'exécution (fuseau UTC forcé)", () => {
+    expect(formaterDateScrutin("2025-01-01")).toBe("1 janvier 2025");
   });
 });
 

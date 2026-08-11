@@ -89,6 +89,19 @@ export function formaterTitreScrutin(titre: string): string {
   return majusculeInitiale(retirerDescriptionDossier(titre));
 }
 
+// Date d'un scrutin affichée en clair (ex. "18 mars 2025") plutôt que le
+// format ISO brut ("2025-03-18"). Fuseau UTC forcé : la date d'un scrutin
+// n'a pas d'heure associée dans l'export AN — sans ça, le fuseau local de
+// l'environnement d'exécution pourrait faire glisser l'affichage d'un jour.
+export function formaterDateScrutin(date: string): string {
+  return new Date(date).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
 // La fiche officielle du scrutin sur assemblee-nationale.fr est indexée par
 // son simple numéro (pas l'uid complet) — vérifié sur un cas réel
 // (VTANR5L17V7988 → /dyn/17/scrutins/7988). Même logique d'extraction de
