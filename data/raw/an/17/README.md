@@ -1,16 +1,21 @@
 # Données brutes — Assemblée nationale, 17e législature
 
-Téléchargées depuis l'open data officiel de l'AN (https://data.assemblee-nationale.fr/) le 2026-07-30.
+Téléchargées depuis l'open data officiel de l'AN (https://data.assemblee-nationale.fr/) le 2026-07-30, rafraîchies le 2026-08-18 (`Scrutins.json.zip`, `Dossiers_Legislatifs.json.zip`, `AMO10_deputes_actifs_mandats_actifs_organes.json.zip`).
 
-**Pas encore commitées** — laissées ici en fichiers non trackés le temps que le ticket "Schéma de données" de la carte wayfinder tranche comment ces données brutes doivent vivre dans le repo (snapshot commité, fetch au build, stockage externe...).
+URLs directes des archives sources (utiles pour un futur script de téléchargement, cf. `docs/notes/126-automatisation-tentatives.md` — l'accès réseau vers `data.assemblee-nationale.fr` fonctionne à nouveau depuis cet environnement) :
+- `https://data.assemblee-nationale.fr/static/openData/repository/17/loi/scrutins/Scrutins.json.zip`
+- `https://data.assemblee-nationale.fr/static/openData/repository/17/loi/dossiers_legislatifs/Dossiers_Legislatifs.json.zip`
+- `https://data.assemblee-nationale.fr/static/openData/repository/17/amo/deputes_actifs_mandats_actifs_organes/AMO10_deputes_actifs_mandats_actifs_organes.json.zip`
+
+`compteRendu*.zip` (comptes rendus de séance, en lots successifs) et les fichiers `*-classifies.json.zip` (sorties des scripts `scripts/extraire-*.ts`, à rejouer après toute mise à jour des sources brutes correspondantes) ne sont pas couverts par ce rafraîchissement — pas de source zip unique côté AN pour les comptes rendus, et `Amendements.json.zip` (source de `Amendements-scrutins-classifies.json.zip`) pèse ~300 Mo brut.
 
 ## Contenu
 
 | Fichier | Source | Format | Contenu |
 |---|---|---|---|
-| `Scrutins.json.zip` | `/travaux-parlementaires/votes` | JSON, 1 fichier par scrutin | **8 434 scrutins** (17e législature à date). Chaque scrutin : métadonnées (date, type, sort), synthèse (votants/suffrages exprimés/décompte), et `ventilationVotes` — position par groupe (`organeRef`) avec décompte nominatif partiel des député·es par groupe. |
-| `Dossiers_Legislatifs.json.zip` | `/travaux-parlementaires/dossiers-legislatifs` | JSON, 1 fichier par dossier (+ documents liés) | **3 028 dossiers parlementaires** (17e législature). Titre, procédure, arbre des actes législatifs (dépôt, commission saisie au fond via `organeRef`, lectures...). Inclut des dossiers **encore en commission, sans scrutin**. |
-| `AMO10_deputes_actifs_mandats_actifs_organes.json.zip` | `/acteurs/deputes-en-exercice` | JSON | 577 acteurs (député·es), mandats, et **7 126 organes** (dont seulement 12 de `codeType: "GP"` = les 11 vrais groupes parlementaires + "Non inscrit" — les 7 114 autres organes sont commissions, délégations, groupes d'études, etc.) |
+| `Scrutins.json.zip` | `/travaux-parlementaires/votes` | JSON, 1 fichier par scrutin | **8 434 scrutins** (17e législature à date, inchangé au 2026-08-18). Chaque scrutin : métadonnées (date, type, sort), synthèse (votants/suffrages exprimés/décompte), et `ventilationVotes` — position par groupe (`organeRef`) avec décompte nominatif partiel des député·es par groupe. |
+| `Dossiers_Legislatifs.json.zip` | `/travaux-parlementaires/dossiers-legislatifs` | JSON, 1 fichier par dossier (+ documents liés) | **10 100 fichiers** (dossiers + documents liés) au 2026-08-18, contre 10 069 au 2026-07-30. Titre, procédure, arbre des actes législatifs (dépôt, commission saisie au fond via `organeRef`, lectures...). Inclut des dossiers **encore en commission, sans scrutin**. |
+| `AMO10_deputes_actifs_mandats_actifs_organes.json.zip` | `/acteurs/deputes-en-exercice` | JSON | 577 acteurs (député·es), mandats, et organes (7 737 au 2026-08-18, contre 7 740 au 2026-07-30 — dont toujours seulement 12 de `codeType: "GP"` = les 11 vrais groupes parlementaires + "Non inscrit", les autres étant commissions, délégations, groupes d'études, etc.) |
 
 ## Constats utiles pour la suite
 
