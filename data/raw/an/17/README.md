@@ -1,13 +1,15 @@
 # Données brutes — Assemblée nationale, 17e législature
 
-Téléchargées depuis l'open data officiel de l'AN (https://data.assemblee-nationale.fr/) le 2026-07-30, rafraîchies le 2026-08-18 (`Scrutins.json.zip`, `Dossiers_Legislatifs.json.zip`, `AMO10_deputes_actifs_mandats_actifs_organes.json.zip`).
+Téléchargées depuis l'open data officiel de l'AN (https://data.assemblee-nationale.fr/) le 2026-07-30, rafraîchies le 2026-08-18 (`Scrutins.json.zip`, `Dossiers_Legislatifs.json.zip`, `AMO10_deputes_actifs_mandats_actifs_organes.json.zip`, `compteRendu.zip`).
 
 URLs directes des archives sources (utiles pour un futur script de téléchargement, cf. `docs/notes/126-automatisation-tentatives.md` — l'accès réseau vers `data.assemblee-nationale.fr` fonctionne à nouveau depuis cet environnement) :
 - `https://data.assemblee-nationale.fr/static/openData/repository/17/loi/scrutins/Scrutins.json.zip`
 - `https://data.assemblee-nationale.fr/static/openData/repository/17/loi/dossiers_legislatifs/Dossiers_Legislatifs.json.zip`
 - `https://data.assemblee-nationale.fr/static/openData/repository/17/amo/deputes_actifs_mandats_actifs_organes/AMO10_deputes_actifs_mandats_actifs_organes.json.zip`
+- `https://data.assemblee-nationale.fr/static/openData/repository/17/vp/syceronbrut/syseron.xml.zip` — archive officielle unique couvrant **tous** les comptes rendus de séance (601 fichiers XML, 17e législature à date) ; remplace `compteRendu1.zip`…`compteRendu4.zip` (lots manuels précédents, désormais un sous-ensemble strict de celle-ci) par un unique `compteRendu.zip`. Toujours reconnue par `compteRenduRepository.ts` (motif `/^compteRendu.*\.zip$/`, insensible au chemin interne des entrées).
+- `https://data.assemblee-nationale.fr/static/openData/repository/17/loi/amendements_div_legis/Amendements.json.zip` — ~300 Mo, **volontairement non commitée** (cf. en-tête de `scripts/extraire-amendements.ts`) : seule `Amendements-scrutins-classifies.json.zip` (le filtré, ~11 Mo) est lue par l'app à l'exécution.
 
-`compteRendu*.zip` (comptes rendus de séance, en lots successifs) et les fichiers `*-classifies.json.zip` (sorties des scripts `scripts/extraire-*.ts`, à rejouer après toute mise à jour des sources brutes correspondantes) ne sont pas couverts par ce rafraîchissement — pas de source zip unique côté AN pour les comptes rendus, et `Amendements.json.zip` (source de `Amendements-scrutins-classifies.json.zip`) pèse ~300 Mo brut.
+**⚠️ Piège vérifié le 2026-08-18 : ne jamais rejouer `scripts/extraire-explications-vote.ts` / `extraire-discussion-generale.ts` en pensant simplement "absorber les nouveaux comptes rendus".** Ces scripts ne détectent que les correspondances mécaniques (titre/date) ; une bonne partie du contenu commité dans `ExplicationsVote-dossiers-classifies.json.zip` et `DiscussionGenerale-dossiers-classifies.json.zip` vient de passes de curation éditoriale manuelle, lot par lot (historique git : "Curation lot N (#95)"), pas seulement de ces scripts. Un rejeu à blanc, même avec des sources `compteRendu*` strictement identiques ou strictement plus complètes, régénère un résultat **plus pauvre** que l'existant (vérifié : 127 dossiers couverts contre 197 commités) et écraserait ce travail de curation s'il était commité tel quel. Si de nouveaux comptes rendus doivent être exploités, les rejouer dans un fichier à part et ne merger que les entrées réellement nouvelles après revue, jamais écraser l'archive committée en bloc.
 
 ## Contenu
 
