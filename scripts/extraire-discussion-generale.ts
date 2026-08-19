@@ -10,8 +10,15 @@
 // même politique que scripts/extraire-explications-vote.ts.
 //
 // Usage :
-//   node --experimental-transform-types scripts/extraire-discussion-generale.ts
+//   node --experimental-transform-types scripts/extraire-discussion-generale.ts [chemin-sortie]
 //   (ou : npm run curer:discussion-generale)
+//
+// Le chemin de sortie optionnel écrit vers un fichier à part plutôt que
+// d'écraser l'archive commitée — mêmes raisons que
+// scripts/extraire-explications-vote.ts, utilisé par
+// scripts/fusionner-curation-an.ts. La lecture d'ExplicationsVote (pour
+// savoir quels scrutins sont déjà couverts, cf. en-tête ci-dessus) continue
+// de se faire sur l'archive commitée, jamais sur une sortie à part.
 
 import AdmZip from "adm-zip";
 import matter from "gray-matter";
@@ -24,10 +31,9 @@ import { FilesystemExplicationsVoteRepository } from "../src/spi/filesystem/expl
 import { FilesystemScrutinRepository } from "../src/spi/filesystem/scrutinRepository.ts";
 
 const CONTENT_DOSSIERS_DIR = path.join(process.cwd(), "content/dossiers");
-const OUTPUT_PATH = path.join(
-  process.cwd(),
-  "data/raw/an/17/DiscussionGenerale-dossiers-classifies.json.zip"
-);
+const OUTPUT_PATH = process.argv[2]
+  ? path.resolve(process.argv[2])
+  : path.join(process.cwd(), "data/raw/an/17/DiscussionGenerale-dossiers-classifies.json.zip");
 
 function dossierRefsClasses(): string[] {
   return readdirSync(CONTENT_DOSSIERS_DIR)

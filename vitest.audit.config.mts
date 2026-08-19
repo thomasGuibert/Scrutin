@@ -22,5 +22,14 @@ export default defineConfig({
     environment: "node",
     include: ["**/audit*.test.ts"],
     exclude: ["**/node_modules/**", ".claude/worktrees/**"],
+    // Le timeout par défaut de Vitest (5000ms) est dépassé par
+    // auditFichesScrutin.test.ts (~5.8s à ce jour, cf. issue #126 —
+    // constaté en doute lors d'un run du pipeline quotidien, indépendant
+    // des données du jour) : ce test rejoue genererFicheScrutinEnrichie
+    // sur *chaque* scrutin de *chaque* dossier classé, un volume qui ne
+    // fait que croître à mesure que content/dossiers/ grossit. Une marge
+    // large plutôt qu'un ajustement au plus juste, pour ne pas avoir à
+    // relever ce plafond à chaque nouveau lot de curation.
+    testTimeout: 60_000,
   },
 });
