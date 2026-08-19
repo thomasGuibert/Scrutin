@@ -9,8 +9,16 @@
 // classés — même politique que scripts/extraire-amendements.ts.
 //
 // Usage :
-//   node --experimental-transform-types scripts/extraire-explications-vote.ts
+//   node --experimental-transform-types scripts/extraire-explications-vote.ts [chemin-sortie]
 //   (ou : npm run curer:explications-vote)
+//
+// Le chemin de sortie optionnel écrit vers un fichier à part plutôt que
+// d'écraser l'archive commitée — utilisé par scripts/fusionner-curation-an.ts
+// (cf. #126) pour ne jamais perdre la curation éditoriale manuelle déjà en
+// place : rejouer ce script en écrasant directement l'archive commitée
+// régénère un résultat *plus pauvre* qu'elle (vérifié le 2026-08-18, cf.
+// data/raw/an/17/README.md) — une bonne partie de son contenu vient de
+// curation manuelle par lots, pas seulement de ce script.
 
 import AdmZip from "adm-zip";
 import matter from "gray-matter";
@@ -21,10 +29,9 @@ import { FilesystemCompteRenduRepository } from "../src/spi/filesystem/compteRen
 import { FilesystemScrutinRepository } from "../src/spi/filesystem/scrutinRepository.ts";
 
 const CONTENT_DOSSIERS_DIR = path.join(process.cwd(), "content/dossiers");
-const OUTPUT_PATH = path.join(
-  process.cwd(),
-  "data/raw/an/17/ExplicationsVote-dossiers-classifies.json.zip"
-);
+const OUTPUT_PATH = process.argv[2]
+  ? path.resolve(process.argv[2])
+  : path.join(process.cwd(), "data/raw/an/17/ExplicationsVote-dossiers-classifies.json.zip");
 
 function dossierRefsClasses(): string[] {
   return readdirSync(CONTENT_DOSSIERS_DIR)
