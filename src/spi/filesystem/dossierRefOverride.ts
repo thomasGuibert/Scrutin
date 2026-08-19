@@ -682,10 +682,15 @@ export const DOSSIER_REF_OVERRIDE: Record<string, string> = {
   // d'assistance éducative et de protection de l'enfance" (1re lecture,
   // adopté)
   VTANR5L17V4714: "DLR5L17N52781",
-  // "l'ensemble du projet de loi spéciale prévue par l'article 45 de la loi
-  // organique du 1er août 2001 relative aux lois de finances" (1re lecture,
-  // adopté)
-  VTANR5L17V4947: "DLR5L17N51079",
+  // Issue #134 : rattaché par erreur à DLR5L17N51079 (déjà pris par
+  // VTANR5L17V525, 2024-12-16) — le commentaire de V525 ci-dessus (lot 4/6
+  // de #33) annonçait déjà qu'une entrée distincte manquait pour celui-ci,
+  // jamais faite. "l'ensemble du projet de loi spéciale prévue par
+  // l'article 45 de la loi organique n°2001-692 du 1er août 2001 relative
+  // aux lois de finances" (1re lecture, adopté, 2025-12-23 — exercice
+  // budgétaire suivant, même mécanisme reconduit, dossier distinct
+  // DLR5L17N53386, confirmé par son voteRef dans Dossiers_Legislatifs.json.zip)
+  VTANR5L17V4947: "DLR5L17N53386",
   // "l'ensemble de la proposition de loi visant à sortir la France du piège
   // du narcotrafic" (1re lecture, adopté)
   VTANR5L17V1194: "DLR5L17N50169",
@@ -749,10 +754,19 @@ export const DOSSIER_REF_OVERRIDE: Record<string, string> = {
   // protection des commerçants grâce à l'usage d'outils numériques" (1re
   // lecture, adopté)
   VTANR5L17V5424: "DLR5L17N53158",
-  // "l'ensemble de la proposition de loi visant à simplifier la sortie de
-  // l'indivison successorale" (1re lecture, adopté — "indivison" est un
-  // coquille du titre AN pour "indivision")
-  VTANR5L17V921: "DLR5L17N52436",
+  // Issue #134 : DLR5L17N52436 ("indivision successorale", coquille du
+  // titre AN pour "indivision") n'a jamais eu de voteRef propre dans
+  // Dossiers_Legislatifs.json.zip — dossier fantôme retrouvé par
+  // rapprochement de titre, jamais réellement voté sous cette référence.
+  // Le vrai dossier de ce scrutin (1re lecture, 2025-03-06, adopté) est
+  // DLR5L17N51329 ("Simplifier la sortie de l'indivision successorale"),
+  // déjà classé pour sa 2e lecture (VTANR5L17V5832, 2026-03-26, titre élargi
+  // à "...et la gestion des successions vacantes" — cf.
+  // content/dossiers/DLR5L17N51329.md) : V5832, plus récent, reste le
+  // Scrutin décisif du dossier (CONTEXT.md) ; V921 rejoint son historique
+  // sans changer la Position affichée. Fiche DLR5L17N52436.md supprimée
+  // (dossier sans scrutin, jamais affiché).
+  VTANR5L17V921: "DLR5L17N51329",
   // "l'article unique de la proposition de loi simplifiant l'ouverture des
   // débits de boissons en zone rurale" (1re lecture, adopté)
   VTANR5L17V930: "DLR5L17N51453",
@@ -781,12 +795,19 @@ export const DOSSIER_REF_OVERRIDE: Record<string, string> = {
   // "l'article unique de la proposition de résolution européenne appelant à
   // la préservation des principes démocratiques... en Turquie" (adopté)
   VTANR5L17V5307: "DLR5L17N51866",
+  // Issue #134 : DLR5L17N53705 ("Commission d'enquête sur...", sans voteRef
+  // propre) est un dossier jumeau administratif de DLR5L17N53005 ("Le
+  // traitement judiciaire des violences sexuelles incestueuses
+  // parentales..."), qui porte lui le voteRef dans
+  // Dossiers_Legislatifs.json.zip — même motif que #33/#34 (dossier
+  // "Commission d'enquête sur X" sans acte "Décision" propre vs jumeau "X"
+  // qui, lui, en a un). Fiche renommée DLR5L17N53705.md -> DLR5L17N53005.md.
   // "l'article unique de la proposition de résolution tendant à la création
   // d'une commission d'enquête sur le traitement judiciaire des violences
   // sexuelles incestueuses parentales..." (adopté)
-  VTANR5L17V5225: "DLR5L17N53705",
+  VTANR5L17V5225: "DLR5L17N53005",
   // même dossier, vote sur l'ensemble plutôt que l'article unique (adopté)
-  VTANR5L17V5226: "DLR5L17N53705",
+  VTANR5L17V5226: "DLR5L17N53005",
   // "l'article unique de la proposition de résolution européenne visant à
   // inscrire la mouvance des frères musulmans sur la liste européenne des
   // organisations terroristes" (adopté)
@@ -814,16 +835,25 @@ export const DOSSIER_REF_OVERRIDE: Record<string, string> = {
   // acte de séance publique, contrairement à celui-ci dont le voteRef
   // référence directement ce scrutin)
   VTANR5L17V4243: "DLR5L17N51615",
+  // Issue #134 : même motif que DLR5L17N53705 ci-dessus — DLR5L17N52405
+  // ("Commission d'enquête sur...", sans voteRef propre) est un jumeau
+  // administratif de DLR5L17N51279 ("Les effets psychologiques de TikTok
+  // sur les mineurs"), qui porte le voteRef. Fiche renommée
+  // DLR5L17N52405.md -> DLR5L17N51279.md.
   // "l'ensemble de la proposition de résolution tendant à la création d'une
   // commission d'enquête sur les effets psychologiques de TikTok sur les
   // mineurs" (adopté)
-  VTANR5L17V1018: "DLR5L17N52405",
+  VTANR5L17V1018: "DLR5L17N51279",
   // même dossier, vote sur l'article unique (adopté)
-  VTANR5L17V1017: "DLR5L17N52405",
+  VTANR5L17V1017: "DLR5L17N51279",
+  // Issue #134 : même motif — DLR5L17N50595 ("Commission d'enquête sur...",
+  // sans voteRef propre) est un jumeau administratif de DLR5L17N50356 ("Les
+  // manquements des politiques publiques de protection de l'enfance"), qui
+  // porte le voteRef. Fiche renommée DLR5L17N50595.md -> DLR5L17N50356.md.
   // "l'article unique de la proposition de résolution tendant à la création
   // d'une commission d'enquête sur les manquements des politiques publiques
   // de protection de l'enfance" (adopté)
-  VTANR5L17V3: "DLR5L17N50595",
+  VTANR5L17V3: "DLR5L17N50356",
   // "l'article unique de la proposition de résolution européenne visant à
   // refuser la ratification de l'accord commercial entre l'Union
   // européenne et le Mercosur" (adopté — à distinguer de DLR5L17N50581, un
