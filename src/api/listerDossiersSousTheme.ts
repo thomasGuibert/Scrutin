@@ -38,6 +38,11 @@ export type DossierAvecPosition = DossierAffiche & {
   // dossier n'a pas encore de Scrutin décisif à date unique (nombreLectures
   // === 0), et une information complémentaire une fois qu'il en a un.
   periode: string | null;
+  // Dates brutes (ISO) de tous les scrutins du dossier — sert au filtre
+  // par période de la liste (cf. domain/filtreDate.ts, issue #151),
+  // distinct de `periode` qui n'en garde qu'une version déjà formatée pour
+  // l'affichage.
+  datesScrutins: string[];
 };
 
 export function createListerDossiersSousTheme(
@@ -98,6 +103,7 @@ export function createListerDossiersSousTheme(
           scrutinDecisifUnique: decisifs.length === 1 ? decisifs[0].uid : null,
           resultat: determinerResultatDossier(scrutins),
           periode: formaterPeriodeDossier(scrutins),
+          datesScrutins: scrutins.map((scrutin) => scrutin.date),
         };
       });
   };

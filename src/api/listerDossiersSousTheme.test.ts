@@ -126,6 +126,7 @@ describe("listerDossiersSousTheme", () => {
     const resultat = await listerDossiersSousTheme("cible");
 
     expect(resultat[0].periode).toBe("du 15/01/2025 au 02/06/2025");
+    expect(resultat[0].datesScrutins).toEqual(["2025-01-15", "2025-06-02"]);
   });
 
   it("ne propose pas de Scrutin décisif unique quand le dossier a connu plusieurs lectures", async () => {

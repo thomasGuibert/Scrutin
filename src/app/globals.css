@@ -514,6 +514,46 @@ table.cmp-table {
   font-size: 0.78rem;
 }
 
+/* Filtre par période (Année/Mois) au-dessus d'une liste de dossiers
+   (DossierListeFiltrable, issue #151) — même vocabulaire visuel discret
+   (mono, muted) que .brief-label, dans ses propres classes : .brief-label
+   est teinté --accent-warm pour la Fiche dossier, un choix qui ne
+   transfère pas tel quel à un contrôle de formulaire. */
+.date-filter {
+  display: flex;
+  gap: 1.2rem;
+  align-items: baseline;
+  margin: 0.9rem 0 1.3rem;
+}
+
+.date-filter-field {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.date-filter-label {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.date-filter-field select {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--ink);
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  padding: 0.25rem 0.5rem;
+}
+
+.date-filter-field select:disabled {
+  color: var(--ink-muted);
+  cursor: not-allowed;
+}
+
 .dossier-list {
   margin-top: 0.5rem;
 }
