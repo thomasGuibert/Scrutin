@@ -50,7 +50,8 @@ export const listerDossiersSousTheme = createListerDossiersSousTheme(
 );
 export const listerSousThemesAvecPosition = createListerSousThemesAvecPosition(
   dossierRepository,
-  agregerPositionsDossiers
+  agregerPositionsDossiers,
+  listerScrutinsDossier
 );
 export const listerThemesTries = createListerThemesTries(
   taxonomyRepository,

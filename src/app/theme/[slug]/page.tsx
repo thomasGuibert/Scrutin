@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/app/_components/Breadcrumb";
-import { SousThemeRow } from "@/app/_components/SousThemeRow";
+import { SousThemeListeFiltrable } from "@/app/_components/SousThemeListeFiltrable";
 import { listerSousThemesAvecPosition, taxonomyRepository } from "@/app/_composition";
 
 export function generateStaticParams() {
@@ -35,25 +35,16 @@ export default async function ThemePage({
       <h1 className="page-title">{theme.nom}</h1>
       <p className="page-gloss">{theme.description}</p>
 
-      {theme.branches.map((branche, index) => (
-        <div className="branch-group" key={branche.slug}>
-          <p className="branch-title">{branche.nom}</p>
-          {branche.sousThemes.length ? (
-            sousThemesParBranche[index].map((entree) => (
-              <SousThemeRow key={entree.sousTheme.slug} {...entree} />
-            ))
-          ) : (
-            <p className="branch-placeholder">
-              Détail des sous-thèmes pas encore fait — branche identifiée
-              mais non descendue plus bas.
-            </p>
-          )}
-        </div>
-      ))}
-
-      {sousThemesDirects.map((entree) => (
-        <SousThemeRow key={entree.sousTheme.slug} {...entree} />
-      ))}
+      <SousThemeListeFiltrable
+        groupes={[
+          ...theme.branches.map((branche, index) => ({
+            titre: branche.nom,
+            sousThemes: sousThemesParBranche[index],
+            placeholderSiVide: true,
+          })),
+          { titre: null, sousThemes: sousThemesDirects, placeholderSiVide: false },
+        ]}
+      />
 
       <Link className="back-link" href="/">
         ← Retour à l&apos;accueil

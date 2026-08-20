@@ -1,11 +1,17 @@
 import type { ComparaisonGroupe } from "@/api/comparerGroupes";
 import type { DossierRepository } from "@/domain/dossier";
+import type { Scrutin } from "@/domain/scrutin";
 import type { SousTheme } from "@/domain/taxonomie";
 
 export type SousThemeAvecPosition = {
   sousTheme: SousTheme;
   nombreDossiers: number;
   comparaison: ComparaisonGroupe[];
+  // Dates brutes (ISO) de tous les scrutins de tous les dossiers du
+  // sous-thème — sert au filtre par période des pages Branche/Thème (cf.
+  // domain/filtreDate.ts, issue #152), au même titre que
+  // DossierAvecPosition.datesScrutins pour la page sous-thème elle-même.
+  datesScrutins: string[];
 };
 
 // Un sous-thème avec, à sa suite, ce que la navigation montre de lui avant
@@ -16,7 +22,8 @@ export function createListerSousThemesAvecPosition(
   dossierRepository: DossierRepository,
   agregerPositionsDossiers: (
     dossierRefs: string[]
-  ) => Promise<ComparaisonGroupe[]>
+  ) => Promise<ComparaisonGroupe[]>,
+  listerScrutinsDossier: (dossierRef: string) => Promise<Scrutin[]>
 ) {
   return async function listerSousThemesAvecPosition(
     sousThemes: SousTheme[]
@@ -26,10 +33,21 @@ export function createListerSousThemesAvecPosition(
         const dossiers = await dossierRepository.getBySousTheme(
           sousTheme.slug
         );
-        const comparaison = await agregerPositionsDossiers(
-          dossiers.map((dossier) => dossier.dossierRef)
-        );
-        return { sousTheme, nombreDossiers: dossiers.length, comparaison };
+        const [comparaison, scrutinsParDossier] = await Promise.all([
+          agregerPositionsDossiers(dossiers.map((dossier) => dossier.dossierRef)),
+          Promise.all(
+            dossiers.map((dossier) => listerScrutinsDossier(dossier.dossierRef))
+          ),
+        ]);
+        const datesScrutins = scrutinsParDossier
+          .flat()
+          .map((scrutin) => scrutin.date);
+        return {
+          sousTheme,
+          nombreDossiers: dossiers.length,
+          comparaison,
+          datesScrutins,
+        };
       })
     );
   };
