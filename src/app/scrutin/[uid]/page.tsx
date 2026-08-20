@@ -13,6 +13,7 @@ import {
   taxonomyRepository,
 } from "@/app/_composition";
 import {
+  calculerEffectifTotal,
   calculerVotants,
   formaterDateScrutin,
   formaterTitreScrutin,
@@ -90,7 +91,8 @@ export default async function ScrutinPage({
           <span className="decompte-item">
             <span className="brief-label">Votants</span>
             <span className="decompte-value">
-              {calculerVotants(scrutin.decompte)}
+              {calculerVotants(scrutin.decompte)}/
+              {calculerEffectifTotal(scrutin.positionsParGroupe)}
             </span>
           </span>
           <span className="decompte-item">

@@ -555,6 +555,22 @@ export function calculerVotants(decompte: DecompteScrutin): number {
   return decompte.pour + decompte.contre + decompte.abstentions;
 }
 
+// Nombre total de député·es que compte l'Assemblée au moment du scrutin —
+// somme de l'effectif de chaque groupe ayant pris part au vote (cf.
+// PositionGroupe.effectif, "nombreMembresGroupe" dans l'export AN). Jamais
+// une constante figée (577, le nombre de sièges) : la composition réelle
+// varie dans le temps (vacances de siège, groupes qui se créent ou
+// disparaissent), l'export AN ne donne que l'effectif par groupe au jour
+// du vote — recalculée à chaque scrutin, elle reste donc exacte à date.
+export function calculerEffectifTotal(
+  positionsParGroupe: PositionGroupe[]
+): number {
+  return positionsParGroupe.reduce(
+    (total, position) => total + position.effectif,
+    0
+  );
+}
+
 // Décompte court d'un groupe pour le tableau des Explications de vote
 // (issue #59) : un groupe qui vote à l'unanimité (cas le plus fréquent)
 // n'affiche que son seul chiffre ("57 pour"), pas deux zéros à côté sans

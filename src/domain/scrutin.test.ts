@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { Dossier } from "@/domain/dossier";
 import {
   agregerPositions,
+  calculerEffectifTotal,
   calculerPosition,
   calculerTauxParticipation,
   calculerVotants,
@@ -47,6 +48,21 @@ describe("calculerVotants", () => {
     const votants = calculerVotants({ pour: 0, contre: 0, abstentions: 0 });
 
     expect(votants).toBe(0);
+  });
+});
+
+describe("calculerEffectifTotal", () => {
+  it("somme l'effectif de chaque groupe ayant pris part au vote", () => {
+    const total = calculerEffectifTotal([
+      { organeRef: "PO1", decompte: { pour: 5, contre: 0, abstentions: 0 }, effectif: 88 },
+      { organeRef: "PO2", decompte: { pour: 0, contre: 3, abstentions: 0 }, effectif: 42 },
+    ]);
+
+    expect(total).toBe(130);
+  });
+
+  it("retourne 0 quand aucun groupe n'a pris part au vote", () => {
+    expect(calculerEffectifTotal([])).toBe(0);
   });
 });
 
