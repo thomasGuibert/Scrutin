@@ -45,7 +45,15 @@ export default async function SousThemePage({
 
       <div className="dossier-list">
         {dossiers.map(
-          ({ dossier, comparaison, viaTag, nombreLectures, scrutinDecisifUnique, resultat }) => {
+          ({
+            dossier,
+            comparaison,
+            viaTag,
+            nombreLectures,
+            scrutinDecisifUnique,
+            resultat,
+            periode,
+          }) => {
             // Un seul Scrutin décisif : lien direct dessus, la page Dossier
             // n'apporterait aucune information supplémentaire (même Fiche
             // dossier, même Position par groupe, déjà affichées ici) — cf.
@@ -78,6 +86,7 @@ export default async function SousThemePage({
                   <span className="dossier-title">{dossier.titre}</span>
                   <span className="dossier-count">{libelle} →</span>
                 </Link>
+                {periode && <p className="node-date">{periode}</p>}
                 <FicheDossier fiche={dossier.ficheDossier} />
                 <ComparaisonGroupes titre="Position par groupe" comparaison={comparaison} />
               </div>

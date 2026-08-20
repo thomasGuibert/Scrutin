@@ -100,6 +100,34 @@ describe("listerDossiersSousTheme", () => {
     expect(resultat[0].scrutinDecisifUnique).toBe("V1");
   });
 
+  it("expose la période (du premier au dernier scrutin du dossier)", async () => {
+    const dossierA = unDossier("DLR5L17A", "cible");
+    const dossierRepository = new FakeDossierRepository([dossierA]);
+    const listerScrutinsDossier = vi.fn().mockResolvedValue([
+      {
+        uid: "V1",
+        titre: "l'article premier de la loi.",
+        numero: 1,
+        date: "2025-01-15",
+      },
+      {
+        uid: "V2",
+        titre: "l'ensemble de la proposition de loi (première lecture).",
+        numero: 2,
+        date: "2025-06-02",
+      },
+    ]);
+    const listerDossiersSousTheme = createListerDossiersSousTheme(
+      dossierRepository,
+      AGREGATION_FACTICE,
+      listerScrutinsDossier
+    );
+
+    const resultat = await listerDossiersSousTheme("cible");
+
+    expect(resultat[0].periode).toBe("du 15/01/2025 au 02/06/2025");
+  });
+
   it("ne propose pas de Scrutin décisif unique quand le dossier a connu plusieurs lectures", async () => {
     const dossierA = unDossier("DLR5L17A", "cible");
     const dossierRepository = new FakeDossierRepository([dossierA]);

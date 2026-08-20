@@ -10,6 +10,7 @@ import {
   estVoteSurEnsemble,
   extraireAmendement,
   formaterDateScrutin,
+  formaterPeriodeDossier,
   formaterTitreScrutin,
   genererFicheScrutin,
   lienScrutinAN,
@@ -180,6 +181,30 @@ describe("formaterDateScrutin", () => {
 
   it("ne glisse pas d'un jour selon le fuseau d'exécution (fuseau UTC forcé)", () => {
     expect(formaterDateScrutin("2025-01-01")).toBe("1 janvier 2025");
+  });
+});
+
+describe("formaterPeriodeDossier", () => {
+  it("affiche la seule date (jj/mm/aaaa), sans 'au', quand tous les scrutins sont le même jour", () => {
+    const scrutins = [
+      creerScrutin({ date: "2025-03-18" }),
+      creerScrutin({ date: "2025-03-18" }),
+    ];
+
+    expect(formaterPeriodeDossier(scrutins)).toBe("18/03/2025");
+  });
+
+  it("affiche 'du ... au ...' du plus ancien au plus récent scrutin, quel que soit leur ordre en entrée", () => {
+    const scrutins = [
+      creerScrutin({ date: "2025-06-02" }),
+      creerScrutin({ date: "2025-01-15" }),
+    ];
+
+    expect(formaterPeriodeDossier(scrutins)).toBe("du 15/01/2025 au 02/06/2025");
+  });
+
+  it("retourne null pour un dossier sans scrutin", () => {
+    expect(formaterPeriodeDossier([])).toBeNull();
   });
 });
 

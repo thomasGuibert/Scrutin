@@ -2,6 +2,7 @@ import type { ComparaisonGroupe } from "@/api/comparerGroupes";
 import type { Dossier, DossierRepository } from "@/domain/dossier";
 import {
   determinerResultatDossier,
+  formaterPeriodeDossier,
   scrutinsDecisifs,
   type ResultatScrutin,
   type Scrutin,
@@ -32,6 +33,11 @@ export type DossierAvecPosition = DossierAffiche & {
   // encore en cours d'examen).
   scrutinDecisifUnique: string | null;
   resultat: ResultatScrutin | null;
+  // Étendue temporelle du dossier (cf. formaterPeriodeDossier), du premier
+  // au dernier de ses scrutins — ce que la liste peut afficher tant que le
+  // dossier n'a pas encore de Scrutin décisif à date unique (nombreLectures
+  // === 0), et une information complémentaire une fois qu'il en a un.
+  periode: string | null;
 };
 
 export function createListerDossiersSousTheme(
@@ -91,6 +97,7 @@ export function createListerDossiersSousTheme(
           nombreLectures: decisifs.length,
           scrutinDecisifUnique: decisifs.length === 1 ? decisifs[0].uid : null,
           resultat: determinerResultatDossier(scrutins),
+          periode: formaterPeriodeDossier(scrutins),
         };
       });
   };

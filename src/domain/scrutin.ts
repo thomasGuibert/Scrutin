@@ -102,6 +102,45 @@ export function formaterDateScrutin(date: string): string {
   });
 }
 
+// Format numérique compact (jj/mm/aaaa) — pour l'étendue temporelle d'un
+// dossier (formaterPeriodeDossier), à la différence de la date isolée d'un
+// scrutin (formaterDateScrutin, en toutes lettres) : une période reste
+// lisible des deux côtés du "au" seulement si chaque date est courte. Même
+// fuseau UTC forcé que formaterDateScrutin, même raison (pas d'heure
+// associée dans l'export AN).
+function formaterDateCourte(date: string): string {
+  return new Date(date).toLocaleDateString("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+// Période couverte par un dossier législatif : du plus ancien au plus
+// récent de ses scrutins (il peut s'étaler sur plusieurs lectures, cf.
+// trouverScrutinDecisif) — contrairement à la date unique du Scrutin
+// décisif affichée sur la page Dossier (le jour où le dossier a
+// réellement été tranché), cette période sert aux listes de dossiers, où
+// aucun Scrutin décisif n'existe encore forcément (dossier en cours
+// d'examen). Une seule date (premier et dernier scrutin le même jour)
+// s'affiche sans répétition ni "au". Null pour un dossier sans scrutin —
+// n'arrive pas en pratique (cf. CONTEXT.md, Dossier législatif), mais
+// rend la fonction totale plutôt que de crasher sur un tableau vide.
+export function formaterPeriodeDossier(scrutins: Scrutin[]): string | null {
+  if (scrutins.length === 0) {
+    return null;
+  }
+
+  const dates = scrutins.map((scrutin) => scrutin.date).sort();
+  const premiere = dates[0];
+  const derniere = dates[dates.length - 1];
+
+  return premiere === derniere
+    ? formaterDateCourte(premiere)
+    : `du ${formaterDateCourte(premiere)} au ${formaterDateCourte(derniere)}`;
+}
+
 // La fiche officielle du scrutin sur assemblee-nationale.fr est indexée par
 // son simple numéro (pas l'uid complet) — vérifié sur un cas réel
 // (VTANR5L17V7988 → /dyn/17/scrutins/7988). Même logique d'extraction de
