@@ -25,9 +25,9 @@ _Avoid_: Sous-thème (sans précision, quand la distinction clivant/consensuel i
 **Sous-thème consensuel**:
 Un sous-thème dont les dossiers partagent un sujet de fond mais sans opposition nette entre groupes parlementaires — nommé simplement par son sujet, pas au format "A vs B" (ex. "Protection des victimes", "Transparence et probité de la vie politique", "Accès aux soins sur le territoire"). Reste un sous-thème à part entière, pas une case à part.
 
-**Sous-thème "Housekeeping / technique"**:
+**Sous-thème "Mesures techniques"**:
 Cas dégénéré de sous-thème consensuel : dossiers purement procéduraux, sans même un sujet de fond distinctif (ex. ratifications de traités bilatéraux techniques). Une branche peut en porter un, générique, pour préserver l'invariant "un dossier appartient toujours à exactement un sous-thème" sans forcer un faux clivage ni un faux sujet.
-_Avoid_: Divers, Non classé (le dossier reste classé — juste dans un sous-thème sans clivage ni sujet propre)
+_Avoid_: Divers, Non classé (le dossier reste classé — juste dans un sous-thème sans clivage ni sujet propre), Housekeeping / technique (ancien nom affiché, jargon anglicisé peu lisible pour un visiteur)
 
 **Dossier législatif**:
 Un texte déposé à l'Assemblée nationale et mis au vote : proposition ou projet de loi, **ou proposition de résolution** (y compris de l'article 34-1 de la Constitution — simple vote de position politique de l'Assemblée, sans portée normative contraignante, mais qui produit un badge Pour/Divisé/Contre par groupe exactement comme une loi, cf. décision #40). Unité d'application du thème : appartient à exactement un sous-thème, dont il hérite le thème racine et la branche. Peut contenir plusieurs scrutins — ou aucun (encore en commission, jamais mis au vote) ; **en v1, un dossier sans scrutin n'est pas affiché sur le site** (pas de Position à montrer), question à rouvrir plus tard.

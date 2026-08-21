@@ -12,12 +12,12 @@ describe("DeclaredTaxonomyRepository", () => {
     });
   });
 
-  it("retrouve un sous-thème housekeeping/technique rattaché directement à un thème racine", () => {
+  it("retrouve un sous-thème Mesures techniques rattaché directement à un thème racine", () => {
     const repository = new DeclaredTaxonomyRepository();
 
     expect(repository.trouverSousTheme("housekeeping-technique")).toEqual({
       slug: "housekeeping-technique",
-      nom: "Housekeeping / technique",
+      nom: "Mesures techniques",
       type: "housekeeping",
     });
   });

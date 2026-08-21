@@ -26,7 +26,7 @@ const TAXONOMIE: ThemeRacine[] = [
       },
       {
         slug: "housekeeping-technique",
-        nom: "Housekeeping / technique",
+        nom: "Mesures techniques",
         type: "housekeeping",
       },
       {
@@ -169,7 +169,7 @@ const TAXONOMIE: ThemeRacine[] = [
           },
           {
             slug: "housekeeping-justice-police-immigration",
-            nom: "Housekeeping / technique",
+            nom: "Mesures techniques",
             type: "housekeeping",
           },
         ],
@@ -209,7 +209,7 @@ const TAXONOMIE: ThemeRacine[] = [
           },
           {
             slug: "housekeeping-vie-democratique",
-            nom: "Housekeeping / technique",
+            nom: "Mesures techniques",
             type: "housekeeping",
           },
           {
@@ -270,7 +270,7 @@ const TAXONOMIE: ThemeRacine[] = [
           },
           {
             slug: "housekeeping-collectivites-territoriales",
-            nom: "Housekeeping / technique",
+            nom: "Mesures techniques",
             type: "housekeeping",
           },
         ],
@@ -461,7 +461,7 @@ const TAXONOMIE: ThemeRacine[] = [
           },
         ],
       },
-      // Branche générique (cf. Sous-thème "Housekeeping/technique" dans
+      // Branche générique (cf. Sous-thème "Mesures techniques" dans
       // CONTEXT.md pour le même principe côté sous-thème) : ces 2 sous-thèmes
       // ne se rattachent nettement ni à Logement ni à Santé (Protection de
       // l'enfance touche plutôt à la famille ; Financement de la sécurité
