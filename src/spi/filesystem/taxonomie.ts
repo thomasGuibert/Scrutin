@@ -202,6 +202,22 @@ const TAXONOMIE: ThemeRacine[] = [
             nom: "Gouvernance et gestion des moyens de l'État",
             type: "consensuel",
           },
+          // Extrait de "Mesures techniques" (issue #153) : contrôle
+          // parlementaire annuel récurrent du budget déjà exécuté (lois de
+          // règlement État, approbation des comptes de la sécurité sociale,
+          // lois de finances de fin de gestion) — motif empirique net (10
+          // des 12 dossiers alors classés en "Mesures techniques" sous
+          // cette branche), distinct du "financement-securite-sociale"
+          // (Solidarité > Autre) qui porte lui la loi de financement de la
+          // sécu PROSPECTIVE (PLFSS, décide des règles pour l'année à
+          // venir) plutôt que l'approbation RÉTROSPECTIVE des comptes déjà
+          // exécutés — deux exercices budgétaires distincts, jamais le même
+          // vote.
+          {
+            slug: "approbation-comptes-publics",
+            nom: "Approbation des comptes publics et de la sécurité sociale",
+            type: "consensuel",
+          },
           {
             slug: "reconnaissance-engagement-securite-civile",
             nom: "Reconnaissance de l'engagement des acteurs de la sécurité civile",
