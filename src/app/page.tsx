@@ -6,9 +6,11 @@ import {
   VariantA,
   VariantB,
   VariantC,
+  VariantD,
   type ExempleAccroche,
 } from "@/app/_components/PrototypeHomeAccroche";
 import { comparerGroupes, getScrutin, listerThemesTries } from "@/app/_composition";
+import { calculerEffectifTotal, calculerVotants } from "@/domain/scrutin";
 
 // PROTOTYPE — accroche "exemple" de la page d'accueil (cf. session prototype,
 // pas encore capturée). Scrutin décisif du dossier DLR5L17N50627 "Lutter
@@ -23,6 +25,7 @@ const VARIANTS: PrototypeVariant[] = [
   { key: "A", label: "Bandeau compact au-dessus de la grille" },
   { key: "B", label: "Intégrée dans la grille (tuile vedette)" },
   { key: "C", label: "Deux colonnes, preuve détaillée" },
+  { key: "D", label: "Gabarit de B, contenu de C, scroll interne" },
 ];
 
 export default async function Home({
@@ -42,6 +45,9 @@ export default async function Home({
     href: `/dossier/${EXEMPLE_DOSSIER_REF}`,
     resultatLabel: "Adopté à l'unanimité (56 pour, 0 contre)",
     comparaison,
+    resultat: scrutin?.resultat ?? "adopté",
+    votants: scrutin ? calculerVotants(scrutin.decompte) : 0,
+    effectifTotal: scrutin ? calculerEffectifTotal(scrutin.positionsParGroupe) : 0,
   };
 
   return (
@@ -49,6 +55,7 @@ export default async function Home({
       {current === "A" && <VariantA themes={themes} exemple={exemple} />}
       {current === "B" && <VariantB themes={themes} exemple={exemple} />}
       {current === "C" && <VariantC themes={themes} exemple={exemple} />}
+      {current === "D" && <VariantD themes={themes} exemple={exemple} />}
       <PrototypeSwitcher variants={VARIANTS} current={current} basePath="/" />
     </>
   );

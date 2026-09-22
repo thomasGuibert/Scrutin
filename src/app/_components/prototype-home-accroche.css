@@ -137,3 +137,54 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* --- Variante D : gabarit de B, contenu de C, scroll interne --- */
+
+.proto-d-block {
+  border-left: 3px solid var(--pour);
+  padding: 1rem 1.1rem 0.9rem;
+  margin: 0 0 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.proto-d-kicker {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--pour);
+  margin: 0 0 0.5rem;
+}
+
+.proto-d-description {
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  margin: 0 0 0.9rem;
+  max-width: 34rem;
+}
+
+.proto-d-scroll {
+  max-height: 12rem;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+}
+
+/* Le bloc .cmp-block porte déjà sa propre marge/bordure (pensées pour un
+   usage pleine page) — neutralisées ici, .proto-d-scroll les remplace. */
+.proto-d-scroll .cmp-block {
+  margin: 0;
+  border: none;
+}
+
+.proto-d-footer {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  margin-top: 0.9rem;
+}
+
+.proto-d-lien {
+  margin-left: auto;
+}

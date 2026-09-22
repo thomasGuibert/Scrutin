@@ -7,15 +7,20 @@
 // "prototype" (sous-shape A) pour le protocole de bascule/capture.
 import Link from "next/link";
 import { ComparaisonGroupes } from "@/app/_components/ComparaisonGroupes";
+import { ResultatBadge } from "@/app/_components/ResultatBadge";
 import "./prototype-home-accroche.css";
 import type { ComparaisonGroupe } from "@/api/comparerGroupes";
 import type { ThemeAvecCompte } from "@/api/listerThemesTries";
+import type { ResultatScrutin } from "@/domain/scrutin";
 
 export type ExempleAccroche = {
   titre: string;
   href: string;
   resultatLabel: string;
   comparaison: ComparaisonGroupe[];
+  resultat: ResultatScrutin;
+  votants: number;
+  effectifTotal: number;
 };
 
 type Props = {
@@ -122,6 +127,50 @@ export function VariantC({ themes, exemple }: Props) {
             <ThemeTiles themes={themes} feature={false} />
           </div>
         </div>
+      </div>
+    </main>
+  );
+}
+
+// --- Variante D : l'emprise de B (même gabarit qu'une tuile vedette, pas
+// de largeur supplémentaire) avec le contenu de C (barres par groupe) —
+// scroll vertical interne pour ne pas grandir avec le nombre de groupes,
+// séparée de la grille par une vraie marge (pas soudée à .a-grid comme en
+// B), description au-dessus, décompte réel (votants + résultat) sous le
+// scroll, toujours visible. ---
+export function VariantD({ themes, exemple }: Props) {
+  return (
+    <main>
+      <h1 className="page-title">Scrutins</h1>
+      <p className="page-gloss">{PITCH}</p>
+
+      <div className="proto-d-block">
+        <p className="proto-d-kicker">Exemple concret</p>
+        <p className="proto-d-description">
+          Un dossier réel, un vote réel : {exemple.titre.toLowerCase()}.
+          Voici comment chaque groupe parlementaire s&apos;est prononcé.
+        </p>
+
+        <div className="proto-d-scroll">
+          <ComparaisonGroupes titre={exemple.titre} comparaison={exemple.comparaison} />
+        </div>
+
+        <div className="proto-d-footer">
+          <span className="decompte-item">
+            <span className="brief-label">Votants</span>
+            <span className="decompte-value">
+              {exemple.votants}/{exemple.effectifTotal}
+            </span>
+          </span>
+          <ResultatBadge resultat={exemple.resultat} variant="value" />
+          <Link href={exemple.href} className="a-tile-arrow proto-d-lien">
+            Voir le dossier complet →
+          </Link>
+        </div>
+      </div>
+
+      <div className="a-grid">
+        <ThemeTiles themes={themes} feature />
       </div>
     </main>
   );
