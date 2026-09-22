@@ -1,6 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // `next dev` réinjecte sinon un bloc générique dans CLAUDE.md à chaque
+  // lancement (node_modules/next/dist/server/lib/generate-agent-files.js) —
+  // en conflit avec le CLAUDE.md du dépôt, qui porte déjà ses propres
+  // instructions agent.
+  agentRules: false,
   // Site public, sans authentification ni contenu généré par les visiteurs :
   // ces en-têtes ne remplacent aucune protection applicative existante,
   // elles ferment simplement des vecteurs génériques (clickjacking, sniffing
