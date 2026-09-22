@@ -9,7 +9,12 @@ import {
   VariantD,
   type ExempleAccroche,
 } from "@/app/_components/PrototypeHomeAccroche";
-import { comparerGroupes, getScrutin, listerThemesTries } from "@/app/_composition";
+import {
+  comparerGroupes,
+  getDossier,
+  getScrutin,
+  listerThemesTries,
+} from "@/app/_composition";
 import { calculerEffectifTotal, calculerVotants } from "@/domain/scrutin";
 
 // PROTOTYPE — accroche "exemple" de la page d'accueil (cf. session prototype,
@@ -38,11 +43,16 @@ export default async function Home({
 
   const themes = await listerThemesTries();
   const scrutin = await getScrutin(EXEMPLE_SCRUTIN_UID);
+  const dossier = await getDossier(EXEMPLE_DOSSIER_REF);
   const comparaison = scrutin ? comparerGroupes(scrutin) : [];
 
   const exemple: ExempleAccroche = {
     titre: EXEMPLE_TITRE,
     href: `/dossier/${EXEMPLE_DOSSIER_REF}`,
+    // Contexte réel de la Fiche dossier (content/dossiers/…), pas un texte
+    // méta qui explique que ceci est un exemple — cf. retour session
+    // prototype du 22/09.
+    description: dossier?.ficheDossier.contexte ?? "",
     resultatLabel: "Adopté à l'unanimité (56 pour, 0 contre)",
     comparaison,
     resultat: scrutin?.resultat ?? "adopté",

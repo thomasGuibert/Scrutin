@@ -16,12 +16,20 @@ import type { ResultatScrutin } from "@/domain/scrutin";
 export type ExempleAccroche = {
   titre: string;
   href: string;
+  description: string;
   resultatLabel: string;
   comparaison: ComparaisonGroupe[];
   resultat: ResultatScrutin;
   votants: number;
   effectifTotal: number;
 };
+
+// Libellé de la rubrique éditoriale (cf. issue #128 "Mise en avant
+// éditoriale de certains scrutins/dossiers") — un seul endroit à changer
+// si "Mise en avant" ne convient pas. Options envisagées à ce stade :
+// "Mise en avant" (reprend le vocabulaire déjà utilisé dans le backlog),
+// "À la une" (plus journalistique), "Repère" (plus sobre).
+const RUBRIQUE = "Mise en avant";
 
 type Props = {
   themes: ThemeAvecCompte[];
@@ -59,7 +67,7 @@ export function VariantA({ themes, exemple }: Props) {
       <p className="page-gloss">{PITCH}</p>
 
       <Link href={exemple.href} className="proto-a-strip">
-        <span className="proto-a-kicker">Exemple concret</span>
+        <span className="proto-a-kicker">{RUBRIQUE}</span>
         <span className="proto-a-titre">{exemple.titre}</span>
         <span className="proto-a-fait">
           {exemple.resultatLabel} — les {exemple.comparaison.length} groupes
@@ -85,7 +93,7 @@ export function VariantB({ themes, exemple }: Props) {
       <div className="a-grid">
         <Link href={exemple.href} className="a-tile a-tile-feature proto-b-exemple-tile">
           <span className="a-tile-name">
-            <span className="proto-b-exemple-kicker">Exemple concret — </span>
+            <span className="proto-b-exemple-kicker">{RUBRIQUE} — </span>
             {exemple.titre}
           </span>
           <span className="a-tile-gloss">
@@ -111,7 +119,7 @@ export function VariantC({ themes, exemple }: Props) {
 
       <div className="proto-c-layout">
         <div>
-          <p className="proto-c-exemple-kicker">Exemple concret</p>
+          <p className="proto-c-exemple-kicker">{RUBRIQUE}</p>
           <ComparaisonGroupes
             titre={`${exemple.titre} — ${exemple.resultatLabel}`}
             comparaison={exemple.comparaison}
@@ -145,11 +153,9 @@ export function VariantD({ themes, exemple }: Props) {
       <p className="page-gloss">{PITCH}</p>
 
       <div className="proto-d-block">
-        <p className="proto-d-kicker">Exemple concret</p>
-        <p className="proto-d-description">
-          Un dossier réel, un vote réel : {exemple.titre.toLowerCase()}.
-          Voici comment chaque groupe parlementaire s&apos;est prononcé.
-        </p>
+        <p className="proto-d-kicker">{RUBRIQUE}</p>
+        <p className="proto-d-titre">{exemple.titre}</p>
+        <p className="proto-d-description">{exemple.description}</p>
 
         <div className="proto-d-scroll">
           <ComparaisonGroupes titre={exemple.titre} comparaison={exemple.comparaison} />

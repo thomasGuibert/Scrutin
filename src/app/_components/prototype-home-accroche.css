@@ -157,6 +157,12 @@
   margin: 0 0 0.5rem;
 }
 
+.proto-d-titre {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  margin: 0 0 0.4rem;
+}
+
 .proto-d-description {
   font-size: 0.85rem;
   color: var(--ink-muted);
