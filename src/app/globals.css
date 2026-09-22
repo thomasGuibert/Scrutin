@@ -624,6 +624,66 @@ table.cmp-table {
   padding-top: 0.7rem;
 }
 
+/* Accroche "Au-delà des clivages" de la page d'accueil (AccrocheExemple) :
+   un dossier réel voté dans le même sens par tous les groupes, au-dessus
+   de la grille de thèmes. Zone à défilement bornée pour le détail par
+   groupe (ne grandit pas avec le nombre de groupes), décompte réel
+   toujours visible en pied de bloc. */
+.accroche-exemple {
+  border-left: 3px solid var(--pour);
+  padding: 1rem 1.1rem 0.9rem;
+  margin: 0 0 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.accroche-kicker {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--pour);
+  margin: 0 0 0.5rem;
+}
+
+.accroche-titre {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  margin: 0 0 0.4rem;
+}
+
+.accroche-description {
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  margin: 0 0 0.9rem;
+  max-width: 34rem;
+}
+
+.accroche-scroll {
+  max-height: 12rem;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+}
+
+/* Le bloc .cmp-block porte déjà sa propre marge/bordure (pensées pour un
+   usage pleine page) — neutralisées ici, .accroche-scroll les remplace. */
+.accroche-scroll .cmp-block {
+  margin: 0;
+  border: none;
+}
+
+.accroche-footer {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  margin-top: 0.9rem;
+}
+
+.accroche-lien {
+  margin-left: auto;
+}
+
 /* Grille de tuiles de la page d'accueil : 2 colonnes, la première tuile
    (plus grand volume) en pleine largeur. */
 .a-grid {
