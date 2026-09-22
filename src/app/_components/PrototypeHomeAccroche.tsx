@@ -24,12 +24,12 @@ export type ExempleAccroche = {
   effectifTotal: number;
 };
 
-// Libellé de la rubrique éditoriale (cf. issue #128 "Mise en avant
-// éditoriale de certains scrutins/dossiers") — un seul endroit à changer
-// si "Mise en avant" ne convient pas. Options envisagées à ce stade :
-// "Mise en avant" (reprend le vocabulaire déjà utilisé dans le backlog),
-// "À la une" (plus journalistique), "Repère" (plus sobre).
-const RUBRIQUE = "Mise en avant";
+// Libellé de la rubrique éditoriale — reprend l'écho de la baseline du
+// site ("Au-delà du discours") plutôt que d'affirmer un choix à justifier
+// ("Sélection", "À la une" sans rotation réelle derrière) : se vérifie
+// directement dans le bloc juste en dessous (absence de clivage visible
+// entre les groupes), cf. session prototype du 22/09.
+const RUBRIQUE = "Au-delà des clivages";
 
 type Props = {
   themes: ThemeAvecCompte[];
