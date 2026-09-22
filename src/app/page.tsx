@@ -41,7 +41,7 @@ export default async function Home() {
       <p className="page-gloss">
         Consultez les votes réels de l&apos;Assemblée nationale, classés par
         thème : comparez ce que les groupes parlementaires ont concrètement
-        voté, dossier par dossier, au-delà de leur communication.
+        voté, dossier par dossier, au-delà de leurs discours.
       </p>
 
       <AccrocheExemple exemple={exemple} />

@@ -2,7 +2,7 @@
 
 [scrutin-theta.vercel.app](https://scrutin-theta.vercel.app)
 
-Consultez les votes réels de l'Assemblée nationale, classés par thème : comparez ce que les groupes parlementaires ont concrètement voté, dossier par dossier, au-delà de leur communication.
+Consultez les votes réels de l'Assemblée nationale, classés par thème : comparez ce que les groupes parlementaires ont concrètement voté, dossier par dossier, au-delà de leurs discours.
 
 ## Objectif
 
