@@ -172,6 +172,42 @@ une nouveauté à committer au même titre que celles des Étapes 3 et 4bis
 téléchargement ici n'est pas un échec complet de run : le signaler dans le
 résumé de l'Étape 8 et continuer.
 
+## Étape 4quater — Résumer les Explications de vote
+
+```
+npm run an:resumes -- --manquants
+```
+
+Liste en JSON les interventions d'Explications de vote encore sans
+`resume` (typiquement celles ajoutées par l'Étape 4bis). Tant qu'un seul
+groupe d'un scrutin n'a pas de résumé, la Fiche Scrutin n'affiche pas le
+tableau par groupe et l'encart « Prises de parole » indique « en cours de
+résumé ». Si la liste est vide, passer à l'Étape 5.
+
+Sinon, rédiger un résumé par intervention à partir de son `texte`, puis les
+écrire dans un fichier JSON temporaire (hors du dépôt) au format
+`[{ "dossierRef", "scrutin", "groupe", "resume" }]` et l'appliquer :
+
+```
+npm run an:resumes -- <fichier.json>
+```
+
+Règles de rédaction (même format que les résumés déjà en ligne) :
+
+- Une seule phrase factuelle, au présent, d'environ 40 à 70 mots.
+- Si l'orateur·ice annonce le vote du groupe : « Le groupe <nom> vote
+  pour/contre ce texte / s'abstient, … » suivi des raisons avancées.
+- Sinon : « Intervention <ce qu'elle soutient ou critique> ; sans détailler
+  davantage la position de vote du groupe dans cet extrait. »
+- Ne reprendre que ce que dit l'intervention : pas de jugement, pas
+  d'adjectif évaluatif, pas de contexte extérieur (cf. posture éditoriale,
+  `CONTEXT.md`).
+
+Le script refuse de remplacer un résumé existant ou de viser une
+intervention introuvable. Tout résumé rédigé par ce run est un déclencheur
+de doute `resumes-a-relire` (Étape 7) : lister chaque résumé dans le corps
+de la PR (dossier, scrutin, groupe, texte du résumé) pour relecture.
+
 ## Étape 5 — Vérifier
 
 Dans cet ordre, en s'arrêtant au premier échec :
@@ -234,8 +270,9 @@ verte** :
 
 **Au moins un déclencheur de doute** (échec technique de l'Étape 5 déjà
 couvert ci-dessus ; ou, sur les nouveautés détectées : `dossierRef-absent`,
-`plf-plfss`, `vote-de-conscience`, ou sous-thème ne correspondant clairement
-à aucun sous-thème existant) :
+`plf-plfss`, `vote-de-conscience`, sous-thème ne correspondant clairement
+à aucun sous-thème existant, ou `resumes-a-relire` — résumés d'Explications
+de vote rédigés à l'Étape 4quater) :
 
 - Committer tout de même les changements sur la branche (y compris les cas
   non ambigus traités dans le même run — ne pas les perdre).
@@ -271,6 +308,7 @@ résumant le run du jour, avec toujours au minimum :
 - `an:detecter-nouveautes` : nombre de scrutins/dossiers nouveaux/modifiés,
   et leurs `raisonsDeDoute` le cas échéant ;
 - `an:fusionner-curation` : dossiers/scrutins ajoutés, par archive ;
+- `an:resumes` : nombre de résumés rédigés (Étape 4quater) ;
 - le résultat de l'Étape 5 (vert, ou première étape en échec) ;
 - l'issue du run : `rien à curer`, `mergé sur main (<sha>)`, ou
   `PR de doute ouverte (<lien>)`.
