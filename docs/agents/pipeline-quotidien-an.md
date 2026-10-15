@@ -204,9 +204,10 @@ Règles de rédaction (même format que les résumés déjà en ligne) :
   `CONTEXT.md`).
 
 Le script refuse de remplacer un résumé existant ou de viser une
-intervention introuvable. Tout résumé rédigé par ce run est un déclencheur
-de doute `resumes-a-relire` (Étape 7) : lister chaque résumé dans le corps
-de la PR (dossier, scrutin, groupe, texte du résumé) pour relecture.
+intervention introuvable. Les résumés ne sont pas un déclencheur de doute
+(choix de Thomas du 2026-10-15) : ils sont livrés comme le reste du run ;
+lister chacun (dossier, scrutin, groupe) dans le message de commit et le
+commentaire de l'Étape 8.
 
 ## Étape 5 — Vérifier
 
@@ -270,9 +271,8 @@ verte** :
 
 **Au moins un déclencheur de doute** (échec technique de l'Étape 5 déjà
 couvert ci-dessus ; ou, sur les nouveautés détectées : `dossierRef-absent`,
-`plf-plfss`, `vote-de-conscience`, sous-thème ne correspondant clairement
-à aucun sous-thème existant, ou `resumes-a-relire` — résumés d'Explications
-de vote rédigés à l'Étape 4quater) :
+`plf-plfss`, `vote-de-conscience`, ou sous-thème ne correspondant clairement
+à aucun sous-thème existant) :
 
 - Committer tout de même les changements sur la branche (y compris les cas
   non ambigus traités dans le même run — ne pas les perdre).
