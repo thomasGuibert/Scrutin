@@ -6,7 +6,8 @@ import { calculerVotants, formaterDecompteCourt, type LigneExplicationVote } fro
 function classePosition(position: string): string {
   if (position === "Pour") return "is-pour";
   if (position === "Contre") return "is-contre";
-  return "is-divise";
+  if (position === "Divisé") return "is-divise";
+  return "is-neutre";
 }
 
 function BarreVote({ decompte }: { decompte: LigneExplicationVote["decompte"] }) {
