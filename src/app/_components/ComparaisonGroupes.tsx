@@ -4,11 +4,13 @@ import { calculerVotants, type DecompteScrutin } from "@/domain/scrutin";
 function badgeClass(position: string): string {
   if (position === "Pour") return "cmp-badge-pour";
   if (position === "Contre") return "cmp-badge-contre";
-  return "cmp-badge-divise";
+  if (position === "Divisé") return "cmp-badge-divise";
+  return "cmp-badge-neutre";
 }
 
 function largeurSegment(valeur: number, decompte: DecompteScrutin): string {
-  return `${(valeur / calculerVotants(decompte)) * 100}%`;
+  const votants = calculerVotants(decompte);
+  return votants === 0 ? "0%" : `${(valeur / votants) * 100}%`;
 }
 
 function LigneComparaison({ groupe, decompte, position }: ComparaisonGroupe) {

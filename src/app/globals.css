@@ -475,6 +475,10 @@ table.cmp-table {
   color: var(--accent-warm);
 }
 
+.vote-label.is-neutre {
+  color: var(--ink-muted);
+}
+
 .vote-bar {
   height: 0.42rem;
   display: flex;
@@ -825,6 +829,10 @@ table.cmp-table {
 
 .cmp-badge-divise {
   color: var(--accent-warm);
+}
+
+.cmp-badge-neutre {
+  color: var(--ink-muted);
 }
 
 .resultat-tag {

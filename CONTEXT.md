@@ -57,7 +57,7 @@ _Avoid_: Axe transversal (rejeté comme modèle), Catégorie secondaire
 ### Vote et agrégation
 
 **Position**:
-Le résultat Pour / Divisé / Contre d'un groupe parlementaire sur un scrutin donné, ou sur l'agrégat de plusieurs scrutins rattachés à un même nœud de l'arbre. Exprimée dans la même grammaire (% Pour / % Contre / % Abstention) à tous les niveaux — jamais un score arbitraire. **À partir du niveau Dossier législatif (et au-dessus), la Position d'un groupe ne s'agrège pas sur tous les scrutins du dossier — voir Scrutin décisif.**
+Le résultat Pour / Divisé / Contre d'un groupe parlementaire sur un scrutin donné, ou sur l'agrégat de plusieurs scrutins rattachés à un même nœud de l'arbre. Un groupe sans aucun Votant est *Non votant* ; un groupe dont tous les Votants se sont abstenus est *Abstention* — jamais Pour par défaut faute de camp à départager. Exprimée dans la même grammaire (% Pour / % Contre / % Abstention) à tous les niveaux — jamais un score arbitraire. **À partir du niveau Dossier législatif (et au-dessus), la Position d'un groupe ne s'agrège pas sur tous les scrutins du dossier — voir Scrutin décisif.**
 _Avoid_: Badge (nom de la représentation visuelle du concept, pas le concept lui-même), Score, Vote (voir Scrutin)
 
 **Scrutin décisif**:

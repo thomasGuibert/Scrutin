@@ -88,10 +88,16 @@ describe("calculerPosition", () => {
     expect(position).toBe("Divisé");
   });
 
-  it("retourne Pour quand le groupe n'a aucun Votant (n'a pas participé au scrutin)", () => {
+  it("retourne Non votant quand le groupe n'a aucun Votant (n'a pas participé au scrutin)", () => {
     const position = calculerPosition({ pour: 0, contre: 0, abstentions: 0 });
 
-    expect(position).toBe("Pour");
+    expect(position).toBe("Non votant");
+  });
+
+  it("retourne Abstention quand tous les Votants du groupe se sont abstenus", () => {
+    const position = calculerPosition({ pour: 0, contre: 0, abstentions: 4 });
+
+    expect(position).toBe("Abstention");
   });
 
   it("n'est pas Divisé exactement à 33% des Votants (seuil strict, pas inclusif)", () => {

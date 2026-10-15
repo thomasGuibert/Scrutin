@@ -583,7 +583,10 @@ export function formaterDecompteCourt(decompte: DecompteScrutin): string {
   return parts.length > 0 ? parts.join(" · ") : "0 pour";
 }
 
-export type Position = "Pour" | "Contre" | "Divisé";
+// "Non votant" et "Abstention" ne sont pas des camps : sans aucun Pour ni
+// Contre, il n'y a rien à départager, et retomber sur Pour (0 >= 0)
+// afficherait un soutien que le groupe n'a jamais exprimé.
+export type Position = "Pour" | "Contre" | "Divisé" | "Abstention" | "Non votant";
 
 const SEUIL_DIVISE = 0.33;
 
@@ -591,9 +594,14 @@ export function calculerPosition(decompte: DecompteScrutin): Position {
   const votants = calculerVotants(decompte);
   const minoritaire = Math.min(decompte.pour, decompte.contre);
 
-  // Aucun Votant (le groupe n'a pas participé) : pas de camp minoritaire à
-  // mesurer, donc jamais Divisé — retombe sur la règle Pour/Contre ci-dessous.
-  if (votants > 0 && minoritaire / votants > SEUIL_DIVISE) {
+  if (votants === 0) {
+    return "Non votant";
+  }
+  if (decompte.pour === 0 && decompte.contre === 0) {
+    return "Abstention";
+  }
+
+  if (minoritaire / votants > SEUIL_DIVISE) {
     return "Divisé";
   }
 
