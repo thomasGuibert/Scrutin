@@ -16,7 +16,8 @@
     "curer:discussion-generale": "node --experimental-transform-types scripts/extraire-discussion-generale.ts",
     "an:recuperer": "node --experimental-transform-types scripts/recuperer-donnees-an.ts",
     "an:detecter-nouveautes": "node --experimental-transform-types scripts/detecter-nouveautes-an.ts",
-    "an:fusionner-curation": "node --experimental-transform-types scripts/fusionner-curation-an.ts"
+    "an:fusionner-curation": "node --experimental-transform-types scripts/fusionner-curation-an.ts",
+    "an:resumes": "node --experimental-transform-types scripts/resumes-explications-vote.ts"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
