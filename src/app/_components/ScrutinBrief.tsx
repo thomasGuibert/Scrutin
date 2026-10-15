@@ -9,12 +9,12 @@ import type {
 
 // Fiche Contexte / Action / Résultat propre à un scrutin (cf. FicheDossier)
 // — quatre formes possibles :
-// - "Résultat" + Contexte/Action en texte : cas générique.
+// - "Résultat" + Contexte/Action en texte : motion de rejet préalable.
 // - "Résultat attendu" (seul, sans tableau) : effet visé par le contenu
 //   réel d'un amendement (genererFicheScrutinEnrichie, issue #46).
-// - "dossierRef" : pas de donnée propre à ce scrutin — état explicite avec
-//   lien vers la Fiche du dossier, plutôt qu'une copie de son contenu
-//   (issue #84).
+// - "message" : pas de donnée propre à ce scrutin — état explicite, avec
+//   lien vers la Fiche du dossier s'il y en a une, plutôt qu'une
+//   reformulation du titre ou une copie de la Fiche dossier (issue #84).
 // - "explicationsParGroupe" : Explications de vote curées (issue #57) —
 //   Contexte/Action/Résultat attendu de la Fiche dossier, PLUS le tableau
 //   des positions inséré juste après (issue #85, ADR-0003 : les deux
@@ -29,15 +29,20 @@ export function ScrutinBrief({
     | FicheScrutinEffetAttendu
     | FicheScrutinExplicationsVote;
 }) {
-  if ("dossierRef" in fiche) {
+  if ("message" in fiche) {
     return (
       <div className="dossier-brief">
         <p className="branch-placeholder brief-pas-de-donnees">
-          {fiche.message} Consultez la{" "}
-          <Link href={`/dossier/${fiche.dossierRef}`}>
-            fiche du dossier « {fiche.dossierTitre} »
-          </Link>
-          .
+          {fiche.message}
+          {fiche.dossier && (
+            <>
+              {" "}Consultez la{" "}
+              <Link href={`/dossier/${fiche.dossier.dossierRef}`}>
+                fiche du dossier « {fiche.dossier.titre} »
+              </Link>
+              .
+            </>
+          )}
         </p>
         <div className="brief-resultat">
           <span className="brief-label">Résultat</span>

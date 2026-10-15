@@ -271,22 +271,12 @@ export function determinerResultatDossier(
   return decisif.resultat;
 }
 
-// Fiche Contexte/Action/Résultat propre à un scrutin (cf. Fiche dossier dans
-// CONTEXT.md, dont elle reprend la structure) — générée à partir des seules
-// métadonnées déjà disponibles (titre nettoyé, dossier rattaché, décompte),
-// plutôt que rédigée à la main comme la fiche d'un dossier : le volume de
-// scrutins (des milliers) rend une rédaction manuelle par scrutin hors de
-// portée. Décrit l'état procédural du vote (avecStade — "Vote sur l'ensemble
-// du texte, à l'issue de..."), jamais recopié d'ailleurs : le titre AN seul
-// ne dit certes jamais pourquoi certains groupes votent pour et d'autres
-// contre, mais recopier mot pour mot la Fiche dossier ne donnait pas non
-// plus cette information (juste l'impression trompeuse d'un contenu propre
-// au scrutin) — cf. FicheScrutinPasDeDonnees ci-dessous, qui a remplacé
-// cette copie pour le seul cas où elle s'appliquait (issue #84). Le
-// troisième volet ("Résultat") décrit toujours une issue déjà connue
-// (adopté/rejeté + décompte), jamais un effet attendu — cf.
-// FicheScrutinEffetAttendu ci-dessous pour le cas où un effet attendu réel
-// est disponible (contenu d'un amendement, issue #46).
+// Fiche Contexte/Action/Résultat dérivée du seul titre AN — réservée à la
+// motion de rejet préalable (cf. genererFicheScrutin) : pour les autres
+// scrutins sans donnée propre, reformuler le titre déjà affiché en tête de
+// page n'apporte rien (cf. FicheScrutinPasDeDonnees). Le "Résultat" décrit
+// l'issue connue (adopté/rejeté + décompte), jamais un effet attendu — cf.
+// FicheScrutinEffetAttendu pour le contenu réel d'un amendement (issue #46).
 export type FicheScrutin = {
   contexte: string;
   action: string;
@@ -335,53 +325,23 @@ export type FicheScrutinExplicationsVote = {
   resultat: string;
 };
 
-// Remplace l'ancien repli "copie de la Fiche dossier" (issue #84) : recopier
-// mot pour mot le Contexte/Action d'un dossier dont ce scrutin est l'unique
-// vote sur le texte entier n'apportait aucune information propre à CE
-// scrutin — juste l'impression trompeuse d'un contenu spécifique alors
-// qu'il s'agissait d'une copie exacte de ce qui est déjà visible sur la
-// page Dossier. À la place, un état explicite signalant l'absence de
-// donnée propre au scrutin, avec un lien vers la Fiche dossier plutôt
-// qu'une duplication de son contenu — le Résultat, lui, n'est jamais une
-// copie mais un fait propre à ce scrutin, donc conservé. Le repli
-// procédural (avecStade, cf. contextePourTypeDeVote) n'est pas concerné :
-// il décrit honnêtement le type de vote, ce n'est pas une copie.
+// Aucune donnée propre à ce scrutin (ni contenu d'amendement, ni
+// Explications de vote curées) : un état explicite plutôt qu'un
+// Contexte/Action reformulant le titre déjà affiché en tête de page
+// (demande de Thomas du 2026-10-15) ou recopiant la Fiche dossier (issue
+// #84). Le lien vers la Fiche dossier reste proposé quand le scrutin est
+// rattaché à un dossier ; le Résultat est un fait propre au scrutin, donc
+// conservé.
+export const MESSAGE_PAS_DE_DONNEES = "Pas d'information supplémentaire sur ce scrutin.";
+
 export type FicheScrutinPasDeDonnees = {
   message: string;
-  dossierRef: string;
-  dossierTitre: string;
+  dossier: { dossierRef: string; titre: string } | null;
   resultat: string;
 };
 
 function pluraliser(valeur: number, mot: string): string {
   return `${valeur} ${mot}${valeur > 1 ? "s" : ""}`;
-}
-
-// Le suffixe parenthésé final du titre AN donne la lecture/l'étape du texte
-// (12 variantes recensées sur les 8434 scrutins de la 17e législature).
-// Formulé pour s'insérer dans "à l'issue de {stade}" — null pour les rares
-// variantes non recensées (~0,2%), auquel cas la phrase reste valide sans
-// mention de lecture (cf. avecStade).
-const LIBELLES_LECTURE: Record<string, string> = {
-  "première lecture": "sa première lecture",
-  "deuxième lecture": "sa deuxième lecture",
-  "nouvelle lecture": "sa nouvelle lecture",
-  "lecture définitive": "sa lecture définitive",
-  "seconde délibération": "sa seconde délibération",
-  "texte de la commission mixte paritaire":
-    "l'examen du texte issu de la commission mixte paritaire",
-};
-
-function extraireStadeLecture(titre: string): string | null {
-  const match = titre.trim().match(/\(([^)]*)\)\.?\s*$/);
-  if (!match) {
-    return null;
-  }
-  return LIBELLES_LECTURE[match[1].trim().toLowerCase()] ?? null;
-}
-
-function avecStade(phrase: string, stade: string | null): string {
-  return stade ? `${phrase}, à l'issue de ${stade}.` : `${phrase}.`;
 }
 
 // "la motion de rejet préalable, déposée par Mme X, de la/du <dossier>..." —
@@ -391,15 +351,6 @@ function extraireAuteurRejetPrealable(titre: string): string | null {
   const match = titre.match(
     /^la motion de rejet préalable,\s*déposée par ([^,]+),/i
   );
-  return match ? match[1].trim() : null;
-}
-
-// "la motion de censure[,] déposée en application de l'article 49[...] par
-// <premier·ère signataire>[, <autres signataires>][ et N (autres) député·es
-// /collègues]." — on ne retient que le·la premier·ère signataire, pas la
-// liste complète.
-function extraireAuteurMotionCensure(titre: string): string | null {
-  const match = titre.match(/\bpar ([^,]+?)(?:,| et \d)/i);
   return match ? match[1].trim() : null;
 }
 
@@ -474,107 +425,31 @@ export function extraireAmendement(
   };
 }
 
-function contextePourAmendement(titre: string): string | null {
-  const amendement = extraireAmendement(titre);
-  if (!amendement) {
-    return null;
-  }
-
-  const prefixe = /^le sous-amendement/i.test(titre.trim())
-    ? "Sous-amendement"
-    : "Amendement";
-  const suffixeArticle = amendement.article
-    ? ` à l'article ${amendement.article}`
-    : "";
-
-  return `${prefixe} de ${amendement.auteur}${suffixeArticle}.`;
-}
-
-// Contexte spécifique au type de vote plutôt qu'un copié-collé du titre du
-// dossier (identique pour tous les scrutins d'un même dossier — cf. issue
-// GitHub #44) : chaque type de scrutin déjà distingué par estScrutinDecisif/
-// trouverScrutinDecisif ci-dessus a sa propre formulation. Tout titre non
-// reconnu par ces classifications garde le comportement d'origine (repli),
-// pour ne jamais casser un cas imprévu.
-function contextePourTypeDeVote(titre: string): string | null {
-  const stade = extraireStadeLecture(titre);
-
-  if (estVoteSurEnsemble(titre)) {
-    return avecStade("Vote sur l'ensemble du texte", stade);
-  }
-  if (estVoteSurArticleUnique(titre)) {
-    return avecStade("Vote sur l'article unique du texte", stade);
-  }
-  if (estVoteDirectSurLeTexte(titre)) {
-    return avecStade("Vote sur le texte lui-même", stade);
-  }
-  if (estMotionDeRejetPrealable(titre)) {
-    const auteur = extraireAuteurRejetPrealable(titre);
-    return auteur
-      ? `${auteur} dépose une motion de rejet préalable visant à écarter le texte avant tout débat sur son contenu.`
-      : "Une motion de rejet préalable vise à écarter le texte avant tout débat sur son contenu.";
-  }
-  if (estMotionDeCensure(titre)) {
-    const auteur = extraireAuteurMotionCensure(titre);
-    return auteur
-      ? `Motion de censure déposée par ${auteur}.`
-      : "Motion de censure déposée en application de l'article 49 de la Constitution.";
-  }
-  if (estVoteSurAmendement(titre)) {
-    return contextePourAmendement(titre);
-  }
-
-  return null;
-}
-
-// Un dossier avec un seul vote sur le texte entier : ce vote-là désigne sans
-// ambiguïté le Scrutin décisif du dossier, d'où l'état "pas de données"
-// pointant vers sa Fiche dossier (issue #84) plutôt que la description
-// procédurale générique. Un dossier avec plusieurs lectures (première
-// lecture, CMP, lecture définitive...) a autant de votes sur le texte
-// entier que de lectures — pointer les deux vers la même Fiche dossier sans
-// distinction perdrait le "pourquoi de CE vote en particulier" (ce qui a
-// changé depuis la lecture précédente, pourquoi celui-ci passe ou pas) :
-// mieux vaut alors le repli procédural (avecStade) qui au moins distingue
-// les lectures, en attendant une curation par scrutin (aucune source de
-// données ne donne aujourd'hui le contenu spécifique à chaque lecture — cf.
-// discussion du 2026-08-06).
-function estSeulVoteSurLeTexteEntierDuDossier(
-  scrutin: Scrutin,
-  scrutinsDossier: Scrutin[]
-): boolean {
-  const votesSurTexteEntier = scrutinsDossier.filter((s) =>
-    estVoteSurLeTexteEntier(s.titre)
-  );
-  return (
-    estVoteSurLeTexteEntier(scrutin.titre) && votesSurTexteEntier.length <= 1
-  );
-}
-
+// Seule la motion de rejet préalable garde une Fiche dérivée du titre : sa
+// phrase dit ce que la motion cherche à obtenir, que le titre AN ne dit
+// pas. Tout autre scrutin sans donnée propre reçoit l'état explicite
+// FicheScrutinPasDeDonnees plutôt qu'une reformulation de son titre.
 export function genererFicheScrutin(
   scrutin: Scrutin,
-  dossier: Dossier | null,
-  scrutinsDossier: Scrutin[]
+  dossier: Dossier | null
 ): FicheScrutin | FicheScrutinPasDeDonnees {
-  if (dossier && estSeulVoteSurLeTexteEntierDuDossier(scrutin, scrutinsDossier)) {
+  const resultat = formaterResultatScrutin(scrutin);
+
+  if (estMotionDeRejetPrealable(scrutin.titre)) {
+    const auteur = extraireAuteurRejetPrealable(scrutin.titre);
     return {
-      message: "Nous n'avons pas encore de contexte détaillé propre à ce scrutin.",
-      dossierRef: dossier.dossierRef,
-      dossierTitre: dossier.titre,
-      resultat: formaterResultatScrutin(scrutin),
+      contexte: auteur
+        ? `${auteur} dépose une motion de rejet préalable visant à écarter le texte avant tout débat sur son contenu.`
+        : "Une motion de rejet préalable vise à écarter le texte avant tout débat sur son contenu.",
+      action: formaterTitreScrutin(scrutin.titre),
+      resultat,
     };
   }
 
-  const contexte =
-    contextePourTypeDeVote(scrutin.titre) ??
-    (dossier
-      ? `Ce scrutin porte sur le dossier « ${dossier.titre} ».`
-      : "Ce scrutin ne se rattache à aucun dossier législatif recensé.");
-
   return {
-    contexte,
-    action: formaterTitreScrutin(scrutin.titre),
-    resultat: formaterResultatScrutin(scrutin),
+    message: MESSAGE_PAS_DE_DONNEES,
+    dossier: dossier ? { dossierRef: dossier.dossierRef, titre: dossier.titre } : null,
+    resultat,
   };
 }
 

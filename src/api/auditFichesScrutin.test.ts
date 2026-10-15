@@ -86,7 +86,7 @@ describe("audit des Fiches Scrutin sur tous les dossiers classés (#46)", () => 
       for (const scrutin of scrutins) {
         let fiche;
         try {
-          fiche = await genererFiche(scrutin, dossier, scrutins);
+          fiche = await genererFiche(scrutin, dossier);
         } catch (e) {
           problemes.push(`${scrutin.uid} (${dossierRef}) : exception ${e}`);
           continue;
@@ -114,7 +114,9 @@ describe("audit des Fiches Scrutin sur tous les dossiers classés (#46)", () => 
         }
 
         for (const [champ, valeur] of Object.entries(fiche)) {
-          verifierTexte(`${prefixe} : ${champ}`, valeur, problemes);
+          if (typeof valeur === "string") {
+            verifierTexte(`${prefixe} : ${champ}`, valeur, problemes);
+          }
         }
       }
     }

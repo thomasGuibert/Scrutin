@@ -140,7 +140,7 @@ describe("genererFicheScrutinEnrichie", () => {
       new FakeDiscoursAmendementRepository()
     );
 
-    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null, []);
+    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null);
 
     expect(fiche).toEqual({
       contexte: "Amendement de M. Amirshahi à l'article 2.",
@@ -163,7 +163,7 @@ describe("genererFicheScrutinEnrichie", () => {
       )
     );
 
-    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null, []);
+    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null);
 
     expect(fiche).toEqual({
       contexte:
@@ -186,7 +186,7 @@ describe("genererFicheScrutinEnrichie", () => {
       new FakeDiscoursAmendementRepository("Discours de séance qui ne doit pas apparaître.")
     );
 
-    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null, []);
+    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null);
 
     expect(avecContexteEtAction(fiche).contexte).toBe(
       "Amendement de M. Amirshahi à l'article 2.\n\nPremier paragraphe de fond."
@@ -206,7 +206,7 @@ describe("genererFicheScrutinEnrichie", () => {
       new FakeDiscoursAmendementRepository()
     );
 
-    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null, []);
+    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null);
 
     expect(fiche).toEqual({
       contexte:
@@ -232,7 +232,7 @@ describe("genererFicheScrutinEnrichie", () => {
       new FakeDiscoursAmendementRepository()
     );
 
-    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null, []);
+    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null);
 
     expect(avecContexteEtAction(fiche).action.length).toBeLessThanOrEqual(801);
     expect(avecContexteEtAction(fiche).action.endsWith("…")).toBe(true);
@@ -255,7 +255,7 @@ describe("genererFicheScrutinEnrichie", () => {
       new FakeDiscoursAmendementRepository()
     );
 
-    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null, []);
+    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null);
 
     expect(avecContexteEtAction(fiche).contexte.length).toBeLessThanOrEqual(801);
     expect(avecContexteEtAction(fiche).contexte.endsWith("…")).toBe(true);
@@ -274,13 +274,13 @@ describe("genererFicheScrutinEnrichie", () => {
       new FakeDiscoursAmendementRepository()
     );
 
-    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null, []);
+    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null);
 
     expect(avecContexteEtAction(fiche).action).toBe("Dispositif court.");
     expect(avecResultatAttendu(fiche).resultatAttendu).toBe("Cet amendement propose l'effet visé.");
   });
 
-  it("retombe sur la Fiche dérivée du titre quand le repository ne trouve rien", async () => {
+  it("retombe sur l'état 'pas d'information supplémentaire' quand le repository ne trouve rien", async () => {
     const repository = new FakeAmendementRepository(null);
     const genererFicheScrutinEnrichie = createGenererFicheScrutinEnrichie(
       repository,
@@ -289,9 +289,9 @@ describe("genererFicheScrutinEnrichie", () => {
       new FakeDiscoursAmendementRepository()
     );
 
-    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null, []);
+    const fiche = await genererFicheScrutinEnrichie(creerScrutin({}), null);
 
-    expect(avecContexteEtAction(fiche).contexte).toBe("Amendement de M. Amirshahi à l'article 2.");
+    expect(fiche).toMatchObject({ message: "Pas d'information supplémentaire sur ce scrutin." });
   });
 
   it("retombe aussi proprement sur un scrutin non-amendement quand le repository ne trouve rien", async () => {
@@ -307,11 +307,12 @@ describe("genererFicheScrutinEnrichie", () => {
       titre: "l'ensemble de la proposition de loi (première lecture).",
     });
 
-    const fiche = await genererFicheScrutinEnrichie(scrutin, null, [scrutin]);
+    const fiche = await genererFicheScrutinEnrichie(scrutin, null);
 
-    expect(avecContexteEtAction(fiche).contexte).toBe(
-      "Vote sur l'ensemble du texte, à l'issue de sa première lecture."
-    );
+    expect(fiche).toMatchObject({
+      message: "Pas d'information supplémentaire sur ce scrutin.",
+      dossier: null,
+    });
   });
 
   it("renvoie l'état 'pas de données' pointant vers le dossier pour un vote sur l'ensemble, même quand le repository d'amendements ne trouve rien — jamais une copie du Contexte/Action du dossier (issue #84)", async () => {
@@ -334,13 +335,12 @@ describe("genererFicheScrutinEnrichie", () => {
       },
     });
 
-    const fiche = await genererFicheScrutinEnrichie(scrutin, dossier, [scrutin]);
+    const fiche = await genererFicheScrutinEnrichie(scrutin, dossier);
 
     expect(fiche).not.toHaveProperty("contexte");
     expect(fiche).not.toHaveProperty("action");
     expect(fiche).toMatchObject({
-      dossierRef: dossier.dossierRef,
-      dossierTitre: dossier.titre,
+      dossier: { dossierRef: dossier.dossierRef, titre: dossier.titre },
     });
   });
 
@@ -353,11 +353,6 @@ describe("genererFicheScrutinEnrichie", () => {
       new FakeDiscoursAmendementRepository()
     );
 
-    const premiereLecture = creerScrutin({
-      uid: "V1",
-      numero: 1,
-      titre: "l'ensemble de la proposition de loi (première lecture).",
-    });
     const cmp = creerScrutin({
       uid: "V2",
       numero: 2,
@@ -372,14 +367,10 @@ describe("genererFicheScrutinEnrichie", () => {
       },
     });
 
-    const fiche = await genererFicheScrutinEnrichie(cmp, dossier, [
-      premiereLecture,
-      cmp,
-    ]);
+    const fiche = await genererFicheScrutinEnrichie(cmp, dossier);
 
-    expect(avecContexteEtAction(fiche).contexte).toBe(
-      "Vote sur l'ensemble du texte, à l'issue de l'examen du texte issu de la commission mixte paritaire."
-    );
+    expect(fiche).not.toHaveProperty("contexte");
+    expect(fiche).toMatchObject({ message: "Pas d'information supplémentaire sur ce scrutin." });
   });
 
   it("construit le tableau des Explications de vote (résumés déjà curés) plutôt que la Fiche dossier — issue #59", async () => {
@@ -415,7 +406,7 @@ describe("genererFicheScrutinEnrichie", () => {
       },
     });
 
-    const fiche = await genererFicheScrutinEnrichie(scrutin, dossier, [scrutin]);
+    const fiche = await genererFicheScrutinEnrichie(scrutin, dossier);
 
     expect(fiche).toEqual({
       contexte: "Contexte de fond du dossier.",
@@ -451,7 +442,7 @@ describe("genererFicheScrutinEnrichie", () => {
     });
     const dossier = creerDossier({});
 
-    const fiche = await genererFicheScrutinEnrichie(scrutin, dossier, [scrutin]);
+    const fiche = await genererFicheScrutinEnrichie(scrutin, dossier);
 
     expect("explicationsParGroupe" in fiche).toBe(true);
     if ("explicationsParGroupe" in fiche) {
@@ -477,11 +468,6 @@ describe("genererFicheScrutinEnrichie", () => {
       new FakeDiscoursAmendementRepository()
     );
 
-    const premiereLecture = creerScrutin({
-      uid: "V1",
-      numero: 1,
-      titre: "l'ensemble de la proposition de loi (première lecture).",
-    });
     const cmp = creerScrutin({
       uid: "V2",
       numero: 2,
@@ -490,10 +476,7 @@ describe("genererFicheScrutinEnrichie", () => {
     });
     const dossier = creerDossier({});
 
-    const fiche = await genererFicheScrutinEnrichie(cmp, dossier, [
-      premiereLecture,
-      cmp,
-    ]);
+    const fiche = await genererFicheScrutinEnrichie(cmp, dossier);
 
     expect("explicationsParGroupe" in fiche).toBe(true);
     if ("explicationsParGroupe" in fiche) {
@@ -535,12 +518,11 @@ describe("genererFicheScrutinEnrichie", () => {
       },
     });
 
-    const fiche = await genererFicheScrutinEnrichie(scrutin, dossier, [scrutin]);
+    const fiche = await genererFicheScrutinEnrichie(scrutin, dossier);
 
     expect(fiche).not.toHaveProperty("explicationsParGroupe");
     expect(fiche).toMatchObject({
-      dossierRef: dossier.dossierRef,
-      dossierTitre: dossier.titre,
+      dossier: { dossierRef: dossier.dossierRef, titre: dossier.titre },
     });
   });
 });
