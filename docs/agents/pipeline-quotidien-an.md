@@ -89,7 +89,8 @@ classification thématique (Étape 4bis).
 
 Si aucun scrutin/dossier nouveau ou modifié n'est rapporté ici, **et** que
 `npm run an:fusionner-curation` (Étape 4bis) ne trouve non plus rien de
-nouveau : **rien à curer** (pas de commit, pas de PR — cf. issue #126 point
+nouveau, **et** que `npm run curer:amendements` (Étape 4ter) laisse son
+archive inchangée : **rien à curer** (pas de commit, pas de PR — cf. issue #126 point
 2, pas de commit no-op quotidien) — restaurer les fichiers `data/raw/an/17/`
 modifiés par l'Étape 2 sans changement réel (`git checkout --
 data/raw/an/17/`) plutôt que de les committer tels quels, puis passer quand
@@ -150,6 +151,26 @@ Lit son rapport (dossiers/scrutins ajoutés) directement sur stdout — à
 reprendre tel quel dans le message de commit et le résumé de l'Étape 8. Un
 rapport "0 ajout" pour les deux archives, combiné à un `an:detecter-nouveautes`
 également vide (Étape 3), confirme le cas "rien à curer".
+
+## Étape 4ter — Rafraîchir le contenu des amendements
+
+```
+npm run curer:amendements
+```
+
+Télécharge l'archive complète `Amendements.json.zip` (~300 Mo, dans un
+dossier temporaire, jamais commitée) et régénère
+`data/raw/an/17/Amendements-scrutins-classifies.json.zip` pour tous les
+scrutins d'amendement des dossiers classés. Sans cette étape, un amendement
+d'un dossier classé après la dernière extraction n'affiche que son titre AN
+reformulé, sans exposé des motifs (constaté le 2026-10-15 sur le dossier
+titre-restaurant). Contrairement aux Explications de vote, cette archive ne
+contient aucune curation manuelle : la régénérer entièrement est sûr.
+L'archive n'est réécrite que si son contenu change ; quand elle l'est, c'est
+une nouveauté à committer au même titre que celles des Étapes 3 et 4bis
+(ne pas la restaurer dans le cas "rien à curer"). Un échec de
+téléchargement ici n'est pas un échec complet de run : le signaler dans le
+résumé de l'Étape 8 et continuer.
 
 ## Étape 5 — Vérifier
 
