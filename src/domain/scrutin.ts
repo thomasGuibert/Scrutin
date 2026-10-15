@@ -416,8 +416,9 @@ function estVoteSurArticle(titre: string): boolean {
 // lecteur supposer un manque. En séance, seul le vote sur le texte entier
 // est précédé d'Explications de vote (un·e orateur·ice par groupe) ; sur un
 // amendement, l'auteur le présente, puis la commission et le gouvernement
-// donnent leur avis. null quand le tableau des Explications est affiché
-// (rien à expliquer) ou pour un type de vote non couvert (motions).
+// donnent leur avis. Sur une motion, les groupes peuvent s'exprimer mais
+// ces interventions ne sont pas encore extraites. null quand le tableau des
+// Explications est affiché (rien à expliquer).
 export function notePrisesDeParole(
   titre: string,
   explications: readonly { resume?: string }[] | null
@@ -427,6 +428,9 @@ export function notePrisesDeParole(
   }
   if (estVoteSurArticle(titre)) {
     return "Un article n'est pas précédé d'explications de vote par groupe.";
+  }
+  if (/^la motion\b/i.test(titre.trim())) {
+    return "Les prises de parole des groupes sur les motions ne sont pas encore reprises sur ce site.";
   }
   if (!estVoteSurLeTexteEntier(titre)) {
     return null;

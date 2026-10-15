@@ -811,7 +811,12 @@ describe("notePrisesDeParole", () => {
     expect(notePrisesDeParole("l'ensemble de la proposition de loi", [explication("Résumé.")])).toBeNull();
   });
 
-  it("ne dit rien pour une motion", () => {
-    expect(notePrisesDeParole("la motion de rejet préalable déposée par M. X", null)).toBeNull();
+  it("indique que les prises de parole sur une motion ne sont pas encore reprises", () => {
+    expect(notePrisesDeParole("la motion de rejet préalable déposée par M. X", null)).toBe(
+      "Les prises de parole des groupes sur les motions ne sont pas encore reprises sur ce site."
+    );
+    expect(notePrisesDeParole("la motion de censure déposée en application de l'article 49", null)).toBe(
+      "Les prises de parole des groupes sur les motions ne sont pas encore reprises sur ce site."
+    );
   });
 });
