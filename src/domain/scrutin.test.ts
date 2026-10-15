@@ -4,6 +4,7 @@ import {
   agregerPositions,
   calculerEffectifTotal,
   calculerPosition,
+  notePrisesDeParole,
   calculerTauxParticipation,
   calculerVotants,
   determinerResultatDossier,
@@ -763,5 +764,54 @@ describe("estVoteSurAmendement", () => {
     expect(
       estVoteSurAmendement("l'article premier de la proposition de loi.")
     ).toBe(false);
+  });
+});
+
+describe("notePrisesDeParole", () => {
+  const explication = (resume?: string) => ({
+    groupe: "RN",
+    orateur: "M. X",
+    texte: "…",
+    resume,
+  });
+
+  it("indique qu'un amendement n'est pas précédé d'explications de vote par groupe", () => {
+    expect(
+      notePrisesDeParole("l'amendement n° 7 de M. Tavernier à l'article 2 de la proposition de loi", null)
+    ).toBe(
+      "Un amendement n'est pas précédé d'explications de vote par groupe : son auteur le présente, puis la commission et le gouvernement donnent leur avis."
+    );
+  });
+
+  it("traite un sous-amendement comme un amendement", () => {
+    expect(
+      notePrisesDeParole("le sous-amendement n° 47 de M. Sitzenstuhl à l'amendement n° 10", null)
+    ).toMatch(/^Un amendement n'est pas précédé/);
+  });
+
+  it("indique qu'un article n'est pas précédé d'explications de vote par groupe", () => {
+    expect(notePrisesDeParole("l'article premier de la proposition de loi", null)).toBe(
+      "Un article n'est pas précédé d'explications de vote par groupe."
+    );
+  });
+
+  it("signale l'absence d'explications relevées sur un vote sur le texte entier", () => {
+    expect(notePrisesDeParole("l'ensemble de la proposition de loi", null)).toBe(
+      "Aucune explication de vote des groupes n'est relevée dans le compte rendu de séance pour ce scrutin."
+    );
+  });
+
+  it("signale des explications pas encore résumées sur un vote sur le texte entier", () => {
+    expect(notePrisesDeParole("l'ensemble de la proposition de loi", [explication()])).toBe(
+      "Les explications de vote des groupes sur ce scrutin sont en cours de résumé."
+    );
+  });
+
+  it("ne dit rien quand les explications résumées sont affichées", () => {
+    expect(notePrisesDeParole("l'ensemble de la proposition de loi", [explication("Résumé.")])).toBeNull();
+  });
+
+  it("ne dit rien pour une motion", () => {
+    expect(notePrisesDeParole("la motion de rejet préalable déposée par M. X", null)).toBeNull();
   });
 });

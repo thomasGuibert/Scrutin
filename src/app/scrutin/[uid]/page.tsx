@@ -6,6 +6,7 @@ import { ResultatBadge } from "@/app/_components/ResultatBadge";
 import { ScrutinBrief } from "@/app/_components/ScrutinBrief";
 import {
   comparerGroupes,
+  explicationsVoteRepository,
   genererFicheScrutinEnrichie,
   getDossier,
   getScrutin,
@@ -18,6 +19,7 @@ import {
   formaterDateScrutin,
   formaterTitreScrutin,
   lienScrutinAN,
+  notePrisesDeParole,
 } from "@/domain/scrutin";
 
 export function generateStaticParams() {
@@ -45,6 +47,12 @@ export default async function ScrutinPage({
     ? taxonomyRepository.trouverContexteSousTheme(dossier.sousTheme)
     : null;
   const titreScrutin = formaterTitreScrutin(scrutin.titre);
+  const prisesDeParole = notePrisesDeParole(
+    scrutin.titre,
+    dossier
+      ? await explicationsVoteRepository.getByScrutin(dossier.dossierRef, scrutin.uid)
+      : null
+  );
   const ficheScrutin = await genererFicheScrutinEnrichie(
     scrutin,
     dossier,
@@ -115,6 +123,13 @@ export default async function ScrutinPage({
       {/* Absorbé par le tableau de la Fiche ci-dessus quand des
           Explications de vote curées sont disponibles (issue #59) — pas
           d'affichage en double de la même information. */}
+      {prisesDeParole && (
+        <div className="prises-parole">
+          <span className="brief-label">Prises de parole</span>
+          {prisesDeParole}
+        </div>
+      )}
+
       {!("explicationsParGroupe" in ficheScrutin) && (
         <ComparaisonGroupes titre="Position par groupe" comparaison={comparaison} />
       )}
