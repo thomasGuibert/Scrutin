@@ -451,48 +451,47 @@ describe("trouverScrutinDecisif", () => {
 });
 
 describe("genererFicheScrutin", () => {
-  it("dérive un contexte spécifique à l'amendement plutôt que le titre du dossier", () => {
+  it("ne reformule pas le titre d'un amendement : état 'pas d'information supplémentaire' avec lien vers le dossier", () => {
     const scrutin = creerScrutin({
       titre:
-        "l'amendement n° 44 de M. Arnaud Bonnet à l'article premier de la proposition de loi visant à garantir l'information (première lecture).",
-      decompte: { pour: 46, contre: 36, abstentions: 32 },
+        "l'amendement n° 371 du Gouvernement et l'amendement identique suivant à l'article 9 ter (examen prioritaire) de la proposition de loi relative au sport professionnel (première lecture).",
+      decompte: { pour: 25, contre: 15, abstentions: 7 },
       resultat: "adopté",
     });
+    const dossier = creerDossier({ dossierRef: "DLR5L17N1", titre: "Un dossier" });
 
-    const fiche = genererFicheScrutin(scrutin, null, [scrutin]);
-
-    expect(fiche).toEqual({
-      contexte: "Amendement de M. Arnaud Bonnet à l'article premier.",
-      action:
-        "L'amendement n° 44 de M. Arnaud Bonnet à l'article premier de la proposition de loi (première lecture).",
-      resultat: "Ce scrutin a été adopté (46 pour, 36 contre, 32 abstentions).",
+    expect(genererFicheScrutin(scrutin, dossier)).toEqual({
+      message: "Pas d'information supplémentaire sur ce scrutin.",
+      dossier: { dossierRef: "DLR5L17N1", titre: "Un dossier" },
+      resultat: "Ce scrutin a été adopté (25 pour, 15 contre, 7 abstentions).",
     });
   });
 
-  it("indique l'absence de dossier rattaché quand il n'y en a pas et que le titre n'est pas classifiable", () => {
+  it("renvoie le même état pour un vote sur l'ensemble, un article ou une motion de censure — jamais le Contexte/Action du dossier recopiés", () => {
+    const dossier = creerDossier({
+      ficheDossier: {
+        contexte: "Contexte de fond du dossier.",
+        action: "Ce que change le texte.",
+        resultatAttendu: "Non utilisé ici.",
+      },
+    });
+    const titres = [
+      "l'ensemble de la proposition de loi visant à sortir la France du piège du narcotrafic (première lecture).",
+      "l'article premier de la proposition de loi (première lecture).",
+      "la motion de censure déposée en application de l'article 49, alinéa 2, de la Constitution par M. Boris Vallaud et 188 de leurs collègues.",
+    ];
+
+    for (const titre of titres) {
+      const fiche = genererFicheScrutin(creerScrutin({ titre }), dossier);
+      expect(fiche).not.toHaveProperty("contexte");
+      expect(fiche).toMatchObject({ message: "Pas d'information supplémentaire sur ce scrutin." });
+    }
+  });
+
+  it("omet le lien quand le scrutin n'est rattaché à aucun dossier", () => {
     const scrutin = creerScrutin({ dossierRef: null });
 
-    const fiche = genererFicheScrutin(scrutin, null, [scrutin]);
-
-    expect(ficheAvecDonnees(fiche).contexte).toBe(
-      "Ce scrutin ne se rattache à aucun dossier législatif recensé."
-    );
-  });
-
-  it("retombe sur le titre du dossier quand le titre du scrutin n'est classifiable par aucun type de vote connu", () => {
-    const scrutin = creerScrutin({
-      titre: "l'article premier de la proposition de loi (première lecture).",
-    });
-
-    const fiche = genererFicheScrutin(
-      scrutin,
-      creerDossier({ titre: "Un dossier quelconque" }),
-      [scrutin]
-    );
-
-    expect(ficheAvecDonnees(fiche).contexte).toBe(
-      "Ce scrutin porte sur le dossier « Un dossier quelconque »."
-    );
+    expect(genererFicheScrutin(scrutin, null)).toMatchObject({ dossier: null });
   });
 
   it("accorde \"abstention\" au singulier quand il n'y en a qu'une", () => {
@@ -500,224 +499,17 @@ describe("genererFicheScrutin", () => {
       decompte: { pour: 5, contre: 2, abstentions: 1 },
     });
 
-    const fiche = genererFicheScrutin(scrutin, null, [scrutin]);
-
-    expect(fiche.resultat).toContain("1 abstention)");
+    expect(genererFicheScrutin(scrutin, null).resultat).toContain("1 abstention)");
   });
 
-  it("mentionne la lecture pour un vote sur l'ensemble quand aucun dossier n'est rattaché", () => {
-    const scrutin = creerScrutin({
-      titre:
-        "l'ensemble de la proposition de loi visant à garantir l'information (première lecture).",
-    });
-
-    const fiche = genererFicheScrutin(scrutin, null, [scrutin]);
-
-    expect(ficheAvecDonnees(fiche).contexte).toBe(
-      "Vote sur l'ensemble du texte, à l'issue de sa première lecture."
-    );
-  });
-
-  it("décrit le texte issu de la commission mixte paritaire pour un vote sur l'ensemble en CMP, quand aucun dossier n'est rattaché", () => {
-    const scrutin = creerScrutin({
-      titre:
-        "l'ensemble de la proposition de loi visant à sortir la France du piège du narcotrafic (texte de la commission mixte paritaire).",
-    });
-
-    const fiche = genererFicheScrutin(scrutin, null, [scrutin]);
-
-    expect(ficheAvecDonnees(fiche).contexte).toBe(
-      "Vote sur l'ensemble du texte, à l'issue de l'examen du texte issu de la commission mixte paritaire."
-    );
-  });
-
-  it("mentionne la lecture pour un vote sur l'article unique quand aucun dossier n'est rattaché", () => {
-    const scrutin = creerScrutin({
-      titre:
-        "l'article unique de la proposition de loi relative à la sortie des collections publiques (première lecture).",
-    });
-
-    const fiche = genererFicheScrutin(scrutin, null, [scrutin]);
-
-    expect(ficheAvecDonnees(fiche).contexte).toBe(
-      "Vote sur l'article unique du texte, à l'issue de sa première lecture."
-    );
-  });
-
-  it("mentionne la lecture pour un vote direct sur le texte (ex. ratification de traité), quand aucun dossier n'est rattaché", () => {
-    const scrutin = creerScrutin({
-      titre:
-        "le projet de loi autorisant l'approbation de l'accord entre le Gouvernement de la République française et la Communauté des Caraïbes (première lecture).",
-    });
-
-    const fiche = genererFicheScrutin(scrutin, null, [scrutin]);
-
-    expect(ficheAvecDonnees(fiche).contexte).toBe(
-      "Vote sur le texte lui-même, à l'issue de sa première lecture."
-    );
-  });
-
-  it("renvoie un état explicite 'pas de données' pointant vers le dossier pour un vote sur l'ensemble qui est le seul de son dossier, plutôt que la description procédurale ou une copie de la Fiche dossier", () => {
-    const scrutin = creerScrutin({
-      titre:
-        "l'ensemble de la proposition de loi visant à sortir la France du piège du narcotrafic (texte de la commission mixte paritaire).",
-      decompte: { pour: 65, contre: 41, abstentions: 52 },
-      resultat: "adopté",
-    });
-    const dossier = creerDossier({
-      dossierRef: "DLR5L17N53980",
-      titre: "Sortir la France du piège du narcotrafic",
-      ficheDossier: {
-        contexte: "Le narcotrafic gangrène des pans entiers du territoire.",
-        action: "Le texte crée un parquet national anti-criminalité organisée.",
-        resultatAttendu: "Un arsenal juridique renforcé contre les réseaux.",
-      },
-    });
-
-    const fiche = genererFicheScrutin(scrutin, dossier, [scrutin]);
-
-    expect(fiche).toEqual({
-      message: "Nous n'avons pas encore de contexte détaillé propre à ce scrutin.",
-      dossierRef: "DLR5L17N53980",
-      dossierTitre: "Sortir la France du piège du narcotrafic",
-      resultat: "Ce scrutin a été adopté (65 pour, 41 contre, 52 abstentions).",
-    });
-  });
-
-  it("renvoie aussi cet état pour un vote sur l'article unique et un vote direct sur le texte, chacun seul de son dossier — jamais le Contexte/Action du dossier recopiés", () => {
-    const dossier = creerDossier({
-      dossierRef: "DLR5L17N1",
-      titre: "Un dossier",
-      ficheDossier: {
-        contexte: "Contexte de fond du dossier.",
-        action: "Ce que change le texte.",
-        resultatAttendu: "Non utilisé ici.",
-      },
-    });
-
-    const scrutinArticleUnique = creerScrutin({
-      titre:
-        "l'article unique de la proposition de loi relative à la sortie des collections publiques (première lecture).",
-    });
-    const articleUnique = genererFicheScrutin(scrutinArticleUnique, dossier, [
-      scrutinArticleUnique,
-    ]);
-    expect(articleUnique).not.toHaveProperty("contexte");
-    expect(articleUnique).not.toHaveProperty("action");
-    expect(articleUnique).toMatchObject({
-      dossierRef: "DLR5L17N1",
-      dossierTitre: "Un dossier",
-    });
-
-    const scrutinVoteDirect = creerScrutin({
-      titre:
-        "le projet de loi autorisant l'approbation de l'accord entre le Gouvernement de la République française et la Communauté des Caraïbes (première lecture).",
-    });
-    const voteDirect = genererFicheScrutin(scrutinVoteDirect, dossier, [
-      scrutinVoteDirect,
-    ]);
-    expect(voteDirect).not.toHaveProperty("contexte");
-    expect(voteDirect).not.toHaveProperty("action");
-    expect(voteDirect).toMatchObject({
-      dossierRef: "DLR5L17N1",
-      dossierTitre: "Un dossier",
-    });
-  });
-
-  it("retombe sur la description procédurale quand le dossier a plusieurs votes sur le texte entier (plusieurs lectures)", () => {
-    const premiereLecture = creerScrutin({
-      uid: "V1",
-      numero: 1,
-      titre:
-        "l'ensemble de la proposition de loi visant à sortir la France du piège du narcotrafic (première lecture).",
-    });
-    const cmp = creerScrutin({
-      uid: "V2",
-      numero: 2,
-      titre:
-        "l'ensemble de la proposition de loi visant à sortir la France du piège du narcotrafic (texte de la commission mixte paritaire).",
-    });
-    const dossier = creerDossier({
-      ficheDossier: {
-        contexte: "Contexte de fond du dossier.",
-        action: "Ce que change le texte.",
-        resultatAttendu: "Non utilisé ici.",
-      },
-    });
-    const scrutinsDossier = [premiereLecture, cmp];
-
-    const ficheCmp = genererFicheScrutin(cmp, dossier, scrutinsDossier);
-
-    // Ni la description générique de la première lecture ni celle de la CMP
-    // ne doivent reprendre la Fiche dossier à l'identique : le dossier a
-    // 2 votes sur le texte entier, répéter le même Contexte/Action sur les
-    // deux perdrait le pourquoi propre à chacun (cf. discussion du
-    // 2026-08-06) — repli sur la description procédurale en attendant une
-    // curation par scrutin.
-    expect(ficheAvecDonnees(ficheCmp).contexte).toBe(
-      "Vote sur l'ensemble du texte, à l'issue de l'examen du texte issu de la commission mixte paritaire."
-    );
-    expect(ficheAvecDonnees(ficheCmp).action).not.toBe("Ce que change le texte.");
-  });
-
-  it("nomme l'auteur·ice d'une motion de rejet préalable", () => {
+  it("explique ce que vise une motion de rejet préalable et nomme son auteur·ice", () => {
     const scrutin = creerScrutin({
       titre:
         "la motion de rejet préalable, déposée par Mme Mathilde Panot, de la proposition de loi visant à sortir la France du piège du narcotrafic (texte de la commission mixte paritaire).",
     });
 
-    const fiche = genererFicheScrutin(scrutin, null, [scrutin]);
-
-    expect(ficheAvecDonnees(fiche).contexte).toBe(
+    expect(ficheAvecDonnees(genererFicheScrutin(scrutin, null)).contexte).toBe(
       "Mme Mathilde Panot dépose une motion de rejet préalable visant à écarter le texte avant tout débat sur son contenu."
-    );
-  });
-
-  it("nomme le·la premier·ère signataire d'une motion de censure", () => {
-    const scrutin = creerScrutin({
-      titre:
-        "la motion de censure déposée en application de l'article 49, alinéa 2, de la Constitution par M. Boris Vallaud, Mme Mathilde Panot, Mme Cyrielle Chatelain, M. André Chassaigne et 188 de leurs collègues.",
-    });
-
-    const fiche = genererFicheScrutin(scrutin, null, [scrutin]);
-
-    expect(ficheAvecDonnees(fiche).contexte).toBe(
-      "Motion de censure déposée par M. Boris Vallaud."
-    );
-  });
-
-  it("nomme l'auteur·ice et l'article visé pour un vote sur amendement", () => {
-    const scrutin = creerScrutin({
-      titre:
-        "l'amendement n° 674 de M. Amirshahi à l'article 2 de la proposition de loi visant à sortir la France du piège du narcotrafic (première lecture).",
-    });
-
-    const fiche = genererFicheScrutin(scrutin, null, [scrutin]);
-
-    expect(ficheAvecDonnees(fiche).contexte).toBe("Amendement de M. Amirshahi à l'article 2.");
-  });
-
-  it("distingue un sous-amendement d'un amendement", () => {
-    const scrutin = creerScrutin({
-      titre:
-        "le sous-amendement n° 973 de M. Caure à l'amendement n° 674 de M. Amirshahi à l'article 2 de la proposition de loi visant à sortir la France du piège du narcotrafic (première lecture).",
-    });
-
-    const fiche = genererFicheScrutin(scrutin, null, [scrutin]);
-
-    expect(ficheAvecDonnees(fiche).contexte).toBe("Sous-amendement de M. Caure à l'article 2.");
-  });
-
-  it("retrouve l'auteur et l'article d'un amendement de suppression", () => {
-    const scrutin = creerScrutin({
-      titre:
-        "l'amendement de suppression n° 265 de M. Bernalicis de suppression de l'article 5 bis de la proposition de loi visant à sortir la France du piège du narcotrafic (première lecture).",
-    });
-
-    const fiche = genererFicheScrutin(scrutin, null, [scrutin]);
-
-    expect(ficheAvecDonnees(fiche).contexte).toBe(
-      "Amendement de M. Bernalicis à l'article 5 bis."
     );
   });
 });

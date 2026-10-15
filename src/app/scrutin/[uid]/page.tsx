@@ -10,7 +10,6 @@ import {
   genererFicheScrutinEnrichie,
   getDossier,
   getScrutin,
-  listerScrutinsDossier,
   taxonomyRepository,
 } from "@/app/_composition";
 import {
@@ -40,9 +39,6 @@ export default async function ScrutinPage({
 
   const comparaison = comparerGroupes(scrutin);
   const dossier = scrutin.dossierRef ? await getDossier(scrutin.dossierRef) : null;
-  const scrutinsDossier = dossier
-    ? await listerScrutinsDossier(dossier.dossierRef)
-    : [];
   const contexte = dossier
     ? taxonomyRepository.trouverContexteSousTheme(dossier.sousTheme)
     : null;
@@ -53,11 +49,7 @@ export default async function ScrutinPage({
       ? await explicationsVoteRepository.getByScrutin(dossier.dossierRef, scrutin.uid)
       : null
   );
-  const ficheScrutin = await genererFicheScrutinEnrichie(
-    scrutin,
-    dossier,
-    scrutinsDossier
-  );
+  const ficheScrutin = await genererFicheScrutinEnrichie(scrutin, dossier);
 
   const fil: BreadcrumbItem[] = [];
   if (contexte) {

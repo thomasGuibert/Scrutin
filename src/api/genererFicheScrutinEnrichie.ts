@@ -103,8 +103,7 @@ export function createGenererFicheScrutinEnrichie(
 ) {
   return async function genererFicheScrutinEnrichie(
     scrutin: Scrutin,
-    dossier: Dossier | null,
-    scrutinsDossier: Scrutin[]
+    dossier: Dossier | null
   ): Promise<
     | FicheScrutin
     | FicheScrutinPasDeDonnees
@@ -115,13 +114,10 @@ export function createGenererFicheScrutinEnrichie(
 
     if (!detail) {
       // Un vote sur le texte entier avec de vraies Explications de vote
-      // disponibles (issue #52/#54) prime sur le repli de genererFicheScrutin
-      // (état "pas de données" ou description procédurale) : contrairement à
-      // la Fiche dossier recopiée par ce repli, ces interventions sont
-      // spécifiques à CE scrutin — la contrainte "seul vote du dossier" de
-      // genererFicheScrutin ne s'applique donc pas ici, un dossier à
-      // plusieurs lectures peut avoir ses deux votes enrichis séparément
-      // (cf. issue #56).
+      // disponibles (issue #52/#54) prime sur l'état "pas de données" de
+      // genererFicheScrutin : ces interventions sont spécifiques à CE
+      // scrutin, un dossier à plusieurs lectures peut donc avoir ses votes
+      // enrichis séparément (cf. issue #56).
       if (dossier && estVoteSurLeTexteEntier(scrutin.titre)) {
         const explications = await explicationsVoteRepository.getByScrutin(
           dossier.dossierRef,
@@ -147,13 +143,11 @@ export function createGenererFicheScrutinEnrichie(
 
       // Pas de contenu réel trouvé (amendement hors périmètre curé, ou tout
       // scrutin non-amendement, ou vote sur le texte entier sans
-      // Explications de vote disponibles) : repli sur la Fiche dérivée du
-      // titre (ou, pour l'unique vote sur le texte entier d'un dossier, sur
-      // un état explicite "pas de données" pointant vers sa Fiche dossier —
-      // cf. genererFicheScrutin, issue #84), avec le "Résultat" toujours
-      // présent = issue déjà connue du vote — jamais d'erreur, jamais de
-      // contenu manquant (cf. issue #46).
-      return genererFicheScrutin(scrutin, dossier, scrutinsDossier);
+      // Explications de vote disponibles) : état explicite "pas
+      // d'information supplémentaire" de genererFicheScrutin (sauf motion de
+      // rejet préalable), avec le "Résultat" toujours présent — jamais une
+      // reformulation du titre (cf. issue #46, #84).
+      return genererFicheScrutin(scrutin, dossier);
     }
 
     const amendement = extraireAmendement(scrutin.titre);
