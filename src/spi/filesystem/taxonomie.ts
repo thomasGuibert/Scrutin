@@ -120,7 +120,7 @@ const TAXONOMIE: ThemeRacine[] = [
         sousThemes: [
           {
             slug: "gouvernance-financement-sport-professionnel",
-            nom: "Gouvernance et financement du sport professionnel",
+            nom: "Gouvernance et financement du sport",
             type: "consensuel",
           },
           {
@@ -453,6 +453,11 @@ const TAXONOMIE: ThemeRacine[] = [
           {
             slug: "acces-soins",
             nom: "Accès aux soins sur le territoire",
+            type: "consensuel",
+          },
+          {
+            slug: "accompagnement-medico-social",
+            nom: "Accompagnement médico-social",
             type: "consensuel",
           },
           {
