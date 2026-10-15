@@ -407,6 +407,43 @@ export function estVoteSurAmendement(titre: string): boolean {
   return /^(?:l['’]amendement|le sous-amendement)\b/i.test(titre.trim());
 }
 
+function estVoteSurArticle(titre: string): boolean {
+  return /^l['’]article\b/i.test(titre.trim()) && !estVoteSurArticleUnique(titre);
+}
+
+// Encart "Prises de parole" de la Fiche Scrutin : dit pourquoi aucune
+// explication par groupe n'accompagne ce vote, plutôt que de laisser le
+// lecteur supposer un manque. En séance, seul le vote sur le texte entier
+// est précédé d'Explications de vote (un·e orateur·ice par groupe) ; sur un
+// amendement, l'auteur le présente, puis la commission et le gouvernement
+// donnent leur avis. Sur une motion, les groupes peuvent s'exprimer mais
+// ces interventions ne sont pas encore extraites. null quand le tableau des
+// Explications est affiché (rien à expliquer).
+export function notePrisesDeParole(
+  titre: string,
+  explications: readonly { resume?: string }[] | null
+): string | null {
+  if (estVoteSurAmendement(titre)) {
+    return "Un amendement n'est pas précédé d'explications de vote par groupe : son auteur le présente, puis la commission et le gouvernement donnent leur avis.";
+  }
+  if (estVoteSurArticle(titre)) {
+    return "Un article n'est pas précédé d'explications de vote par groupe.";
+  }
+  if (/^la motion\b/i.test(titre.trim())) {
+    return "Les prises de parole des groupes sur les motions ne sont pas encore reprises sur ce site.";
+  }
+  if (!estVoteSurLeTexteEntier(titre)) {
+    return null;
+  }
+  if (!explications) {
+    return "Aucune explication de vote des groupes n'est relevée dans le compte rendu de séance pour ce scrutin.";
+  }
+  if (!explications.every(({ resume }) => Boolean(resume))) {
+    return "Les explications de vote des groupes sur ce scrutin sont en cours de résumé.";
+  }
+  return null;
+}
+
 // "l'amendement n° X [rectifié] de <auteur> {à|après|de suppression} ..." —
 // l'auteur est tout ce qui suit "n° X de " jusqu'au premier marqueur de fin
 // (préposition introduisant l'article, "et les amendements identiques...",

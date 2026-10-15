@@ -338,6 +338,15 @@ p.page-gloss {
    .branch-placeholder (état vide muté/italique) mais son lien vers la Fiche
    dossier doit rester visiblement cliquable : `a { color: inherit }` global
    le rendrait sinon indiscernable du texte muet qui l'entoure. */
+.prises-parole {
+  margin: 1.2rem 0;
+  padding: 0.75rem 0.9rem;
+  border-left: 3px solid var(--line);
+  background: var(--paper-raised);
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+}
+
 .brief-pas-de-donnees a {
   color: var(--accent);
   font-style: normal;
