@@ -98,6 +98,14 @@ même à l'Étape 8 pour journaliser ce constat. Ne jamais s'arrêter ici sans
 journaliser : c'est le cas qui, en pratique, se confond le plus facilement
 avec un run qui n'a pas eu lieu ou qui a échoué en silence.
 
+Ce cas exige **zéro** scrutin et **zéro** dossier nouveau ou modifié dans le
+rapport. Des scrutins nouveaux non décisifs (amendements d'un dossier non
+classé, typiquement le PLF/PLFSS) ou des dossiers nouveaux sans scrutin
+décisif ne sont **pas** « rien à curer » : il n'y a rien à rédiger, mais les
+données brutes ont réellement changé et doivent être committées et publiées
+(Étape 7), sinon `main` reste figé et chaque run suivant redétecte les mêmes
+nouveautés.
+
 ## Étape 4 — Curer chaque nouveau scrutin décisif
 
 Pour chaque scrutin **décisif** (`decisif: true`) nouveau ou modifié dont le
@@ -128,6 +136,13 @@ pas encore spécifié. Ces cas passent de toute façon en PR de doute
 Pour un scrutin non décisif (amendement, article, procédure) d'un dossier
 déjà classé : aucune action requise à ce stade, ces scrutins sont couverts
 automatiquement dès que la Fiche dossier existe.
+
+Pour un scrutin non décisif d'un dossier **non classé** (y compris un
+PLF/PLFSS dont `raisonsDeDoute` contient `plf-plfss`) : rien à curer non plus,
+mais la mise à jour des données brutes reste à publier (Étape 7). Un
+`raisonsDeDoute` porté uniquement par des scrutins non décisifs n'est pas un
+déclencheur de doute : aucun contenu n'est produit pour eux, il n'y a donc
+rien à faire vérifier.
 
 ## Étape 4bis — Enrichir Explications de vote / Discussion générale
 
@@ -270,9 +285,10 @@ verte** :
 - Supprimer la branche de travail.
 
 **Au moins un déclencheur de doute** (échec technique de l'Étape 5 déjà
-couvert ci-dessus ; ou, sur les nouveautés détectées : `dossierRef-absent`,
-`plf-plfss`, `vote-de-conscience`, ou sous-thème ne correspondant clairement
-à aucun sous-thème existant) :
+couvert ci-dessus ; ou, sur les scrutins **décisifs** curés à l'Étape 4 :
+`dossierRef-absent`, `plf-plfss`, `vote-de-conscience`, ou sous-thème ne
+correspondant clairement à aucun sous-thème existant — un `raisonsDeDoute`
+sur des scrutins non décisifs seulement ne compte pas, cf. Étape 4) :
 
 - Committer tout de même les changements sur la branche (y compris les cas
   non ambigus traités dans le même run — ne pas les perdre).
