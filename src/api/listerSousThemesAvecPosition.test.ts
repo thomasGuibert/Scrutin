@@ -82,12 +82,12 @@ describe("listerSousThemesAvecPosition", () => {
         sousTheme: unSousTheme("vide"),
         nombreDossiers: 0,
         comparaison: [],
-        datesScrutins: [],
+        datesParDossier: [],
       },
     ]);
   });
 
-  it("agrège les dates de scrutin de tous les dossiers du sous-thème", async () => {
+  it("donne les dates de scrutin de chaque dossier du sous-thème", async () => {
     const dossierRepository = new FakeDossierRepository({
       "sous-theme-a": [
         unDossier("DLR5L17A", "sous-theme-a"),
@@ -112,6 +112,6 @@ describe("listerSousThemesAvecPosition", () => {
       unSousTheme("sous-theme-a"),
     ]);
 
-    expect(resultat[0].datesScrutins).toEqual(["2025-01-15", "2026-07-02"]);
+    expect(resultat[0].datesParDossier).toEqual([["2025-01-15"], ["2026-07-02"]]);
   });
 });

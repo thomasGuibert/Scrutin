@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   AUCUN_FILTRE,
   anneesDisponibles,
+  compterDossiersDansPeriode,
   correspondAuFiltre,
   filtreDepuisParametres,
   moisDisponibles,
@@ -91,5 +92,19 @@ describe("filtreDepuisParametres / parametresDuFiltre", () => {
   it("fait l'aller-retour sans perte", () => {
     const filtre = { annee: 2025, mois: 11 };
     expect(lire(parametresDuFiltre(filtre).slice(1))).toEqual(filtre);
+  });
+});
+
+describe("compterDossiersDansPeriode", () => {
+  const datesParDossier = [["2025-03-18", "2026-01-10"], ["2026-01-20"], ["2025-11-02"]];
+
+  it("compte les dossiers qui ont au moins un scrutin dans la période", () => {
+    expect(compterDossiersDansPeriode(datesParDossier, 3, { annee: 2026, mois: null })).toBe(2);
+    expect(compterDossiersDansPeriode(datesParDossier, 3, { annee: 2025, mois: 11 })).toBe(1);
+    expect(compterDossiersDansPeriode(datesParDossier, 3, { annee: 2024, mois: null })).toBe(0);
+  });
+
+  it("garde le total du nœud sans filtre, dossiers sans scrutin compris", () => {
+    expect(compterDossiersDansPeriode(datesParDossier, 4, AUCUN_FILTRE)).toBe(4);
   });
 });

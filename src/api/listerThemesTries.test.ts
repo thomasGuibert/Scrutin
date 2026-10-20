@@ -103,9 +103,9 @@ describe("listerThemesTries", () => {
       {
         theme: themeGrand,
         nombreDossiers: 3,
-        datesScrutins: ["2026-01-02", "2026-01-03", "2026-01-04"],
+        datesParDossier: [["2026-01-02"], ["2026-01-03"], ["2026-01-04"]],
       },
-      { theme: themePetit, nombreDossiers: 1, datesScrutins: ["2026-01-01"] },
+      { theme: themePetit, nombreDossiers: 1, datesParDossier: [["2026-01-01"]] },
     ]);
   });
 });

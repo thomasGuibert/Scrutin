@@ -7,11 +7,11 @@ export type SousThemeAvecPosition = {
   sousTheme: SousTheme;
   nombreDossiers: number;
   comparaison: ComparaisonGroupe[];
-  // Dates brutes (ISO) de tous les scrutins de tous les dossiers du
-  // sous-thème — sert au filtre par période des pages Branche/Thème (cf.
-  // domain/filtreDate.ts, issue #152), au même titre que
-  // DossierAvecPosition.datesScrutins pour la page sous-thème elle-même.
-  datesScrutins: string[];
+  // Dates brutes (ISO) des scrutins de chaque dossier du sous-thème, un
+  // tableau par dossier — sert au filtre par période des pages
+  // Branche/Thème (cf. domain/filtreDate.ts, issue #152) et à recompter
+  // les dossiers de la période (cf. compterDossiersDansPeriode).
+  datesParDossier: string[][];
 };
 
 // Un sous-thème avec, à sa suite, ce que la navigation montre de lui avant
@@ -39,14 +39,14 @@ export function createListerSousThemesAvecPosition(
             dossiers.map((dossier) => listerScrutinsDossier(dossier.dossierRef))
           ),
         ]);
-        const datesScrutins = scrutinsParDossier
-          .flat()
-          .map((scrutin) => scrutin.date);
+        const datesParDossier = scrutinsParDossier.map((scrutins) =>
+          scrutins.map((scrutin) => scrutin.date)
+        );
         return {
           sousTheme,
           nombreDossiers: dossiers.length,
           comparaison,
-          datesScrutins,
+          datesParDossier,
         };
       })
     );

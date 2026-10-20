@@ -70,6 +70,21 @@ export function correspondAuFiltre(
   );
 }
 
+// Nombre de dossiers à afficher pour un nœud (thème, branche, sous-thème)
+// sous le filtre : ceux qui ont au moins un scrutin dans la période (même
+// règle que correspondAuFiltre). Sans filtre, le total du nœud, qui compte
+// aussi les dossiers encore sans scrutin.
+export function compterDossiersDansPeriode(
+  datesParDossier: string[][],
+  nombreDossiers: number,
+  filtre: FiltrePeriode
+): number {
+  if (filtre.annee === null) {
+    return nombreDossiers;
+  }
+  return datesParDossier.filter((dates) => correspondAuFiltre(dates, filtre)).length;
+}
+
 // Le filtre voyage dans l'URL (`?annee=2026&mois=3`) pour suivre la
 // navigation : choisi sur l'accueil ou un thème, il reste appliqué sur les
 // pages suivantes (thème → branche → sous-thème), et un lien partagé
