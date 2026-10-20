@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { LienPeriode } from "@/app/_components/LienPeriode";
 import { Breadcrumb } from "@/app/_components/Breadcrumb";
 import { SousThemeListeFiltrable } from "@/app/_components/SousThemeListeFiltrable";
 import { listerSousThemesAvecPosition, taxonomyRepository } from "@/app/_composition";
@@ -46,9 +46,9 @@ export default async function ThemePage({
         ]}
       />
 
-      <Link className="back-link" href="/">
+      <LienPeriode className="back-link" href="/">
         ← Retour à l&apos;accueil
-      </Link>
+      </LienPeriode>
     </main>
   );
 }

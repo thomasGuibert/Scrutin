@@ -1,25 +1,39 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import { ComparaisonGroupes } from "@/app/_components/ComparaisonGroupes";
 import { FicheDossier } from "@/app/_components/FicheDossier";
 import { ResultatBadge } from "@/app/_components/ResultatBadge";
+import { AvecFiltrePeriode, type EtatFiltrePeriode } from "@/app/_components/AvecFiltrePeriode";
 import { SelecteurPeriode } from "@/app/_components/SelecteurPeriode";
 import type { DossierAvecPosition } from "@/api/listerDossiersSousTheme";
-import { AUCUN_FILTRE, correspondAuFiltre, type FiltrePeriode } from "@/domain/filtreDate";
+import { correspondAuFiltre } from "@/domain/filtreDate";
 
 // Liste de dossiers d'un sous-thème (cf. page sous-thème), filtrable par
 // période (Année, éventuellement Mois — cf. domain/filtreDate.ts, issue
 // #151). Composant client : le filtre s'applique instantanément sur les
 // dossiers déjà chargés par le Server Component parent, sans aller-retour
-// réseau (le site reste par ailleurs entièrement statique).
+// réseau (le site reste par ailleurs entièrement statique). La période
+// vient de l'URL (cf. AvecFiltrePeriode) et suit les liens vers les pages
+// Dossier et Scrutin.
 export function DossierListeFiltrable({
   dossiers,
 }: {
   dossiers: DossierAvecPosition[];
 }) {
-  const [filtre, setFiltre] = useState<FiltrePeriode>(AUCUN_FILTRE);
+  return (
+    <AvecFiltrePeriode>
+      {(etat) => <ListeDossiers dossiers={dossiers} {...etat} />}
+    </AvecFiltrePeriode>
+  );
+}
+
+function ListeDossiers({
+  dossiers,
+  filtre,
+  onChange,
+  suffixeLiens,
+}: { dossiers: DossierAvecPosition[] } & EtatFiltrePeriode) {
 
   const dossiersAffiches = dossiers.filter((d) =>
     correspondAuFiltre(d.datesScrutins, filtre)
@@ -30,7 +44,7 @@ export function DossierListeFiltrable({
       <SelecteurPeriode
         datesParEntree={dossiers.map((d) => d.datesScrutins)}
         filtre={filtre}
-        onChange={setFiltre}
+        onChange={onChange}
       />
 
       <div className="dossier-list">
@@ -60,8 +74,8 @@ export function DossierListeFiltrable({
             // formes commencent par "scrutin(s)" pour rester lisibles en
             // balayant la liste.
             const href = scrutinDecisifUnique
-              ? `/scrutin/${scrutinDecisifUnique}`
-              : `/dossier/${dossier.dossierRef}`;
+              ? `/scrutin/${scrutinDecisifUnique}${suffixeLiens}`
+              : `/dossier/${dossier.dossierRef}${suffixeLiens}`;
             const libelle =
               nombreLectures === 0
                 ? "Scrutins en cours"

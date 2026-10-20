@@ -1,4 +1,5 @@
 import type { DossierRepository } from "@/domain/dossier";
+import type { Scrutin } from "@/domain/scrutin";
 import {
   tousLesSousThemes,
   type TaxonomyRepository,
@@ -8,11 +9,16 @@ import {
 export type ThemeAvecCompte = {
   theme: ThemeRacine;
   nombreDossiers: number;
+  // Dates brutes (ISO) de tous les scrutins des dossiers du thème — sert au
+  // filtre par période de l'accueil (cf. domain/filtreDate.ts), comme
+  // SousThemeAvecPosition.datesScrutins pour les pages Thème/Branche.
+  datesScrutins: string[];
 };
 
 export function createListerThemesTries(
   taxonomyRepository: TaxonomyRepository,
-  dossierRepository: DossierRepository
+  dossierRepository: DossierRepository,
+  listerScrutinsDossier: (dossierRef: string) => Promise<Scrutin[]>
 ) {
   return async function listerThemesTries(): Promise<ThemeAvecCompte[]> {
     const themes = taxonomyRepository.listerThemes();
@@ -24,11 +30,14 @@ export function createListerThemesTries(
             dossierRepository.getBySousTheme(sousTheme.slug)
           )
         );
-        const nombreDossiers = dossiersParSousTheme.reduce(
-          (total, dossiers) => total + dossiers.length,
-          0
+        const dossiers = dossiersParSousTheme.flat();
+        const scrutinsParDossier = await Promise.all(
+          dossiers.map((dossier) => listerScrutinsDossier(dossier.dossierRef))
         );
-        return { theme, nombreDossiers };
+        const datesScrutins = scrutinsParDossier
+          .flat()
+          .map((scrutin) => scrutin.date);
+        return { theme, nombreDossiers: dossiers.length, datesScrutins };
       })
     );
 

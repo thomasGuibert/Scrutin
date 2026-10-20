@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import Link from "next/link";
+import { LienPeriode } from "@/app/_components/LienPeriode";
 
 export type BreadcrumbItem = { href: string; label: string } | { label: string };
 
@@ -10,12 +10,12 @@ export type BreadcrumbItem = { href: string; label: string } | { label: string }
 export function Breadcrumb({ items }: { items: BreadcrumbItem[] }) {
   return (
     <nav className="breadcrumb">
-      <Link href="/">Accueil</Link>
+      <LienPeriode href="/">Accueil</LienPeriode>
       {items.map((item) => (
         <Fragment key={"href" in item ? item.href : item.label}>
           <span className="sep">/</span>
           {"href" in item ? (
-            <Link href={item.href}>{item.label}</Link>
+            <LienPeriode href={item.href}>{item.label}</LienPeriode>
           ) : (
             <span className="current">{item.label}</span>
           )}

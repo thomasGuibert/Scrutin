@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { LienPeriode } from "@/app/_components/LienPeriode";
 import { Breadcrumb, type BreadcrumbItem } from "@/app/_components/Breadcrumb";
 import { ComparaisonGroupes } from "@/app/_components/ComparaisonGroupes";
 import { ResultatBadge } from "@/app/_components/ResultatBadge";
@@ -127,9 +127,9 @@ export default async function ScrutinPage({
       )}
 
       {dossier && (
-        <Link className="back-link" href={`/dossier/${dossier.dossierRef}`}>
+        <LienPeriode className="back-link" href={`/dossier/${dossier.dossierRef}`}>
           ← Retour à {dossier.titre}
-        </Link>
+        </LienPeriode>
       )}
       <br />
       <a

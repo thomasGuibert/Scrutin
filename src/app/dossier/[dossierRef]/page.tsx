@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { LienPeriode } from "@/app/_components/LienPeriode";
 import { Breadcrumb, type BreadcrumbItem } from "@/app/_components/Breadcrumb";
 import { ComparaisonGroupes } from "@/app/_components/ComparaisonGroupes";
 import { DossierViewTracker } from "@/app/_components/DossierViewTracker";
@@ -120,23 +120,23 @@ export default async function DossierPage({
       <div className="dossier-list">
         {scrutins.map((scrutin) => (
           <div className="dossier-row" key={scrutin.uid}>
-            <Link className="dossier-header" href={`/scrutin/${scrutin.uid}`}>
+            <LienPeriode className="dossier-header" href={`/scrutin/${scrutin.uid}`}>
               <span className="dossier-tag">Scrutin</span>
               <span className="dossier-title">
                 {formaterTitreScrutin(scrutin.titre)}
               </span>
               <span className="dossier-count">Voir →</span>
-            </Link>
+            </LienPeriode>
           </div>
         ))}
       </div>
 
-      <Link
+      <LienPeriode
         className="back-link"
         href={contexte ? `/sous-theme/${contexte.sousTheme.slug}` : "/"}
       >
         ← Retour {contexte ? `à ${contexte.sousTheme.nom}` : "à l'accueil"}
-      </Link>
+      </LienPeriode>
       <br />
       <a
         className="source-link"

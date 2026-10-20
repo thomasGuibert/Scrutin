@@ -3,7 +3,9 @@ import {
   AUCUN_FILTRE,
   anneesDisponibles,
   correspondAuFiltre,
+  filtreDepuisParametres,
   moisDisponibles,
+  parametresDuFiltre,
 } from "@/domain/filtreDate";
 
 describe("anneesDisponibles", () => {
@@ -61,5 +63,33 @@ describe("correspondAuFiltre", () => {
     const filtre = { annee: 2026, mois: 7 };
 
     expect(correspondAuFiltre(["2025-01-10", "2026-07-15"], filtre)).toBe(true);
+  });
+});
+
+describe("filtreDepuisParametres / parametresDuFiltre", () => {
+  const lire = (requete: string) => filtreDepuisParametres(new URLSearchParams(requete));
+
+  it("lit l'année et le mois depuis l'URL", () => {
+    expect(lire("annee=2026&mois=3")).toEqual({ annee: 2026, mois: 3 });
+    expect(lire("annee=2026")).toEqual({ annee: 2026, mois: null });
+  });
+
+  it("ignore les valeurs invalides plutôt que de casser la page", () => {
+    expect(lire("")).toEqual(AUCUN_FILTRE);
+    expect(lire("mois=3")).toEqual(AUCUN_FILTRE);
+    expect(lire("annee=abc&mois=3")).toEqual(AUCUN_FILTRE);
+    expect(lire("annee=2026&mois=13")).toEqual({ annee: 2026, mois: null });
+    expect(lire("annee=2026&mois=0")).toEqual({ annee: 2026, mois: null });
+  });
+
+  it("produit la chaîne de requête à propager, vide sans filtre", () => {
+    expect(parametresDuFiltre(AUCUN_FILTRE)).toBe("");
+    expect(parametresDuFiltre({ annee: 2026, mois: null })).toBe("?annee=2026");
+    expect(parametresDuFiltre({ annee: 2026, mois: 3 })).toBe("?annee=2026&mois=3");
+  });
+
+  it("fait l'aller-retour sans perte", () => {
+    const filtre = { annee: 2025, mois: 11 };
+    expect(lire(parametresDuFiltre(filtre).slice(1))).toEqual(filtre);
   });
 });

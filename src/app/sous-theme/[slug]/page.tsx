@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { LienPeriode } from "@/app/_components/LienPeriode";
 import { Breadcrumb, type BreadcrumbItem } from "@/app/_components/Breadcrumb";
 import { DossierListeFiltrable } from "@/app/_components/DossierListeFiltrable";
 import { listerDossiersSousTheme, taxonomyRepository } from "@/app/_composition";
@@ -43,9 +43,9 @@ export default async function SousThemePage({
 
       <DossierListeFiltrable dossiers={dossiers} />
 
-      <Link className="back-link" href={retourHref}>
+      <LienPeriode className="back-link" href={retourHref}>
         ← Retour à {retourLabel}
-      </Link>
+      </LienPeriode>
     </main>
   );
 }

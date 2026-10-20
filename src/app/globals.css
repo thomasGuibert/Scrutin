@@ -738,6 +738,14 @@ table.cmp-table {
   gap: 1.5rem;
 }
 
+/* Le filtre par période de l'accueil peut laisser un nombre impair de
+   tuiles sous la tuile vedette (rang pair en comptant celle-ci) : la
+   dernière occupe alors toute la ligne plutôt que de laisser une case
+   vide. */
+.a-tile:not(.a-tile-feature):nth-child(even):last-child {
+  grid-column: 1 / -1;
+}
+
 .a-tile-feature .a-tile-name {
   font-size: 1.3rem;
 }

@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { LienPeriode } from "@/app/_components/LienPeriode";
 import { Breadcrumb } from "@/app/_components/Breadcrumb";
 import { SousThemeListeFiltrable } from "@/app/_components/SousThemeListeFiltrable";
 import { listerSousThemesAvecPosition, taxonomyRepository } from "@/app/_composition";
@@ -40,9 +40,9 @@ export default async function BranchePage({
         groupes={[{ titre: null, sousThemes, placeholderSiVide: true }]}
       />
 
-      <Link className="back-link" href={`/theme/${theme.slug}`}>
+      <LienPeriode className="back-link" href={`/theme/${theme.slug}`}>
         ← Retour à {theme.nom}
-      </Link>
+      </LienPeriode>
     </main>
   );
 }

@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { AccrocheExemple, type ExempleAccroche } from "@/app/_components/AccrocheExemple";
+import { ThemeGrilleFiltrable } from "@/app/_components/ThemeGrilleFiltrable";
 import {
   comparerGroupes,
   getDossier,
@@ -46,21 +46,7 @@ export default async function Home() {
 
       <AccrocheExemple exemple={exemple} />
 
-      <div className="a-grid">
-        {themes.map(({ theme, nombreDossiers }, index) => (
-          <Link
-            key={theme.slug}
-            href={`/theme/${theme.slug}`}
-            className={index === 0 ? "a-tile a-tile-feature" : "a-tile"}
-          >
-            <span className="a-tile-name">{theme.nom}</span>
-            <span className="a-tile-gloss">{theme.description}</span>
-            <span className="a-tile-arrow">
-              {nombreDossiers} dossier{nombreDossiers > 1 ? "s" : ""} →
-            </span>
-          </Link>
-        ))}
-      </div>
+      <ThemeGrilleFiltrable themes={themes} />
     </main>
   );
 }
