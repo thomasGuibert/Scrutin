@@ -8,6 +8,7 @@ import type {
   ThemeRacine,
 } from "@/domain/taxonomie";
 import type { Dossier, DossierRepository } from "@/domain/dossier";
+import type { Scrutin } from "@/domain/scrutin";
 
 class FakeTaxonomyRepository implements TaxonomyRepository {
   constructor(private readonly themes: ThemeRacine[]) {}
@@ -92,14 +93,19 @@ describe("listerThemesTries", () => {
     });
     const listerThemesTries = createListerThemesTries(
       taxonomyRepository,
-      dossierRepository
+      dossierRepository,
+      async (dossierRef) => [{ date: `2026-01-0${dossierRef.slice(1)}` } as Scrutin]
     );
 
     const resultat = await listerThemesTries();
 
     expect(resultat).toEqual([
-      { theme: themeGrand, nombreDossiers: 3 },
-      { theme: themePetit, nombreDossiers: 1 },
+      {
+        theme: themeGrand,
+        nombreDossiers: 3,
+        datesScrutins: ["2026-01-02", "2026-01-03", "2026-01-04"],
+      },
+      { theme: themePetit, nombreDossiers: 1, datesScrutins: ["2026-01-01"] },
     ]);
   });
 });

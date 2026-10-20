@@ -69,3 +69,37 @@ export function correspondAuFiltre(
     (date) => anneeDeDate(date) === annee && (mois === null || moisDeDate(date) === mois)
   );
 }
+
+// Le filtre voyage dans l'URL (`?annee=2026&mois=3`) pour suivre la
+// navigation : choisi sur l'accueil ou un thème, il reste appliqué sur les
+// pages suivantes (thème → branche → sous-thème), et un lien partagé
+// retombe sur la même vue. Toute valeur invalide (absente, non numérique,
+// mois hors 1-12, mois sans année) est ignorée plutôt que de casser la page.
+export function filtreDepuisParametres(parametres: {
+  get(nom: string): string | null;
+}): FiltrePeriode {
+  const annee = entierOuNull(parametres.get("annee"));
+  if (annee === null) {
+    return AUCUN_FILTRE;
+  }
+  const mois = entierOuNull(parametres.get("mois"));
+  return { annee, mois: mois !== null && mois >= 1 && mois <= 12 ? mois : null };
+}
+
+// Pendant de filtreDepuisParametres : la chaîne de requête à ajouter à un
+// lien pour y propager le filtre (`?annee=2026&mois=3`), vide sans filtre.
+export function parametresDuFiltre(filtre: FiltrePeriode): string {
+  if (filtre.annee === null) {
+    return "";
+  }
+  return filtre.mois === null
+    ? `?annee=${filtre.annee}`
+    : `?annee=${filtre.annee}&mois=${filtre.mois}`;
+}
+
+function entierOuNull(valeur: string | null): number | null {
+  if (valeur === null || !/^\d+$/.test(valeur)) {
+    return null;
+  }
+  return Number(valeur);
+}

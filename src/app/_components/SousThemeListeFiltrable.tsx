@@ -1,10 +1,11 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
+import { AvecFiltrePeriode, type EtatFiltrePeriode } from "@/app/_components/AvecFiltrePeriode";
 import { SelecteurPeriode } from "@/app/_components/SelecteurPeriode";
 import { SousThemeRow } from "@/app/_components/SousThemeRow";
 import type { SousThemeAvecPosition } from "@/api/listerSousThemesAvecPosition";
-import { AUCUN_FILTRE, correspondAuFiltre, type FiltrePeriode } from "@/domain/filtreDate";
+import { correspondAuFiltre } from "@/domain/filtreDate";
 
 // Un groupe de sous-thèmes tel qu'affiché par la page Branche (un seul
 // groupe, sans titre : `titre: null`, le h1 de la page donne déjà le nom
@@ -27,13 +28,26 @@ export type GroupeSousThemes = {
 // (Année, éventuellement Mois — cf. domain/filtreDate.ts, issue #152) : le
 // pendant, un niveau au-dessus, du filtre déjà en place sur la page
 // sous-thème (issue #151). Un sous-thème reste affiché dès qu'un seul de
-// ses dossiers a un scrutin dans la période choisie.
+// ses dossiers a un scrutin dans la période choisie. La période vient de
+// l'URL (cf. AvecFiltrePeriode) et suit les liens vers les sous-thèmes.
 export function SousThemeListeFiltrable({
   groupes,
 }: {
   groupes: GroupeSousThemes[];
 }) {
-  const [filtre, setFiltre] = useState<FiltrePeriode>(AUCUN_FILTRE);
+  return (
+    <AvecFiltrePeriode>
+      {(etat) => <ListeSousThemes groupes={groupes} {...etat} />}
+    </AvecFiltrePeriode>
+  );
+}
+
+function ListeSousThemes({
+  groupes,
+  filtre,
+  onChange,
+  suffixeLiens,
+}: { groupes: GroupeSousThemes[] } & EtatFiltrePeriode) {
 
   const groupesAffiches = groupes.map((groupe) => ({
     ...groupe,
@@ -55,7 +69,7 @@ export function SousThemeListeFiltrable({
           groupe.sousThemes.map((entree) => entree.datesScrutins)
         )}
         filtre={filtre}
-        onChange={setFiltre}
+        onChange={onChange}
       />
 
       {groupesAffiches.map((groupe, index) => {
@@ -82,7 +96,11 @@ export function SousThemeListeFiltrable({
           </p>
         ) : (
           groupe.sousThemesAffiches.map((entree) => (
-            <SousThemeRow key={entree.sousTheme.slug} {...entree} />
+            <SousThemeRow
+              key={entree.sousTheme.slug}
+              {...entree}
+              suffixeLien={suffixeLiens}
+            />
           ))
         );
 

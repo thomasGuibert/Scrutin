@@ -46,6 +46,18 @@ export function SelecteurPeriode({
 
   const mois =
     filtre.annee === null ? [] : moisDisponibles(datesParEntree, filtre.annee);
+  // Période reçue d'une page précédente (via l'URL) sans aucun scrutin ici :
+  // elle reste sélectionnée et visible plutôt que d'afficher "Toutes" alors
+  // que la liste est filtrée (le parent affiche alors "Aucun … pour cette
+  // période").
+  if (filtre.annee !== null && !annees.includes(filtre.annee)) {
+    annees.push(filtre.annee);
+    annees.sort((a, b) => b - a);
+  }
+  if (filtre.mois !== null && !mois.includes(filtre.mois)) {
+    mois.push(filtre.mois);
+    mois.sort((a, b) => a - b);
+  }
 
   return (
     <div className="date-filter">

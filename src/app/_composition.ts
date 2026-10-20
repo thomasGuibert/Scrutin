@@ -55,5 +55,6 @@ export const listerSousThemesAvecPosition = createListerSousThemesAvecPosition(
 );
 export const listerThemesTries = createListerThemesTries(
   taxonomyRepository,
-  dossierRepository
+  dossierRepository,
+  listerScrutinsDossier
 );
