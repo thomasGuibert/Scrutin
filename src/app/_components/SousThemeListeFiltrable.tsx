@@ -5,7 +5,7 @@ import { AvecFiltrePeriode, type EtatFiltrePeriode } from "@/app/_components/Ave
 import { SelecteurPeriode } from "@/app/_components/SelecteurPeriode";
 import { SousThemeRow } from "@/app/_components/SousThemeRow";
 import type { SousThemeAvecPosition } from "@/api/listerSousThemesAvecPosition";
-import { correspondAuFiltre } from "@/domain/filtreDate";
+import { compterDossiersDansPeriode, correspondAuFiltre } from "@/domain/filtreDate";
 
 // Un groupe de sous-thèmes tel qu'affiché par la page Branche (un seul
 // groupe, sans titre : `titre: null`, le h1 de la page donne déjà le nom
@@ -29,7 +29,8 @@ export type GroupeSousThemes = {
 // pendant, un niveau au-dessus, du filtre déjà en place sur la page
 // sous-thème (issue #151). Un sous-thème reste affiché dès qu'un seul de
 // ses dossiers a un scrutin dans la période choisie. La période vient de
-// l'URL (cf. AvecFiltrePeriode) et suit les liens vers les sous-thèmes.
+// l'URL (cf. AvecFiltrePeriode) et suit les liens vers les sous-thèmes ;
+// le compteur de chaque sous-thème ne compte que les dossiers de la période.
 export function SousThemeListeFiltrable({
   groupes,
 }: {
@@ -52,7 +53,7 @@ function ListeSousThemes({
   const groupesAffiches = groupes.map((groupe) => ({
     ...groupe,
     sousThemesAffiches: groupe.sousThemes.filter((entree) =>
-      correspondAuFiltre(entree.datesScrutins, filtre)
+      correspondAuFiltre(entree.datesParDossier.flat(), filtre)
     ),
   }));
 
@@ -66,7 +67,7 @@ function ListeSousThemes({
     <>
       <SelecteurPeriode
         datesParEntree={groupes.flatMap((groupe) =>
-          groupe.sousThemes.map((entree) => entree.datesScrutins)
+          groupe.sousThemes.map((entree) => entree.datesParDossier.flat())
         )}
         filtre={filtre}
         onChange={onChange}
@@ -99,6 +100,11 @@ function ListeSousThemes({
             <SousThemeRow
               key={entree.sousTheme.slug}
               {...entree}
+              nombreDossiers={compterDossiersDansPeriode(
+                entree.datesParDossier,
+                entree.nombreDossiers,
+                filtre
+              )}
               suffixeLien={suffixeLiens}
             />
           ))

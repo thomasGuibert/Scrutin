@@ -9,10 +9,10 @@ import {
 export type ThemeAvecCompte = {
   theme: ThemeRacine;
   nombreDossiers: number;
-  // Dates brutes (ISO) de tous les scrutins des dossiers du thème — sert au
+  // Dates brutes (ISO) des scrutins de chaque dossier du thème — sert au
   // filtre par période de l'accueil (cf. domain/filtreDate.ts), comme
-  // SousThemeAvecPosition.datesScrutins pour les pages Thème/Branche.
-  datesScrutins: string[];
+  // SousThemeAvecPosition.datesParDossier pour les pages Thème/Branche.
+  datesParDossier: string[][];
 };
 
 export function createListerThemesTries(
@@ -34,10 +34,10 @@ export function createListerThemesTries(
         const scrutinsParDossier = await Promise.all(
           dossiers.map((dossier) => listerScrutinsDossier(dossier.dossierRef))
         );
-        const datesScrutins = scrutinsParDossier
-          .flat()
-          .map((scrutin) => scrutin.date);
-        return { theme, nombreDossiers: dossiers.length, datesScrutins };
+        const datesParDossier = scrutinsParDossier.map((scrutins) =>
+          scrutins.map((scrutin) => scrutin.date)
+        );
+        return { theme, nombreDossiers: dossiers.length, datesParDossier };
       })
     );
 
