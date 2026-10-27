@@ -10,6 +10,7 @@ import { createListerDossiersSousTheme } from "@/api/listerDossiersSousTheme";
 import { createListerScrutinsDossier } from "@/api/listerScrutinsDossier";
 import { createListerSousThemesAvecPosition } from "@/api/listerSousThemesAvecPosition";
 import { createListerThemesTries } from "@/api/listerThemesTries";
+import { createTrouverDernierDossierVote } from "@/api/trouverDernierDossierVote";
 import { FilesystemAmendementRepository } from "@/spi/filesystem/amendementRepository";
 import { FilesystemDiscoursAmendementRepository } from "@/spi/filesystem/discoursAmendementRepository";
 import { FilesystemDossierRepository } from "@/spi/filesystem/dossierRepository";
@@ -55,6 +56,10 @@ export const listerSousThemesAvecPosition = createListerSousThemesAvecPosition(
 );
 export const listerThemesTries = createListerThemesTries(
   taxonomyRepository,
+  dossierRepository,
+  listerScrutinsDossier
+);
+export const trouverDernierDossierVote = createTrouverDernierDossierVote(
   dossierRepository,
   listerScrutinsDossier
 );

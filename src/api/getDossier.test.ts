@@ -5,6 +5,10 @@ import type { Dossier, DossierRepository } from "@/domain/dossier";
 class FakeDossierRepository implements DossierRepository {
   constructor(private readonly dossiers: Record<string, Dossier>) {}
 
+  async getAll(): Promise<Dossier[]> {
+    throw new Error("not used in this test");
+  }
+
   async getByRef(dossierRef: string): Promise<Dossier | null> {
     return this.dossiers[dossierRef] ?? null;
   }

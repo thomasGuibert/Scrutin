@@ -2,37 +2,31 @@ import { AccrocheExemple, type ExempleAccroche } from "@/app/_components/Accroch
 import { ThemeGrilleFiltrable } from "@/app/_components/ThemeGrilleFiltrable";
 import {
   comparerGroupes,
-  getDossier,
-  getScrutin,
   listerThemesTries,
+  trouverDernierDossierVote,
 } from "@/app/_composition";
-import { calculerEffectifTotal, calculerVotants } from "@/domain/scrutin";
+import {
+  calculerEffectifTotal,
+  calculerVotants,
+  determinerResultatDossier,
+} from "@/domain/scrutin";
 
-// Dossier mis en avant en accroche (cf. AccrocheExemple) : scrutin décisif
-// voté dans le même sens par les 11 groupes parlementaires (56 pour,
-// 0 contre) — choisi manuellement pour son sujet immédiatement lisible et
-// son résultat vérifiable d'un coup d'œil. Fixe pour l'instant, pas de
-// rotation (choisirait parmi les dossiers dont le scrutin décisif est
-// unanime ou quasi — principe à formaliser le jour où une rotation réelle
-// est construite).
-const EXEMPLE_SCRUTIN_UID = "VTANR5L17V1725";
-const EXEMPLE_DOSSIER_REF = "DLR5L17N50627";
-const EXEMPLE_TITRE = "Lutter contre la pédocriminalité";
-
+// Dossier mis en avant en accroche (cf. AccrocheExemple) : le dernier
+// dossier curé dont le Scrutin décisif a eu lieu (cf.
+// trouverDernierDossierVote), recalculé à chaque build — donc à chaque
+// passage du pipeline quotidien qui publie de nouvelles données.
 export default async function Home() {
   const themes = await listerThemesTries();
-  const scrutin = await getScrutin(EXEMPLE_SCRUTIN_UID);
-  const dossier = await getDossier(EXEMPLE_DOSSIER_REF);
-  const comparaison = scrutin ? comparerGroupes(scrutin) : [];
+  const dernier = await trouverDernierDossierVote();
 
-  const exemple: ExempleAccroche = {
-    titre: EXEMPLE_TITRE,
-    href: `/dossier/${EXEMPLE_DOSSIER_REF}`,
-    description: dossier?.ficheDossier.contexte ?? "",
-    comparaison,
-    resultat: scrutin?.resultat ?? "adopté",
-    votants: scrutin ? calculerVotants(scrutin.decompte) : 0,
-    effectifTotal: scrutin ? calculerEffectifTotal(scrutin.positionsParGroupe) : 0,
+  const exemple: ExempleAccroche | null = dernier && {
+    titre: dernier.dossier.titre,
+    href: `/dossier/${dernier.dossier.dossierRef}`,
+    description: dernier.dossier.ficheDossier.contexte,
+    comparaison: comparerGroupes(dernier.scrutinDecisif),
+    resultat: determinerResultatDossier(dernier.scrutins) ?? dernier.scrutinDecisif.resultat,
+    votants: calculerVotants(dernier.scrutinDecisif.decompte),
+    effectifTotal: calculerEffectifTotal(dernier.scrutinDecisif.positionsParGroupe),
   };
 
   return (
@@ -44,7 +38,7 @@ export default async function Home() {
         voté, dossier par dossier, au-delà de leurs discours.
       </p>
 
-      <AccrocheExemple exemple={exemple} />
+      {exemple && <AccrocheExemple exemple={exemple} />}
 
       <ThemeGrilleFiltrable themes={themes} />
     </main>

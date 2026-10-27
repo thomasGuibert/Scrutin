@@ -13,6 +13,7 @@ export type Dossier = {
 };
 
 export interface DossierRepository {
+  getAll(): Promise<Dossier[]>;
   getByRef(dossierRef: string): Promise<Dossier | null>;
   getBySousTheme(slug: string): Promise<Dossier[]>;
   getByTagImpact(tag: string): Promise<Dossier[]>;

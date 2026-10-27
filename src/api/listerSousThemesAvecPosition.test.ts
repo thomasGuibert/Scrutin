@@ -6,6 +6,10 @@ import type { SousTheme } from "@/domain/taxonomie";
 class FakeDossierRepository implements DossierRepository {
   constructor(private readonly dossiers: Record<string, Dossier[]>) {}
 
+  async getAll(): Promise<Dossier[]> {
+    throw new Error("not used in this test");
+  }
+
   async getByRef(): Promise<Dossier | null> {
     throw new Error("not used in this test");
   }

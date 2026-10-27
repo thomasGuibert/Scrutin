@@ -17,19 +17,34 @@ export type ExempleAccroche = {
 // "Au-delà des clivages" plutôt qu'un mot qui affirmerait un choix
 // éditorial à justifier ("Sélection", "À la une") : se vérifie directement
 // dans le bloc lui-même (absence de clivage visible entre les groupes),
-// sans rien à expliquer ailleurs sur la page.
-const RUBRIQUE = "Au-delà des clivages";
+// sans rien à expliquer ailleurs sur la page. Ne vaut que si tous les
+// groupes qui ont voté ont la même position — sinon la rubrique dit
+// simplement ce qu'est le bloc (le dernier dossier voté, cf. page.tsx).
+const RUBRIQUE_CONSENSUS = "Au-delà des clivages";
+const RUBRIQUE_DERNIER = "Dernier dossier voté";
 
-// Accroche de la page d'accueil : un dossier réel dont le scrutin décisif
-// a été voté dans le même sens par tous les groupes, pour montrer la
-// neutralité de traitement du site par un fait plutôt que l'affirmer (cf.
-// projet-votes-assemblee-nationale.md, impact map #4 : désamorcer le
+function estConsensuel(comparaison: ComparaisonGroupe[]): boolean {
+  const positions = new Set(
+    comparaison
+      .map(({ position }) => position)
+      .filter((position) => position !== "Non votant")
+  );
+  return positions.size === 1 && !positions.has("Divisé");
+}
+
+// Accroche de la page d'accueil : le dernier dossier réel voté (cf.
+// page.tsx), avec la position de chaque groupe sur son scrutin décisif —
+// montrer les votes par un fait plutôt qu'affirmer la neutralité du site
+// (cf. projet-votes-assemblee-nationale.md, impact map #4 : désamorcer le
 // soupçon de biais avant qu'il s'installe, sur le tout premier écran).
-// L'exemple est fixe (cf. page.tsx) — pas de rotation pour l'instant.
 export function AccrocheExemple({ exemple }: { exemple: ExempleAccroche }) {
+  const rubrique = estConsensuel(exemple.comparaison)
+    ? RUBRIQUE_CONSENSUS
+    : RUBRIQUE_DERNIER;
+
   return (
     <div className="accroche-exemple">
-      <p className="accroche-kicker">{RUBRIQUE}</p>
+      <p className="accroche-kicker">{rubrique}</p>
       <p className="accroche-titre">{exemple.titre}</p>
       <p className="accroche-description">{exemple.description}</p>
 

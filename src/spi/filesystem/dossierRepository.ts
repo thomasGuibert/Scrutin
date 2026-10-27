@@ -94,6 +94,10 @@ export class FilesystemDossierRepository implements DossierRepository {
     return this.parseDossier(raw);
   }
 
+  async getAll(): Promise<Dossier[]> {
+    return this.getTousLesDossiers();
+  }
+
   async getBySousTheme(slug: string): Promise<Dossier[]> {
     const dossiers = await this.getTousLesDossiers();
     return dossiers.filter((dossier) => dossier.sousTheme === slug);
