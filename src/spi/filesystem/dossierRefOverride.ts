@@ -923,3 +923,17 @@ export const DOSSIER_REF_OVERRIDE: Record<string, string> = {
   // adaptée aux besoins des justiciables ultramarins" (adopté)
   VTANR5L17V2273: "DLR5L17N52245",
 };
+
+// Correction des dossierRef bruts ERRONÉS (≠ DOSSIER_REF_OVERRIDE, qui ne
+// comble que les dossierRef null). Prioritaire sur la valeur brute de
+// l'export Scrutins : à n'utiliser que lorsque l'index canonique de
+// Dossiers_Legislatifs.json.zip (actes "Décision") contredit l'export
+// Scrutins, constaté par `npm run audit:rattachements`.
+// - VTANR5L17V10080 : "l'ensemble de la proposition de loi visant à lutter
+//   contre la vie chère en renforçant le droit de la concurrence et de la
+//   régulation économique outre-mer" — l'export Scrutins donne
+//   DLR5L17N51962 (Territoires zéro chômeur), le dossier canonique est
+//   DLR5L17N51095 (PR #182, décision de Thomas du 2026-11-21).
+export const DOSSIER_REF_CORRECTION: Record<string, string> = {
+  VTANR5L17V10080: "DLR5L17N51095",
+};
