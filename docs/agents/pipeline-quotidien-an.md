@@ -34,6 +34,16 @@ réellement rien à curer ce jour-là.
   état à jour.
 - Créer une branche de travail dédiée à ce run : `automation/an-YYYY-MM-DD`
   (date du jour).
+- **Chercher une PR de doute déjà ouverte** : PR ouverte dont la branche
+  commence par `automation/an-` (outil MCP GitHub `list_pull_requests`,
+  `state: open`). S'il y en a une, noter son numéro et la liste des
+  dossiers en doute de son corps (identifiants `DLR…` des titres
+  `### N.`) : ce sont les **dossiers en attente**. Ils ne sont pas re-curés
+  ni re-signalés par ce run (Étape 4), et la PR existante est mise à jour au
+  lieu d'en ouvrir une nouvelle (Étape 7). Sans cette règle, chaque run
+  repart de `main` et rouvre une PR de doute identique chaque jour tant que
+  la précédente n'est pas tranchée, et plus rien n'est publié (cas des PR
+  #175 à #182, novembre 2026).
 
 ## Étape 2 — Récupérer les données brutes
 
@@ -124,6 +134,12 @@ rigueur que le travail fait pour les issues
    taxonomie n'émerge qu'empiriquement (`CONTEXT.md`). Si aucun sous-thème
    existant ne convient clairement, marquer ce dossier en doute
    (`sous-theme-incertain`, Étape 7) plutôt que de trancher.
+
+**Dossiers en attente** (cf. Étape 1) : ne pas créer leur fiche ni les
+classer sur la branche du jour, même si leurs scrutins sont nouveaux ou
+modifiés. Ils restent non classés sur `main` (données brutes seulement)
+jusqu'à la décision sur la PR de doute ouverte, et ne comptent pas comme
+déclencheur de doute pour ce run.
 
 **Exception PLF/PLFSS et votes de conscience** (`raisonsDeDoute` contient
 `plf-plfss` ou `vote-de-conscience`) : faire la fiche dossier et la
@@ -292,7 +308,10 @@ sur des scrutins non décisifs seulement ne compte pas, cf. Étape 4) :
 
 - Committer tout de même les changements sur la branche (y compris les cas
   non ambigus traités dans le même run — ne pas les perdre).
-- Ouvrir **une seule** PR regroupant tous les cas en doute de ce run, avec
+- S'il existe déjà une PR de doute ouverte (Étape 1), ne pas en ouvrir une
+  seconde : ajouter les nouveaux cas à cette PR (voir « Mettre à jour la
+  PR de doute ouverte » ci-dessous). Sinon, ouvrir **une seule** PR
+  regroupant tous les cas en doute de ce run, avec
   un corps qui liste explicitement, par dossier/scrutin :
   - la raison du doute,
   - ce qui a été fait automatiquement (ex. "classé en PLF, narratif exclu —
@@ -304,6 +323,21 @@ sur des scrutins non décisifs seulement ne compte pas, cf. Étape 4) :
   au-delà de la notification GitHub standard (nouvelle PR sur un dépôt dont
   le propriétaire est notifié par défaut).
 - Ne pas committer directement sur `main` dans ce cas, même partiellement.
+
+**Mettre à jour la PR de doute ouverte** (s'il y en a une, Étape 1), après
+la publication ci-dessus, pour qu'elle reste fusionnable sur le `main` du
+jour :
+
+1. `git checkout <branche de la PR> && git merge origin/main`.
+2. En cas de conflit sur une archive de `data/raw/an/17/`, prendre la
+   version de `main` (`git checkout --theirs <archive>`), terminer le
+   merge, puis relancer sur cette branche `npm run an:fusionner-curation`
+   (en retirant de nouveau les dossiers PLF/PLFSS et votes de conscience,
+   cf. Étape 4) et `npm run an:resumes` pour les interventions manquantes.
+3. S'il y a de nouveaux cas en doute ce jour-là, faire leur curation sur
+   cette branche et les ajouter au corps de la PR.
+4. Étape 5 complète sur cette branche, commit, push, puis un commentaire
+   sur la PR résumant la mise à jour du jour.
 
 Dans les deux cas (merge auto ou PR de doute), passer ensuite à l'Étape 8.
 

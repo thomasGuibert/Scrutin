@@ -1,6 +1,6 @@
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { FilesystemScrutinRepository } from "@/spi/filesystem/scrutinRepository";
+import { FilesystemScrutinRepository, normaliserDossierRef } from "@/spi/filesystem/scrutinRepository";
 
 const FIXTURE_ZIP_PATH = path.join(
   import.meta.dirname,
@@ -125,5 +125,19 @@ describe("FilesystemScrutinRepository", () => {
     const scrutins = await repository.getByDossierRef("DLR5L17INCONNU");
 
     expect(scrutins).toEqual([]);
+  });
+});
+
+describe("normaliserDossierRef", () => {
+  it("garde le dossierRef brut quand il est renseigné et non corrigé", () => {
+    expect(normaliserDossierRef("VTANR5L17V9999999", "DLR5L17N00001")).toBe("DLR5L17N00001");
+  });
+
+  it("comble un dossierRef null avec la curation manuelle", () => {
+    expect(normaliserDossierRef("VTANR5L17V1304", null)).toBe("DLR5L17N50579");
+  });
+
+  it("remplace un dossierRef brut erroné par sa correction", () => {
+    expect(normaliserDossierRef("VTANR5L17V10080", "DLR5L17N51962")).toBe("DLR5L17N51095");
   });
 });

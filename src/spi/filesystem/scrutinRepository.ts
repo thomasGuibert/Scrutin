@@ -9,7 +9,7 @@ import type {
 // node par scripts/extraire-*.ts (les 3 s'appuient sur
 // FilesystemScrutinRepository), qui ne résout pas l'alias "@/" — même
 // contrainte documentée dans discussionGeneraleRepository.ts.
-import { DOSSIER_REF_OVERRIDE } from "./dossierRefOverride.ts";
+import { DOSSIER_REF_CORRECTION, DOSSIER_REF_OVERRIDE } from "./dossierRefOverride.ts";
 
 const ZIP_PATH = path.join(
   process.cwd(),
@@ -92,12 +92,13 @@ function normaliserOrganeRef(organeRef: string): string {
 // (src/spi/filesystem/auditDossiersManquants.test.ts, cf. #33/#42) — la
 // même logique de résolution (brut ?? curation manuelle) doit y être
 // utilisée pour ne pas re-signaler comme "manquants" des scrutins déjà
-// couverts par DOSSIER_REF_OVERRIDE.
+// couverts par DOSSIER_REF_OVERRIDE. DOSSIER_REF_CORRECTION passe avant la
+// valeur brute : elle corrige les rattachements erronés de l'export AN.
 export function normaliserDossierRef(
   uid: string,
   dossierRef: string | null
 ): string | null {
-  return dossierRef ?? DOSSIER_REF_OVERRIDE[uid] ?? null;
+  return DOSSIER_REF_CORRECTION[uid] ?? dossierRef ?? DOSSIER_REF_OVERRIDE[uid] ?? null;
 }
 
 function parseScrutin(raw: RawScrutinFile): Scrutin {
