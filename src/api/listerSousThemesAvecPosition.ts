@@ -1,3 +1,7 @@
+import {
+  agregerPositionsDecisives,
+  type PositionDecisiveGroupe,
+} from "@/api/agregerPositionsDossiers";
 import type { ComparaisonGroupe } from "@/api/comparerGroupes";
 import type { DossierRepository } from "@/domain/dossier";
 import type { Scrutin } from "@/domain/scrutin";
@@ -12,6 +16,10 @@ export type SousThemeAvecPosition = {
   // Branche/Thème (cf. domain/filtreDate.ts, issue #152) et à recompter
   // les dossiers de la période (cf. compterDossiersDansPeriode).
   datesParDossier: string[][];
+  // Positions sur le scrutin décisif de chaque dossier, dans le même ordre
+  // que datesParDossier : permet de recalculer `comparaison` sur les seuls
+  // dossiers de la période filtrée (cf. SousThemeListeFiltrable).
+  positionsParDossier: PositionDecisiveGroupe[][];
 };
 
 // Un sous-thème avec, à sa suite, ce que la navigation montre de lui avant
@@ -20,9 +28,9 @@ export type SousThemeAvecPosition = {
 // CONTEXT.md : la comparaison entre groupes, c'est la navigation de l'arbre).
 export function createListerSousThemesAvecPosition(
   dossierRepository: DossierRepository,
-  agregerPositionsDossiers: (
+  positionsDecisivesParDossier: (
     dossierRefs: string[]
-  ) => Promise<ComparaisonGroupe[]>,
+  ) => Promise<PositionDecisiveGroupe[][]>,
   listerScrutinsDossier: (dossierRef: string) => Promise<Scrutin[]>
 ) {
   return async function listerSousThemesAvecPosition(
@@ -33,8 +41,10 @@ export function createListerSousThemesAvecPosition(
         const dossiers = await dossierRepository.getBySousTheme(
           sousTheme.slug
         );
-        const [comparaison, scrutinsParDossier] = await Promise.all([
-          agregerPositionsDossiers(dossiers.map((dossier) => dossier.dossierRef)),
+        const [positionsParDossier, scrutinsParDossier] = await Promise.all([
+          positionsDecisivesParDossier(
+            dossiers.map((dossier) => dossier.dossierRef)
+          ),
           Promise.all(
             dossiers.map((dossier) => listerScrutinsDossier(dossier.dossierRef))
           ),
@@ -45,8 +55,9 @@ export function createListerSousThemesAvecPosition(
         return {
           sousTheme,
           nombreDossiers: dossiers.length,
-          comparaison,
+          comparaison: agregerPositionsDecisives(positionsParDossier),
           datesParDossier,
+          positionsParDossier,
         };
       })
     );

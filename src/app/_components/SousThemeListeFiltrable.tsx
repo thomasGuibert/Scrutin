@@ -4,6 +4,7 @@ import { Fragment } from "react";
 import { AvecFiltrePeriode, type EtatFiltrePeriode } from "@/app/_components/AvecFiltrePeriode";
 import { SelecteurPeriode } from "@/app/_components/SelecteurPeriode";
 import { SousThemeRow } from "@/app/_components/SousThemeRow";
+import { agregerPositionsDecisives } from "@/api/agregerPositionsDossiers";
 import type { SousThemeAvecPosition } from "@/api/listerSousThemesAvecPosition";
 import { compterDossiersDansPeriode, correspondAuFiltre } from "@/domain/filtreDate";
 
@@ -30,7 +31,8 @@ export type GroupeSousThemes = {
 // sous-thème (issue #151). Un sous-thème reste affiché dès qu'un seul de
 // ses dossiers a un scrutin dans la période choisie. La période vient de
 // l'URL (cf. AvecFiltrePeriode) et suit les liens vers les sous-thèmes ;
-// le compteur de chaque sous-thème ne compte que les dossiers de la période.
+// le compteur de chaque sous-thème ne compte que les dossiers de la période,
+// et sa Position par groupe n'agrège que ces mêmes dossiers.
 export function SousThemeListeFiltrable({
   groupes,
 }: {
@@ -100,6 +102,7 @@ function ListeSousThemes({
             <SousThemeRow
               key={entree.sousTheme.slug}
               {...entree}
+              comparaison={comparaisonDansPeriode(entree, filtre)}
               nombreDossiers={compterDossiersDansPeriode(
                 entree.datesParDossier,
                 entree.nombreDossiers,
@@ -126,5 +129,22 @@ function ListeSousThemes({
         <p className="dossier-note">Aucun sous-thème pour cette période.</p>
       )}
     </>
+  );
+}
+
+// Position par groupe d'un sous-thème restreinte aux dossiers de la période
+// (même règle que le compteur : au moins un scrutin dans la période). Sans
+// filtre, la Position calculée sur tous les dossiers.
+function comparaisonDansPeriode(
+  entree: SousThemeAvecPosition,
+  filtre: EtatFiltrePeriode["filtre"]
+) {
+  if (filtre.annee === null) {
+    return entree.comparaison;
+  }
+  return agregerPositionsDecisives(
+    entree.positionsParDossier.filter((_, index) =>
+      correspondAuFiltre(entree.datesParDossier[index] ?? [], filtre)
+    )
   );
 }

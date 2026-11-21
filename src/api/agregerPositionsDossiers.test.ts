@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { createAgregerPositionsDossiers } from "@/api/agregerPositionsDossiers";
+import {
+  agregerPositionsDecisives,
+  createAgregerPositionsDossiers,
+} from "@/api/agregerPositionsDossiers";
 import type { Groupe, GroupeRepository } from "@/domain/groupes";
 import type { Scrutin, ScrutinRepository } from "@/domain/scrutin";
 
@@ -226,5 +229,20 @@ describe("agregerPositionsDossiers", () => {
     const comparaison = await agregerPositionsDossiers(["DLR5L17ENCOURS"]);
 
     expect(comparaison).toEqual([]);
+  });
+});
+
+describe("agregerPositionsDecisives", () => {
+  it("n'agrège que les dossiers passés : un sous-ensemble (ex. une période) donne sa propre Position", () => {
+    const dossierPour = [
+      { groupe: UN_GROUPE, decompte: { pour: 10, contre: 0, abstentions: 0 }, effectif: 10 },
+    ];
+    const dossierContre = [
+      { groupe: UN_GROUPE, decompte: { pour: 0, contre: 10, abstentions: 0 }, effectif: 10 },
+    ];
+
+    expect(agregerPositionsDecisives([dossierPour])[0].position).toBe("Pour");
+    expect(agregerPositionsDecisives([dossierPour, dossierContre])[0].position).toBe("Divisé");
+    expect(agregerPositionsDecisives([[]])).toEqual([]);
   });
 });

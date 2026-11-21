@@ -48,7 +48,7 @@ describe("listerSousThemesAvecPosition", () => {
       ],
       "sous-theme-b": [unDossier("DLR5L17C", "sous-theme-b")],
     });
-    const agregerPositionsDossiers = vi.fn().mockResolvedValue([]);
+    const agregerPositionsDossiers = vi.fn().mockImplementation(async (refs: string[]) => refs.map(() => []));
     const listerSousThemesAvecPosition = createListerSousThemesAvecPosition(
       dossierRepository,
       agregerPositionsDossiers,
@@ -70,7 +70,7 @@ describe("listerSousThemesAvecPosition", () => {
 
   it("retourne un nombre de dossiers à zéro pour un sous-thème sans dossier", async () => {
     const dossierRepository = new FakeDossierRepository({});
-    const agregerPositionsDossiers = vi.fn().mockResolvedValue([]);
+    const agregerPositionsDossiers = vi.fn().mockImplementation(async (refs: string[]) => refs.map(() => []));
     const listerSousThemesAvecPosition = createListerSousThemesAvecPosition(
       dossierRepository,
       agregerPositionsDossiers,
@@ -87,6 +87,7 @@ describe("listerSousThemesAvecPosition", () => {
         nombreDossiers: 0,
         comparaison: [],
         datesParDossier: [],
+        positionsParDossier: [],
       },
     ]);
   });
@@ -98,7 +99,7 @@ describe("listerSousThemesAvecPosition", () => {
         unDossier("DLR5L17B", "sous-theme-a"),
       ],
     });
-    const agregerPositionsDossiers = vi.fn().mockResolvedValue([]);
+    const agregerPositionsDossiers = vi.fn().mockImplementation(async (refs: string[]) => refs.map(() => []));
     const listerScrutinsDossier = vi
       .fn()
       .mockImplementation(async (dossierRef: string) =>
