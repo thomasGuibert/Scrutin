@@ -1,7 +1,10 @@
 // Composition root : câble les adaptateurs spi/filesystem aux fonctions
 // api, une seule fois. Les routes (app/**/page.tsx) importent d'ici plutôt
 // que de reconstruire ce graphe de dépendances chacune de leur côté.
-import { createAgregerPositionsDossiers } from "@/api/agregerPositionsDossiers";
+import {
+  createAgregerPositionsDossiers,
+  createPositionsDecisivesParDossier,
+} from "@/api/agregerPositionsDossiers";
 import { createComparerGroupes } from "@/api/comparerGroupes";
 import { createGenererFicheScrutinEnrichie } from "@/api/genererFicheScrutinEnrichie";
 import { createGetDossier } from "@/api/getDossier";
@@ -49,9 +52,13 @@ export const listerDossiersSousTheme = createListerDossiersSousTheme(
   agregerPositionsDossiers,
   listerScrutinsDossier
 );
+export const positionsDecisivesParDossier = createPositionsDecisivesParDossier(
+  scrutinRepository,
+  groupeRepository
+);
 export const listerSousThemesAvecPosition = createListerSousThemesAvecPosition(
   dossierRepository,
-  agregerPositionsDossiers,
+  positionsDecisivesParDossier,
   listerScrutinsDossier
 );
 export const listerThemesTries = createListerThemesTries(
