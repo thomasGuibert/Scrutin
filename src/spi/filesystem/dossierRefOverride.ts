@@ -934,6 +934,28 @@ export const DOSSIER_REF_OVERRIDE: Record<string, string> = {
 //   régulation économique outre-mer" — l'export Scrutins donne
 //   DLR5L17N51962 (Territoires zéro chômeur), le dossier canonique est
 //   DLR5L17N51095 (PR #182, décision de Thomas du 2026-11-21).
+// - VTANR5L17V10063 à VTANR5L17V10079 : amendements et articles de ce même
+//   texte (séance du 2026-11-19), rattachés par l'export Scrutins au même
+//   dossier erroné DLR5L17N51962. Non décisifs, donc invisibles pour
+//   `audit:rattachements` ; repérés le 2026-11-24 quand l'AN a corrigé le
+//   titre de V10068.
 export const DOSSIER_REF_CORRECTION: Record<string, string> = {
+  VTANR5L17V10063: "DLR5L17N51095",
+  VTANR5L17V10064: "DLR5L17N51095",
+  VTANR5L17V10065: "DLR5L17N51095",
+  VTANR5L17V10066: "DLR5L17N51095",
+  VTANR5L17V10067: "DLR5L17N51095",
+  VTANR5L17V10068: "DLR5L17N51095",
+  VTANR5L17V10069: "DLR5L17N51095",
+  VTANR5L17V10070: "DLR5L17N51095",
+  VTANR5L17V10071: "DLR5L17N51095",
+  VTANR5L17V10072: "DLR5L17N51095",
+  VTANR5L17V10073: "DLR5L17N51095",
+  VTANR5L17V10074: "DLR5L17N51095",
+  VTANR5L17V10075: "DLR5L17N51095",
+  VTANR5L17V10076: "DLR5L17N51095",
+  VTANR5L17V10077: "DLR5L17N51095",
+  VTANR5L17V10078: "DLR5L17N51095",
+  VTANR5L17V10079: "DLR5L17N51095",
   VTANR5L17V10080: "DLR5L17N51095",
 };
